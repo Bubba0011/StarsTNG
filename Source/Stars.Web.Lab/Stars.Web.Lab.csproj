@@ -5,7 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Stars.Core\Stars.Core.csproj" />
     <ProjectReference Include="..\Stars.Web.Components\Stars.Web.Components.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Data\" />
   </ItemGroup>
 
 </Project>
