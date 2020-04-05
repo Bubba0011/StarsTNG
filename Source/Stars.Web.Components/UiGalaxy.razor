@@ -9,9 +9,10 @@
 
 		@foreach (var p in Galaxy.Planets)
 		{
-			<circle cx="@p.Position.X" cy="@p.Position.Y" r="2" fill="white" />
+			<circle cx="@p.Position.X" cy="@p.Position.Y" r="1" fill="white" />
 		}
 
+		@ChildContent
 	</svg>
 }
 
@@ -19,4 +20,7 @@
 {
 	[Parameter]
 	public Galaxy Galaxy { get; set; }
+
+	[Parameter]
+	public RenderFragment ChildContent { get; set; }
 }
