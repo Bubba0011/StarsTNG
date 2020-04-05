@@ -11,7 +11,10 @@ namespace Stars.Core.Setup
 		{
 			// TODO: Validate settings
 
-			Galaxy galaxy = new Galaxy();
+			Galaxy galaxy = new Galaxy()
+			{
+				Size = settings.GalaxySize
+			};
 
 			galaxy.Planets = Enumerable.Range(0, settings.PlanetCount)
 				.Select(_ => RandomPosition(settings.GalaxySize))

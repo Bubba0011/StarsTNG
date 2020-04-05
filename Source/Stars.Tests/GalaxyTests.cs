@@ -30,11 +30,11 @@ namespace Stars.Tests
 			var galaxy = generator.Generate(settings);
 
 			Assert.Equal(planets, galaxy.Planets.Count);
+			Assert.Equal(size, galaxy.Size);
+			Assert.All(galaxy.Planets, planet => Assert.True(PointInRange(planet.Position)));
 
-			Assert.All(galaxy.Planets, planet => Assert.True(planet.Position.X >= 0));
-			Assert.All(galaxy.Planets, planet => Assert.True(planet.Position.Y >= 0));
-			Assert.All(galaxy.Planets, planet => Assert.True(planet.Position.X < size));
-			Assert.All(galaxy.Planets, planet => Assert.True(planet.Position.Y < size));
+			bool InRange(int n) => n >= 0 && n < size;
+			bool PointInRange(Position p) => InRange(p.X) && InRange(p.Y);
 		}
 	}
 }

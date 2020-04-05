@@ -1,8 +1,27 @@
 ﻿@page "/galaxy"
 
-<h3>Galaxy</h3>
+@using Stars.Core 
+@using Stars.Core.Setup
+
+<UiGalaxy Galaxy="galaxy" />
+
+<div>
+	Galaxy stats...
+</div>
 
 @code 
-{
+{ 
+	private Galaxy galaxy;
 
-}
+	protected override void OnInitialized()
+	{
+		var settings = new GalaxyGeneratorSettings()
+		{
+			GalaxySize = 600,
+			PlanetCount = 150,
+		};
+
+		var generator = new GalaxyGenerator();
+
+		galaxy = generator.Generate(settings);
+	}}

@@ -1,0 +1,22 @@
+﻿@using Stars.Core
+
+@if (Galaxy != null)
+{
+	<svg width="@Galaxy.Size" height="@Galaxy.Size" style="background-color: black">
+
+		<line x1="0" x2="@Galaxy.Size" y1="@(Galaxy.Size/2)" y2="@(Galaxy.Size/2)" stroke="grey" stroke-width="1" />
+		<line y1="0" y2="@Galaxy.Size" x1="@(Galaxy.Size/2)" x2="@(Galaxy.Size/2)" stroke="grey" stroke-width="1" />
+
+		@foreach (var p in Galaxy.Planets)
+		{
+			<circle cx="@p.Position.X" cy="@p.Position.Y" r="2" fill="white" />
+		}
+
+	</svg>
+}
+
+@code 
+{
+	[Parameter]
+	public Galaxy Galaxy { get; set; }
+}
