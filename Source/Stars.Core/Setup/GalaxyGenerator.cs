@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Stars.Core.Setup
@@ -6,6 +7,7 @@ namespace Stars.Core.Setup
 	public class GalaxyGenerator
 	{
 		private Random rnd = new Random();
+		private IList<Position> occupiedSpace = new List<Position>();
 
 		public Galaxy Generate(GalaxyGeneratorSettings settings)
 		{
@@ -17,20 +19,38 @@ namespace Stars.Core.Setup
 			};
 
 			galaxy.Planets = Enumerable.Range(0, settings.PlanetCount)
-				.Select(_ => RandomPosition(settings.GalaxySize))
+				.Select(_ => RandomPosition(settings.GalaxySize, settings.MinimumDistanceBetweenPlanets))
 				.Select(position => new Planet() { Position = position })
 				.ToList();
 
 			return galaxy;
 		}
 
-		private Position RandomPosition(int galaxySize)
+		private Position RandomPosition(int galaxySize, int minimumDistance)
 		{
 			const int Padding = 10;
 
 			int Next() => rnd.Next(Padding, galaxySize - Padding);
 
-			return new Position(Next(), Next());
+			Position position;
+			bool isToClose;
+			do
+			{
+				position = new Position(Next(), Next());
+				isToClose = occupiedSpace.Any(occupiedPosition => IsInsideMinimumDistance(occupiedPosition, position, minimumDistance));
+			} while (isToClose);
+
+			occupiedSpace.Add(position);
+
+			return position;
+		}
+
+		private bool IsInsideMinimumDistance(Position p1, Position p2, int minimumDistance)
+		{
+			var dx = p1.X - p2.X;
+			var dy = p1.Y - p2.Y;
+			var hyp = Math.Sqrt((dx * dx + dy * dy));
+			return hyp < minimumDistance;
 		}
 	}
 }
