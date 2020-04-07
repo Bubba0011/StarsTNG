@@ -36,7 +36,9 @@
 		galaxy = generator.Generate(settings);
 
 		stats = GetStats(galaxy);
-	}	private static GalaxyStats GetStats(Galaxy galaxy)
+	}
+
+	private static GalaxyStats GetStats(Galaxy galaxy)
 	{
 		var stats = new GalaxyStats();
 
@@ -87,7 +89,9 @@
 				return dx * dx + dy * dy;
 			}
 		}
-	}	struct GalaxyStats
+	}
+
+	struct GalaxyStats
 	{
 		public Position Center { get; set; }
 
@@ -97,4 +101,5 @@
 
 		public Planet MinPlanet { get; set; }
 		public Planet MaxPlanet { get; set; }
-	}}
+	}
+}
