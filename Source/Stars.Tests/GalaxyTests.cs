@@ -36,10 +36,10 @@ namespace Stars.Tests
 			Assert.All(galaxy.Planets, planet => Assert.True(PointInRange(planet.Position)));
 			Assert.All(galaxy.Planets, planet => Assert.True(MinDistanceKept(planet.Position)));
 
-			bool InRange(int n) => n >= 0 && n < size;
-			bool PointInRange(Position p) => InRange(p.X) && InRange(p.Y);
+			bool CoordInRange(int coord) => coord >= 0 && coord < size;
+			bool PointInRange(Position position) => CoordInRange(position.X) && CoordInRange(position.Y);
 
-			bool MinDistanceKept(Position p)
+			bool MinDistanceKept(Position position)
 			{
 				bool PassesSocialDistancingRule(Position p1, Position p2)
 				{
@@ -47,12 +47,12 @@ namespace Stars.Tests
 					{
 						return true;
 					}
-					var dx = p1.X - p2.X;
-					var dy = p1.Y - p2.Y;
-					return Math.Sqrt(dx * dx + dy * dy) > minDistance;
+
+					var distance = p1.DistanceTo(p2);
+					return distance > minDistance;
 				}
 
-				return galaxy.Planets.All(planet => PassesSocialDistancingRule(planet.Position, p));
+				return galaxy.Planets.All(planet => PassesSocialDistancingRule(planet.Position, position));
 			}
 		}
 	}

@@ -47,10 +47,7 @@ namespace Stars.Core.Setup
 
 		private bool IsInsideMinimumDistance(Position p1, Position p2, int minimumDistance)
 		{
-			var dx = p1.X - p2.X;
-			var dy = p1.Y - p2.Y;
-			var hyp = Math.Sqrt((dx * dx + dy * dy));
-			return hyp < minimumDistance;
+			return p1.DistanceTo(p2) < minimumDistance;
 		}
 	}
 }

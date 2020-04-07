@@ -1,4 +1,6 @@
-﻿namespace Stars.Core
+﻿using System;
+
+namespace Stars.Core
 {
 	public struct Position
 	{
@@ -11,7 +13,15 @@
 			Y = y;
 		}
 
+		public double DistanceTo(Position position)
+		{
+			var dx = position.X - X;
+			var dy = position.Y - Y;
+			return Math.Sqrt(dx * dx + dy * dy);
+		}
+
 		public override string ToString() => $"{X},{Y}";
+
 		public override bool Equals(object obj)
 		{
 			if (!(obj is Position)) return false;
