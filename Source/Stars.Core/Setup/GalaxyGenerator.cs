@@ -38,7 +38,7 @@ namespace Stars.Core.Setup
 
 		private int CalculatePlanetCapacity(GalaxyGeneratorSettings settings)
 		{
-			long Square(long n) => n * n;
+			static long Square(long n) => n * n;
 
 			var spaceAvailable = Square(settings.GalaxySize);
 			var spaceRequiredPerPlanet = Square(settings.MinimumDistanceBetweenPlanets);
