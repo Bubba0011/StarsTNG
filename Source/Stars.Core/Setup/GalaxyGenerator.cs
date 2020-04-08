@@ -1,13 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Stars.Core.Setup
 {
 	public class GalaxyGenerator
 	{
-		private Random rnd = new Random();
+		private readonly IRandom rnd;
 		private IList<Position> occupiedSpace = new List<Position>();
+
+		public GalaxyGenerator(IRandom? random = null)
+		{
+			rnd = random ?? new DefaultRandom();
+		}
 
 		public Galaxy Generate(GalaxyGeneratorSettings settings)
 		{
@@ -33,19 +37,19 @@ namespace Stars.Core.Setup
 			int Next() => rnd.Next(Padding, galaxySize - Padding);
 
 			Position position;
-			bool isToClose;
+			bool isTooClose;
 			do
 			{
 				position = new Position(Next(), Next());
-				isToClose = occupiedSpace.Any(occupiedPosition => IsInsideMinimumDistance(occupiedPosition, position, minimumDistance));
-			} while (isToClose);
+				isTooClose = occupiedSpace.Any(occupiedPosition => CheckIfTooClose(occupiedPosition, position, minimumDistance));
+			} while (isTooClose);
 
 			occupiedSpace.Add(position);
 
 			return position;
 		}
 
-		private bool IsInsideMinimumDistance(Position p1, Position p2, int minimumDistance)
+		private bool CheckIfTooClose(Position p1, Position p2, int minimumDistance)
 		{
 			return p1.DistanceTo(p2) < minimumDistance;
 		}

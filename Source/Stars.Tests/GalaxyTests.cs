@@ -49,7 +49,7 @@ namespace Stars.Tests
 					}
 
 					var distance = p1.DistanceTo(p2);
-					return distance > minDistance;
+					return distance >= minDistance;
 				}
 
 				return galaxy.Planets.All(planet => PassesSocialDistancingRule(planet.Position, position));
