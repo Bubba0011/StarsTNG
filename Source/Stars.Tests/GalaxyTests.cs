@@ -34,13 +34,14 @@ namespace Stars.Tests
 			Assert.Equal(planets, galaxy.Planets.Count);
 			Assert.Equal(size, galaxy.Size);
 			Assert.All(galaxy.Planets, planet => Assert.True(PointInRange(planet.Position)));
-			Assert.All(galaxy.Planets, planet => Assert.True(MinDistanceKept(planet.Position)));
+			Assert.All(galaxy.Planets, planet => Assert.True(MinDistanceKept(planet)));
+			Assert.Equal(planets, galaxy.Planets.Select(planet => planet.Position).Distinct().Count());
 
 			bool CoordInRange(int coord) => coord >= 0 && coord < size;
 			bool PointInRange(Position position) => CoordInRange(position.X) && CoordInRange(position.Y);
 
-			bool PassesSocialDistancingRule(Position p1, Position p2) => p1 != p2 ? p1.DistanceTo(p2) >= minDistance : true;
-			bool MinDistanceKept(Position position) => galaxy.Planets.All(planet => PassesSocialDistancingRule(planet.Position, position));
+			bool PassesSocialDistancingRule(Planet p1, Planet p2) => p1 != p2 ? p1.Position.DistanceTo(p2.Position) >= minDistance : true;
+			bool MinDistanceKept(Planet planet) => galaxy.Planets.All(otherPlanet => PassesSocialDistancingRule(planet, otherPlanet));
 		}
 	}
 }
