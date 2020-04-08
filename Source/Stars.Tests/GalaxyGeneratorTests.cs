@@ -48,10 +48,10 @@ namespace Stars.Tests
 		}
 
 		[Theory]
-		[InlineData(100, 25)]
-		[InlineData(800, 125)]
-		[InlineData(2000, 500)]
-		public void PlanetsHaveValidPositions(int size, int planets)
+		[InlineData(100, 25, 10)]
+		[InlineData(800, 125, 0)]
+		[InlineData(2000, 500, 20)]
+		public void PlanetsHaveValidPositions(int size, int planets, int padding)
 		{
 			var generator = new GalaxyGenerator();
 
@@ -59,13 +59,14 @@ namespace Stars.Tests
 			{
 				GalaxySize = size,
 				PlanetCount = planets,
+				Padding = padding,
 			};
 
 			var galaxy = generator.Generate(settings);
 
 			Assert.All(galaxy.Planets, planet => Assert.True(PointInRange(planet.Position)));
 
-			bool CoordInRange(int coord) => coord >= 0 && coord < size;
+			bool CoordInRange(int coord) => coord >= padding && coord < size - padding;
 			bool PointInRange(Position position) => CoordInRange(position.X) && CoordInRange(position.Y);;
 		}
 
@@ -111,7 +112,8 @@ namespace Stars.Tests
 		[Theory]
 		[InlineData(100, 1000, 10)]
 		[InlineData(100, 10, 100)]
-		public void NotEnoughSpaceForPlanetsCausesTimeout(int size, int planets, int minDistance)
+		[InlineData(100, 99, 10)]
+		public void NotEnoughSpaceForPlanetsCausesException(int size, int planets, int minDistance)
 		{
 			var generator = new GalaxyGenerator();
 
@@ -122,7 +124,7 @@ namespace Stars.Tests
 				MinimumDistanceBetweenPlanets = minDistance,
 			};
 
-			Assert.Throws<TimeoutException>(() => generator.Generate(settings));
+			Assert.Throws<OutOfSpaceException>(() => generator.Generate(settings));
 		}
 	}
 }

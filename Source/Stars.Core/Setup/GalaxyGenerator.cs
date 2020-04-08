@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Stars.Core.Setup
 {
 	public class GalaxyGenerator
 	{
+		const int MAX_TRIES = 1_000_000;
+
 		private readonly IRandom rnd;
-		private IList<Position> occupiedSpace = new List<Position>();
-		const int MAX_TRIES = 1000000;
 
 		public GalaxyGenerator(IRandom? random = null)
 		{
@@ -19,51 +18,66 @@ namespace Stars.Core.Setup
 		{
 			// TODO: Validate settings
 
+			if (CalculatePlanetCapacity(settings) < settings.PlanetCount)
+			{
+				throw new OutOfSpaceException($"Not enough space for planets in the galaxy.");
+			}
+
 			Galaxy galaxy = new Galaxy()
 			{
 				Size = settings.GalaxySize
 			};
-			try
-			{
-				galaxy.Planets = Enumerable.Range(0, settings.PlanetCount)
-					.Select(_ => RandomPosition(settings.GalaxySize, settings.MinimumDistanceBetweenPlanets))
-					.Select(position => new Planet() { Position = position })
-					.ToList();
-			}
-			catch (TimeoutException ex)
-			{
-				Console.WriteLine(ex);
-				throw ex;
-			}
+
+			galaxy.Planets = RandomPositions(settings)
+				.Take(settings.PlanetCount)
+				.Select(position => new Planet() { Position = position })
+				.ToList();
 
 			return galaxy;
 		}
 
-		private Position RandomPosition(int galaxySize, int minimumDistance)
+		private int CalculatePlanetCapacity(GalaxyGeneratorSettings settings)
 		{
-			const int Padding = 10;
-			var tries = 0;
+			long Square(long n) => n * n;
 
-			int Next() => rnd.Next(Padding, galaxySize - Padding);
+			var spaceAvailable = Square(settings.GalaxySize);
+			var spaceRequiredPerPlanet = Square(settings.MinimumDistanceBetweenPlanets);
 
-			Position pos;
-			bool isTooClose;
-			do
+			return (int)(spaceAvailable / spaceRequiredPerPlanet);
+		}
+
+		private IEnumerable<Position> RandomPositions(GalaxyGeneratorSettings settings)
+		{
+			List<Position> occupiedSpace = new List<Position>();
+
+			while (true)
 			{
-				tries++;
+				var tries = 0;
+				Position pos;
+				bool isTooClose;
 
-				pos = new Position(Next(), Next());
-				isTooClose = occupiedSpace.Any(p => (p.DistanceTo(pos) < minimumDistance));
-			} while ((tries < MAX_TRIES) && isTooClose);
+				do
+				{
+					pos = RandomPosition();
+					tries++;
+					isTooClose = occupiedSpace.Any(p => (p.DistanceTo(pos) < settings.MinimumDistanceBetweenPlanets));
+				} while (isTooClose && tries < MAX_TRIES);
 
-			if (tries >= MAX_TRIES)
-			{
-				throw new TimeoutException("Could not create planets with current settings. Please decrease minimum distance or increase galaxy size.");
+				if (tries >= MAX_TRIES)
+				{
+					throw new OutOfSpaceException("Could not create planets with current settings. Please decrease minimum distance or increase galaxy size.");
+				}
+
+				occupiedSpace.Add(pos);
+				yield return pos;
 			}
 
-			occupiedSpace.Add(pos);
+			Position RandomPosition()
+			{
+				int Next() => rnd.Next(settings.Padding, settings.GalaxySize - settings.Padding);
 
-			return pos;
+				return new Position(Next(), Next());
+			}
 		}
 	}
 }
