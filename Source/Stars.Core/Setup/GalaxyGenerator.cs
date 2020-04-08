@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Stars.Core.Setup
@@ -7,6 +8,7 @@ namespace Stars.Core.Setup
 	{
 		private readonly IRandom rnd;
 		private IList<Position> occupiedSpace = new List<Position>();
+		const int MAX_TRIES = 1000000;
 
 		public GalaxyGenerator(IRandom? random = null)
 		{
@@ -21,11 +23,18 @@ namespace Stars.Core.Setup
 			{
 				Size = settings.GalaxySize
 			};
-
-			galaxy.Planets = Enumerable.Range(0, settings.PlanetCount)
-				.Select(_ => RandomPosition(settings.GalaxySize, settings.MinimumDistanceBetweenPlanets))
-				.Select(position => new Planet() { Position = position })
-				.ToList();
+			try
+			{
+				galaxy.Planets = Enumerable.Range(0, settings.PlanetCount)
+					.Select(_ => RandomPosition(settings.GalaxySize, settings.MinimumDistanceBetweenPlanets))
+					.Select(position => new Planet() { Position = position })
+					.ToList();
+			}
+			catch (TimeoutException ex)
+			{
+				Console.WriteLine(ex);
+				throw ex;
+			}
 
 			return galaxy;
 		}
@@ -33,25 +42,28 @@ namespace Stars.Core.Setup
 		private Position RandomPosition(int galaxySize, int minimumDistance)
 		{
 			const int Padding = 10;
+			var tries = 0;
 
 			int Next() => rnd.Next(Padding, galaxySize - Padding);
 
-			Position position;
+			Position pos;
 			bool isTooClose;
 			do
 			{
-				position = new Position(Next(), Next());
-				isTooClose = occupiedSpace.Any(occupiedPosition => CheckIfTooClose(occupiedPosition, position, minimumDistance));
-			} while (isTooClose);
+				tries++;
 
-			occupiedSpace.Add(position);
+				pos = new Position(Next(), Next());
+				isTooClose = occupiedSpace.Any(p => (p.DistanceTo(pos) < minimumDistance));
+			} while ((tries < MAX_TRIES) && isTooClose);
 
-			return position;
-		}
+			if (tries >= MAX_TRIES)
+			{
+				throw new TimeoutException("Could not create planets with current settings. Please decrease minimum distance or increase galaxy size.");
+			}
 
-		private bool CheckIfTooClose(Position p1, Position p2, int minimumDistance)
-		{
-			return p1.DistanceTo(p2) < minimumDistance;
+			occupiedSpace.Add(pos);
+
+			return pos;
 		}
 	}
 }
