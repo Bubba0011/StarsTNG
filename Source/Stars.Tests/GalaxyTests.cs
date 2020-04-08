@@ -39,21 +39,8 @@ namespace Stars.Tests
 			bool CoordInRange(int coord) => coord >= 0 && coord < size;
 			bool PointInRange(Position position) => CoordInRange(position.X) && CoordInRange(position.Y);
 
-			bool MinDistanceKept(Position position)
-			{
-				bool PassesSocialDistancingRule(Position p1, Position p2)
-				{
-					if (p1.Equals(p2))
-					{
-						return true;
-					}
-
-					var distance = p1.DistanceTo(p2);
-					return distance >= minDistance;
-				}
-
-				return galaxy.Planets.All(planet => PassesSocialDistancingRule(planet.Position, position));
-			}
+			bool PassesSocialDistancingRule(Position p1, Position p2) => p1 != p2 ? p1.DistanceTo(p2) >= minDistance : true;
+			bool MinDistanceKept(Position position) => galaxy.Planets.All(planet => PassesSocialDistancingRule(planet.Position, position));
 		}
 	}
 }
