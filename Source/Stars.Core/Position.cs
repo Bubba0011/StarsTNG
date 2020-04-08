@@ -2,7 +2,7 @@
 
 namespace Stars.Core
 {
-	public struct Position
+	public struct Position : IEquatable<Position>
 	{
 		public int X { get; set; }
 		public int Y { get; set; }
@@ -22,18 +22,19 @@ namespace Stars.Core
 
 		public override string ToString() => $"{X},{Y}";
 
-		public override bool Equals(object obj)
+		public bool Equals(Position other)
 		{
-			if (!(obj is Position)) return false;
-			{
-				Position p = (Position)obj;
-				return (X == p.X) && (Y == p.Y);
-			}
+			return (X == other.X) && (Y == other.Y);
 		}
 
-		public override int GetHashCode()
+		public static bool operator ==(Position lhs, Position rhs)
 		{
-			return X ^ Y;
+			return lhs.Equals(rhs);
+		}
+
+		public static bool operator !=(Position lhs, Position rhs)
+		{
+			return !lhs.Equals(rhs);
 		}
 	}
 }
