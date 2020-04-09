@@ -1,8 +1,9 @@
 ﻿@using Stars.Core
+@inject IJSRuntime JSRuntime
 
 @if (Galaxy != null)
 {
-	<svg width="@Galaxy.Size" height="@Galaxy.Size" style="background-color: black">
+	<svg width="@Galaxy.Size" height="@Galaxy.Size" style="background-color: black" @ref="SVG" @onclick="TargetObject">
 
 		<line x1="0" x2="@Galaxy.Size" y1="@(Galaxy.Size/2)" y2="@(Galaxy.Size/2)" stroke="grey" stroke-width="1" />
 		<line y1="0" y2="@Galaxy.Size" x1="@(Galaxy.Size/2)" x2="@(Galaxy.Size/2)" stroke="grey" stroke-width="1" />
@@ -11,16 +12,40 @@
 		{
 			<circle cx="@p.Position.X" cy="@p.Position.Y" r="1" fill="white" />
 		}
+		@if (Target.X != 0 && Target.Y != 0)
+		{
+			<circle cx="@Target.X" cy="@Target.Y" r="5" stroke="yellow" fill="transparent" />
+		}
+
 
 		@ChildContent
 	</svg>
+	@if (Target.X != 0 && Target.Y != 0)
+	{
+		<div style="display: inline-block;">
+			<h5>Target</h5>
+			<p>Position: @Target.X, @Target.Y</p>
+		</div>
+	}
 }
 
-@code 
+
+@code
 {
+	ElementReference SVG;
+
+	Position Target;
+
 	[Parameter]
 	public Galaxy Galaxy { get; set; }
 
 	[Parameter]
 	public RenderFragment ChildContent { get; set; }
+
+	private async Task TargetObject(MouseEventArgs e)
+	{
+		Position clickCoords = await JSRuntime.InvokeAsync<Position>("retrieveElementPosition", SVG, e);
+		Target = Galaxy.ClosestPlanet(clickCoords).Position;
+
+	}
 }
