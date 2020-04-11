@@ -1,0 +1,97 @@
+﻿@page "/fun-charts"
+
+<style>
+	.swig {
+		background-color: lightblue;
+	}
+
+	.plot {
+		stroke: blue;
+		stroke-width: 1;
+		fill: transparent;
+	}
+</style>
+
+<svg class="swig" width="1000" height="500">
+	<polyline points="@data.GetPoints(1000, 500)" class="plot" />
+</svg>
+
+@code 
+{
+	private Dataset data = new Dataset();
+
+	struct DataPoint
+	{
+		public double X { get; set; }
+		public double Y { get; set; }
+
+		public DataPoint(double x, double y)
+		{
+			X = x;
+			Y = y;
+		}
+	}
+
+	class Dataset
+	{
+		public List<DataPoint> Points { get; set; } = new List<DataPoint>();
+
+		public Dataset()
+		{
+			var data = new RandomData();
+			Points = data.Collect(100, 1_000_000).ToList();
+		}
+
+		public string GetPoints(int width, int height)
+		{
+			var xs = Points.Select(p => p.X);
+			var ys = Points.Select(p => p.Y);
+
+			var xmin = xs.Min();
+			var xmax = xs.Max();
+			var ymin = 0;// ys.Min();
+			var ymax = ys.Max();
+
+			var fx = width / (xmax - xmin);
+			var fy = height / (ymax - ymin);
+
+			DataPoint f(DataPoint p)
+			{
+				return new DataPoint(fx * (p.X - xmin), height - fy * (p.Y - ymin));
+			}
+
+			return string.Join(" ", Points.Select(f).Select(S));
+		}
+
+		string S(DataPoint p) => $"{S(p.X)},{S(p.Y)}";
+
+		string S(double d) => d.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture);
+	}
+
+	class RandomData
+	{
+		public IEnumerable<DataPoint> Collect(int range, int count)
+		{
+			var data = Generate(range, count)
+				.GroupBy(n => n)
+				.OrderBy(g => g.Key)
+				.Select(g => new DataPoint(g.Key, g.Count()));
+
+			return data;
+		}
+
+		public IEnumerable<int> Generate(int range, int count)
+		{
+			Random rnd = new Random();
+
+			int Next(int l)
+			{
+				return (int)Enumerable.Range(0, l)
+					.Select(_ => rnd.Next(range))
+					.Average();
+			}
+
+			return Enumerable.Range(0, count).Select(_ => Next(3));
+		}
+	}
+}
