@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace Stars.Core.Setup
 {
@@ -14,6 +15,13 @@ namespace Stars.Core.Setup
 		public int Next(int minValue, int maxValue)
 		{
 			return rnd.Next(minValue, maxValue);
+		}
+
+		public int Norm(int minValue, int maxValue, int count)
+		{
+			return (int)Enumerable.Range(1, count)
+				.Select(_ => Next(minValue, maxValue))
+				.Average();
 		}
 	}
 }
