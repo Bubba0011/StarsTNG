@@ -30,10 +30,44 @@ namespace Stars.Core.Setup
 
 			galaxy.Planets = RandomPositions(settings)
 				.Take(settings.PlanetCount)
-				.Select(position => new Planet() { Position = position })
+				.Select((p, n) => CreatePlanet(p, n + 1))
 				.ToList();
 
 			return galaxy;
+		}
+
+		private Planet CreatePlanet(Position position, int id)
+		{
+			var planet = new Planet()
+			{
+				Id = id,
+				Position = position,
+				Details = CreateDetails(),
+			};
+
+			return planet;
+		}
+
+		private PlanetDetails CreateDetails()
+		{
+			var details = new PlanetDetails()
+			{
+				Environment = new Environment()
+				{
+					Gravity = rnd.Norm(0, 100, 3),
+					Radiation = rnd.Norm(0, 100, 3),
+					Temperature = rnd.Norm(0, 100, 3),
+				},
+
+				Minerals = new Minerals()
+				{
+					Boranium = rnd.Norm(0, 100, 3),
+					Germanium = rnd.Norm(0, 100, 3),
+					Ironium = rnd.Norm(0, 100, 3),
+				},
+			};
+
+			return details;
 		}
 
 		private int CalculatePlanetCapacity(GalaxyGeneratorSettings settings)

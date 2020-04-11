@@ -1,14 +1,28 @@
 ﻿@page "/galaxy"
 
-@using Stars.Core 
+@using Stars.Core
 @using Stars.Core.Setup
 
-<UiGalaxy Galaxy="galaxy">
+<UiGalaxy Galaxy="galaxy" OnPlanetSelected="p => selectedPlanet = p">
 	<circle cx="@stats.Center.X" cy="@stats.Center.Y" r="15" stroke="blue" fill="transparent" />
-
 	<circle cx="@stats.MinPlanet.Position.X" cy="@stats.MinPlanet.Position.Y" r="10" stroke="green" fill="transparent" />
 	<circle cx="@stats.MaxPlanet.Position.X" cy="@stats.MaxPlanet.Position.Y" r="10" stroke="red" fill="transparent" />
+
+	@if (selectedPlanet != null)
+	{
+		<circle cx="@selectedPlanet.Position.X" cy="@selectedPlanet.Position.Y" r="5" stroke="yellow" fill="transparent" />
+	}
 </UiGalaxy>
+
+@if (selectedPlanet != null)
+{
+<div style="display: inline-block;">
+	<h5>Planet #@selectedPlanet.Id</h5>
+	<p><b>Position</b> @selectedPlanet.Position.X, @selectedPlanet.Position.Y</p>
+	<p><b>Environment</b> @selectedPlanet.Details.Environment</p>
+	<p><b>Minerals</b> @selectedPlanet.Details.Minerals</p>
+</div>
+}
 
 <div>
 	<h5>Closest Neighbor</h5>
@@ -29,12 +43,13 @@
 	<div style="color: red">@errorMessage</div>
 }
 
-@code 
-{ 
+@code
+{
 	private GalaxyGeneratorSettings settings = new GalaxyGeneratorSettings();
 	private Galaxy galaxy;
 	private GalaxyStats stats;
 	private string errorMessage;
+	private Planet selectedPlanet;
 
 	protected override void OnInitialized()
 	{
@@ -44,6 +59,7 @@
 	private void Generate()
 	{
 		errorMessage = null;
+		selectedPlanet = null;
 		var generator = new GalaxyGenerator();
 
 		try

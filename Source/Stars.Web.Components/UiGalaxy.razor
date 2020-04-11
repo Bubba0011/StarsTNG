@@ -12,29 +12,14 @@
 		{
 			<circle cx="@p.Position.X" cy="@p.Position.Y" r="1" fill="white" />
 		}
-		@if (Target.X != 0 && Target.Y != 0)
-		{
-			<circle cx="@Target.X" cy="@Target.Y" r="5" stroke="yellow" fill="transparent" />
-		}
-
 
 		@ChildContent
 	</svg>
-	@if (Target.X != 0 && Target.Y != 0)
-	{
-		<div style="display: inline-block;">
-			<h5>Target</h5>
-			<p>Position: @Target.X, @Target.Y</p>
-		</div>
-	}
 }
-
 
 @code
 {
 	ElementReference SVG;
-
-	Position Target;
 
 	[Parameter]
 	public Galaxy Galaxy { get; set; }
@@ -42,10 +27,13 @@
 	[Parameter]
 	public RenderFragment ChildContent { get; set; }
 
+	[Parameter]
+	public EventCallback<Planet> OnPlanetSelected { get; set; }
+
 	private async Task TargetObject(MouseEventArgs e)
 	{
 		Position clickCoords = await JSRuntime.InvokeAsync<Position>("retrieveElementPosition", SVG, e);
-		Target = Galaxy.ClosestPlanet(clickCoords).Position;
-
+		var target = Galaxy.ClosestPlanet(clickCoords);
+		await OnPlanetSelected.InvokeAsync(target);
 	}
 }
