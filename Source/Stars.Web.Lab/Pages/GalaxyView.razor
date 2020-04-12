@@ -3,26 +3,40 @@
 @using Stars.Core
 @using Stars.Core.Setup
 
-<UiGalaxy Galaxy="galaxy" OnPlanetSelected="p => selectedPlanet = p">
-	<circle cx="@stats.Center.X" cy="@stats.Center.Y" r="15" stroke="blue" fill="transparent" />
-	<circle cx="@stats.MinPlanet.Position.X" cy="@stats.MinPlanet.Position.Y" r="10" stroke="green" fill="transparent" />
-	<circle cx="@stats.MaxPlanet.Position.X" cy="@stats.MaxPlanet.Position.Y" r="10" stroke="red" fill="transparent" />
+<style>
+	.main-container {
+		position: relative;
+	}
+
+	.planet-info-panel {
+		position: absolute;
+		background-color: rgba(40,60,80,0.65);
+		color: white;
+		border-radius: 3px;
+		box-shadow: 0 0 1px 1px rgb(80,120,160);
+		padding: 4px;
+	}
+</style>
+
+<div class="main-container">
+	<UiGalaxy Galaxy="galaxy" OnPlanetSelected="PlanetClicked">
+		<circle cx="@stats.Center.X" cy="@stats.Center.Y" r="15" stroke="blue" fill="transparent" />
+		<circle cx="@stats.MinPlanet.Position.X" cy="@stats.MinPlanet.Position.Y" r="10" stroke="green" fill="transparent" />
+		<circle cx="@stats.MaxPlanet.Position.X" cy="@stats.MaxPlanet.Position.Y" r="10" stroke="red" fill="transparent" />
+
+		@if (selectedPlanet != null)
+		{
+			<circle cx="@selectedPlanet.Position.X" cy="@selectedPlanet.Position.Y" r="5" stroke="yellow" fill="transparent" />
+		}
+	</UiGalaxy>
 
 	@if (selectedPlanet != null)
 	{
-		<circle cx="@selectedPlanet.Position.X" cy="@selectedPlanet.Position.Y" r="5" stroke="yellow" fill="transparent" />
+		<div class="planet-info-panel" style="left: @(selectedPlanet.Position.X + 10)px; top: @(selectedPlanet.Position.Y)px;"  @onclick="() => selectedPlanet = null">
+			<PlanetInfoPanel Planet="selectedPlanet" />
+		</div>
 	}
-</UiGalaxy>
-
-@if (selectedPlanet != null)
-{
-<div style="display: inline-block;">
-	<h5>Planet #@selectedPlanet.Id</h5>
-	<p><b>Position</b> @selectedPlanet.Position.X, @selectedPlanet.Position.Y</p>
-	<p><b>Environment</b> @selectedPlanet.Details.Environment</p>
-	<p><b>Minerals</b> @selectedPlanet.Details.Minerals</p>
 </div>
-}
 
 <div>
 	<h5>Closest Neighbor</h5>
@@ -54,6 +68,11 @@
 	protected override void OnInitialized()
 	{
 		Generate();
+	}
+
+	private void PlanetClicked(Planet planet)
+	{
+		selectedPlanet = planet != selectedPlanet	? planet	: null;
 	}
 
 	private void Generate()

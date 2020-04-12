@@ -1,0 +1,16 @@
+﻿
+<div style="font-size: small;">
+	<h5>Planet #@Planet.Id</h5>
+
+	<p><b>Position</b> @Planet.Position.X, @Planet.Position.Y</p>
+
+	<p><b>Environment</b> <br/> @Planet.Details.Environment</p>
+
+	<p><b>Minerals</b> <MineralsPanel Minerals="Planet.Details.Minerals" /></p>
+</div>
+
+@code 
+{
+	[Parameter]
+	public Planet Planet { get; set; }
+}

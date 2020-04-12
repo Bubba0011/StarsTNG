@@ -1,0 +1,25 @@
+﻿<style>
+	.pan {
+	}
+	.br {
+		color: lime;
+	}
+	.gr {
+		color: yellow;
+	}
+	.ir {
+		color: blue;
+	}
+</style>
+
+<div class="pan">
+	<span class="br">Br: @Minerals.Boranium</span>
+	<span class="gr">Gr: @Minerals.Germanium</span>
+	<span class="ir">Ir: @Minerals.Ironium</span>
+</div>
+
+@code
+{
+	[Parameter]
+	public Minerals Minerals { get; set; }
+}
