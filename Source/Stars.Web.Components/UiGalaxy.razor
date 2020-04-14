@@ -65,12 +65,17 @@
 		zoomPosition = await JSRuntime.InvokeAsync<Position>("retrieveElementPosition", SVG, e);
 		if ((e.DeltaY < 0 && ScaleRate < 1.8) || (e.DeltaY > 0 && ScaleRate > 0.3))
 		{
-			ScaleRate = ScaleRate + (e.DeltaY < 0 ? 0.1 : -0.1);
+			int wheel = e.DeltaY < 0 ? 1 : -1;
+			UpdateViewBox(zoomPosition.X, zoomPosition.Y, wheel);
+			//ScaleRate = ScaleRate + (e.DeltaY < 0 ? 0.1 : -0.1);
 		}
 	}
 
-	private void UpdateViewBox(int x = 0, int y = 0)
+	private void UpdateViewBox(int x = 0, int y = 0, int wheel = 1)
 	{
+		var zoomIntensity = 0.2;
+		var zoom = Math.Exp(wheel * zoomIntensity); 
+
 		x = (x - Box.MidX) / 2;
 		y = (y - Box.MidY) / 2;
 		int height = (int)(Galaxy.Size * ScaleRate);
