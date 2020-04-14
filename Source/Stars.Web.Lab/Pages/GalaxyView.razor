@@ -64,6 +64,7 @@
 	private GalaxyStats stats;
 	private string errorMessage;
 	private Planet selectedPlanet;
+	private Position relativePlanetPosition;
 
 	protected override void OnInitialized()
 	{
@@ -72,7 +73,7 @@
 
 	private void PlanetClicked(Planet planet)
 	{
-		selectedPlanet = planet != selectedPlanet	? planet	: null;
+		selectedPlanet = planet != selectedPlanet   ? planet    : null;
 	}
 
 	private void Generate()

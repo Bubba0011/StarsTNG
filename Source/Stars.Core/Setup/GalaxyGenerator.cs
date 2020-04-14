@@ -108,7 +108,7 @@ namespace Stars.Core.Setup
 
 			Position RandomPosition()
 			{
-				int Next() => rnd.Next(settings.Padding, settings.GalaxySize - settings.Padding);
+				int Next() => rnd.Next(settings.Padding - settings.GalaxySize/2, settings.GalaxySize/2 - settings.Padding);
 
 				return new Position(Next(), Next());
 			}

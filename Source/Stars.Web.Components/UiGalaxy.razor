@@ -2,14 +2,19 @@
 
 @if (Galaxy != null)
 {
-	<svg width="@Galaxy.Size" height="@Galaxy.Size" style="background-color: black" @ref="SVG" @onclick="TargetObject">
+	<svg viewBox="@(Box.X) @(Box.Y) @(Box.Width) @(Box.Height)"
+		 width="@Galaxy.Size" height="@Galaxy.Size"
+		 style="background-color: black"
+		 @ref="SVG"
+		 @onclick="TargetObject"
+		 @onwheel="Zoom">
 
-		<line x1="0" x2="@Galaxy.Size" y1="@(Galaxy.Size/2)" y2="@(Galaxy.Size/2)" stroke="grey" stroke-width="1" />
-		<line y1="0" y2="@Galaxy.Size" x1="@(Galaxy.Size/2)" x2="@(Galaxy.Size/2)" stroke="grey" stroke-width="1" />
+		<line x1="@Box.X" x2="@Box.Width" y1="@(Box.MidY)" y2="@(Box.MidY)" stroke="grey" stroke-width="0.1%" />
+		<line y1="@Box.Y" y2="@Box.Height" x1="@(Box.MidX)" x2="@(Box.MidX)" stroke="grey" stroke-width="0.1%" />
 
 		@foreach (var p in Galaxy.Planets)
 		{
-			<circle cx="@p.Position.X" cy="@p.Position.Y" r="1" fill="white" />
+			<circle cx="@p.Position.X" cy="@p.Position.Y" r="0.1%" fill="white" />
 		}
 
 		@ChildContent
@@ -20,6 +25,19 @@
 {
 	ElementReference SVG;
 
+	private ViewBox Box { get; set; }
+	private Position zoomPosition;
+	private double _scaleRate;
+	private double ScaleRate
+	{
+		get => _scaleRate;
+		set
+		{
+			_scaleRate = value;
+			UpdateViewBox(zoomPosition.X, zoomPosition.Y);
+		}
+	}
+
 	[Parameter]
 	public Galaxy Galaxy { get; set; }
 
@@ -29,10 +47,52 @@
 	[Parameter]
 	public EventCallback<Planet> OnPlanetSelected { get; set; }
 
+	protected override void OnInitialized()
+	{
+		ScaleRate = 1;
+		UpdateViewBox();
+	}
+
 	private async Task TargetObject(MouseEventArgs e)
 	{
 		Position clickCoords = await JSRuntime.InvokeAsync<Position>("retrieveElementPosition", SVG, e);
 		var target = Galaxy.ClosestPlanet(clickCoords);
 		await OnPlanetSelected.InvokeAsync(target);
+	}
+
+	private async Task Zoom(WheelEventArgs e)
+	{
+		zoomPosition = await JSRuntime.InvokeAsync<Position>("retrieveElementPosition", SVG, e);
+		if ((e.DeltaY < 0 && ScaleRate < 1.8) || (e.DeltaY > 0 && ScaleRate > 0.3))
+		{
+			ScaleRate = ScaleRate + (e.DeltaY < 0 ? 0.1 : -0.1);
+		}
+	}
+
+	private void UpdateViewBox(int x = 0, int y = 0)
+	{
+		x = (x - Box.MidX) / 2;
+		y = (y - Box.MidY) / 2;
+		int height = (int)(Galaxy.Size * ScaleRate);
+		int cornerX = x - height / 2;
+		int cornerY = y - height / 2;
+
+		Box = new ViewBox()
+		{
+			X = cornerX,
+			Y = cornerY,
+			Height = height,
+			Width = height
+		};
+	}
+
+	public struct ViewBox
+	{
+		public int X { get; set; }
+		public int Y { get; set; }
+		public int Width { get; set; }
+		public int Height { get; set; }
+		public int MidX => X + Width / 2;
+		public int MidY => Y + Height / 2;
 	}
 }
