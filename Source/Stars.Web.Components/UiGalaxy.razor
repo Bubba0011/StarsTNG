@@ -1,20 +1,44 @@
 ﻿@inject IJSRuntime JSRuntime
 
+<style>
+	.swig {
+		background-color: rgb(30,30,30);
+	}
+
+	.galaxy-box {
+		stroke: darkgray;
+		stroke-width: 2px;
+		fill: black;
+	}
+
+	.grid-line {
+		stroke: darkgray;
+		stroke-width: 0.5px;
+	}
+
+	.planet {
+		fill: lightblue;
+		r: 1.5px;
+	}
+</style>
+
 @if (Galaxy != null)
 {
-	<svg viewBox="@(Box.X) @(Box.Y) @(Box.Width) @(Box.Height)"
-		 width="@Galaxy.Size" height="@Galaxy.Size"
-		 style="background-color: black"
-		 @ref="SVG"
-		 @onclick="TargetObject"
-		 @onwheel="Zoom">
+	<svg viewBox="@Box"
+		  width="1500" height="800"
+		  class="swig"
+		  @ref="SVG"
+		  @onclick="TargetObject"
+		  @onwheel="Zoom">
 
-		<line x1="@Box.X" x2="@Box.Width" y1="@(Box.MidY)" y2="@(Box.MidY)" stroke="grey" stroke-width="0.1%" />
-		<line y1="@Box.Y" y2="@Box.Height" x1="@(Box.MidX)" x2="@(Box.MidX)" stroke="grey" stroke-width="0.1%" />
+		<rect x="@(-gridSide)" y="@(-gridSide)" width="@Galaxy.Size" height="@Galaxy.Size" class="galaxy-box" />
+
+		<line x1="@(-gridSide)" x2="@gridSide" y1="0" y2="0" class="grid-line" />
+		<line y1="@(-gridSide)" y2="@gridSide" x1="0" x2="0" class="grid-line" />
 
 		@foreach (var p in Galaxy.Planets)
 		{
-			<circle cx="@p.Position.X" cy="@p.Position.Y" r="0.1%" fill="white" />
+			<circle cx="@p.Position.X" cy="@p.Position.Y" class="planet" />
 		}
 
 		@ChildContent
@@ -23,6 +47,9 @@
 
 @code
 {
+	int gridMid => 0;
+	int gridSide => Galaxy.Size / 2;
+
 	ElementReference SVG;
 
 	private ViewBox Box { get; set; }
@@ -30,6 +57,7 @@
 	private double ScaleRate { get; set; }
 
 	private Galaxy _galaxy;
+
 	[Parameter]
 	public Galaxy Galaxy
 	{
@@ -38,7 +66,6 @@
 		{
 			_galaxy = value;
 			ResetViewBox();
-		
 		}
 	}
 
@@ -107,5 +134,7 @@
 		public int Height { get; set; }
 		public int MidX => X + Width / 2;
 		public int MidY => Y + Height / 2;
+
+		public override string ToString() => $"{X} {Y} {Width} {Height}";
 	}
 }

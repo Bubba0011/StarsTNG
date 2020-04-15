@@ -15,47 +15,51 @@
 		border-radius: 3px;
 		box-shadow: 0 0 1px 1px rgb(80,120,160);
 		padding: 4px;
+		left: 10px;
+		bottom: 10px;
 	}
 </style>
 
-<div class="main-container">
-	<UiGalaxy Galaxy="galaxy" OnPlanetSelected="PlanetClicked">
-		<circle cx="@stats.Center.X" cy="@stats.Center.Y" r="15" stroke="blue" fill="transparent" />
-		<circle cx="@stats.MinPlanet.Position.X" cy="@stats.MinPlanet.Position.Y" r="10" stroke="green" fill="transparent" />
-		<circle cx="@stats.MaxPlanet.Position.X" cy="@stats.MaxPlanet.Position.Y" r="10" stroke="red" fill="transparent" />
+<div>
+	<div class="main-container">
+		<UiGalaxy Galaxy="galaxy" OnPlanetSelected="PlanetClicked">
+			<circle cx="@stats.Center.X" cy="@stats.Center.Y" r="15" stroke="blue" fill="transparent" />
+			<circle cx="@stats.MinPlanet.Position.X" cy="@stats.MinPlanet.Position.Y" r="10" stroke="green" fill="transparent" />
+			<circle cx="@stats.MaxPlanet.Position.X" cy="@stats.MaxPlanet.Position.Y" r="10" stroke="red" fill="transparent" />
+
+			@if (selectedPlanet != null)
+			{
+				<circle cx="@selectedPlanet.Position.X" cy="@selectedPlanet.Position.Y" r="5" stroke="yellow" fill="transparent" />
+			}
+		</UiGalaxy>
 
 		@if (selectedPlanet != null)
 		{
-			<circle cx="@selectedPlanet.Position.X" cy="@selectedPlanet.Position.Y" r="5" stroke="yellow" fill="transparent" />
+			<div class="planet-info-panel" @onclick="() => selectedPlanet = null">
+				<PlanetInfoPanel Planet="selectedPlanet" />
+			</div>
 		}
-	</UiGalaxy>
+	</div>
 
-	@if (selectedPlanet != null)
+	<div>
+		<h5>Closest Neighbor</h5>
+		<div>Min: @stats.Min ly</div>
+		<div>Max: @stats.Max ly</div>
+		<div>Avg: @stats.Avg ly</div>
+	</div>
+
+	<div>
+		Galaxy Size:<input @bind-value="settings.GalaxySize" />
+		Min. Distance:<input @bind-value="settings.MinimumDistanceBetweenPlanets" />
+		Planets:<input @bind-value="settings.PlanetCount" />
+		<button @onclick="Generate">Generate New Galaxy</button>
+	</div>
+
+	@if (errorMessage != null)
 	{
-		<div class="planet-info-panel" style="left: @(selectedPlanet.Position.X + 10)px; top: @(selectedPlanet.Position.Y)px;"  @onclick="() => selectedPlanet = null">
-			<PlanetInfoPanel Planet="selectedPlanet" />
-		</div>
+		<div style="color: red">@errorMessage</div>
 	}
 </div>
-
-<div>
-	<h5>Closest Neighbor</h5>
-	<div>Min: @stats.Min ly</div>
-	<div>Max: @stats.Max ly</div>
-	<div>Avg: @stats.Avg ly</div>
-</div>
-
-<div>
-	Galaxy Size:<input @bind-value="settings.GalaxySize" />
-	Min. Distance:<input @bind-value="settings.MinimumDistanceBetweenPlanets" />
-	Planets:<input @bind-value="settings.PlanetCount" />
-	<button @onclick="Generate">Generate New Galaxy</button>
-</div>
-
-@if (errorMessage != null)
-{
-	<div style="color: red">@errorMessage</div>
-}
 
 @code
 {
