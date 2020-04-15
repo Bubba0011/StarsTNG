@@ -27,19 +27,20 @@
 
 	private ViewBox Box { get; set; }
 	private Position zoomPosition;
-	private double _scaleRate;
-	private double ScaleRate
+	private double ScaleRate { get; set; }
+
+	private Galaxy _galaxy;
+	[Parameter]
+	public Galaxy Galaxy
 	{
-		get => _scaleRate;
+		get => _galaxy;
 		set
 		{
-			_scaleRate = value;
-			UpdateViewBox(zoomPosition.X, zoomPosition.Y);
+			_galaxy = value;
+			ResetViewBox();
+		
 		}
 	}
-
-	[Parameter]
-	public Galaxy Galaxy { get; set; }
 
 	[Parameter]
 	public RenderFragment ChildContent { get; set; }
@@ -50,7 +51,7 @@
 	protected override void OnInitialized()
 	{
 		ScaleRate = 1;
-		UpdateViewBox();
+		ResetViewBox();
 	}
 
 	private async Task TargetObject(MouseEventArgs e)
@@ -62,32 +63,39 @@
 
 	private async Task Zoom(WheelEventArgs e)
 	{
-		zoomPosition = await JSRuntime.InvokeAsync<Position>("retrieveElementPosition", SVG, e);
-		if ((e.DeltaY < 0 && ScaleRate < 1.8) || (e.DeltaY > 0 && ScaleRate > 0.3))
-		{
-			int wheel = e.DeltaY < 0 ? 1 : -1;
-			UpdateViewBox(zoomPosition.X, zoomPosition.Y, wheel);
-			//ScaleRate = ScaleRate + (e.DeltaY < 0 ? 0.1 : -0.1);
-		}
+		zoomPosition = await JSRuntime.InvokeAsync<Position>("retrievePosFromCorner", SVG, e);
+		int wheel = e.DeltaY < 0 ? 1 : -1;
+		UpdateViewBox(zoomPosition.X, zoomPosition.Y, wheel);
 	}
 
-	private void UpdateViewBox(int x = 0, int y = 0, int wheel = 1)
+	private void UpdateViewBox(int zoomX, int zoomY, int wheel)
 	{
 		var zoomIntensity = 0.2;
-		var zoom = Math.Exp(wheel * zoomIntensity); 
-
-		x = (x - Box.MidX) / 2;
-		y = (y - Box.MidY) / 2;
-		int height = (int)(Galaxy.Size * ScaleRate);
-		int cornerX = x - height / 2;
-		int cornerY = y - height / 2;
+		var zoom = Math.Exp(wheel * zoomIntensity);
+		// Calculate new corner node so the mouse position is the same before and after the zoom
+		int x = Box.X - (int)(zoomX / (ScaleRate * zoom) - zoomX / ScaleRate);
+		int y = Box.Y - (int)(zoomY / (ScaleRate * zoom) - zoomY / ScaleRate);
+		ScaleRate *= zoom;
+		int height = (int)(Galaxy.Size / ScaleRate);
 
 		Box = new ViewBox()
 		{
-			X = cornerX,
-			Y = cornerY,
+			X = x,
+			Y = y,
 			Height = height,
 			Width = height
+		};
+
+	}
+
+	private void ResetViewBox()
+	{
+		Box = new ViewBox()
+		{
+			X = -(Galaxy.Size / 2),
+			Y = -(Galaxy.Size / 2),
+			Height = Galaxy.Size,
+			Width = Galaxy.Size
 		};
 	}
 
