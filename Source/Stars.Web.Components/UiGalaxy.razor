@@ -2,7 +2,9 @@
 
 <style>
 	.swig {
-		background-color: rgb(30,30,30);
+		background-color: rgb(20,20,20);
+		width: 100vw; 
+		height: 80vh;
 	}
 
 	.galaxy-box {
@@ -13,7 +15,19 @@
 
 	.grid-line {
 		stroke: darkgray;
+		
+	}
+
+	.grid-level-1 {
+		stroke-width: 0.75px;
+	}
+
+	.grid-level-2 {
 		stroke-width: 0.5px;
+	}
+
+	.grid-level-3 {
+		stroke-width: 0.25px;
 	}
 
 	.planet {
@@ -25,7 +39,6 @@
 @if (Galaxy != null)
 {
 	<svg viewBox="@Box"
-		  width="100vw" height="80vh"
 		  class="swig"
 		  id="svg"
 		  @ref="SVG"
@@ -34,9 +47,12 @@
 		  @onmousemove="Hover">
 
 		<rect x="@(-gridSide)" y="@(-gridSide)" width="@Galaxy.Size" height="@Galaxy.Size" class="galaxy-box" />
-
-		<line x1="@(-gridSide)" x2="@gridSide" y1="0" y2="0" class="grid-line" />
-		<line y1="@(-gridSide)" y2="@gridSide" x1="0" x2="0" class="grid-line" />
+		
+		@foreach (var (coord, level) in GetGridLines())
+		{
+			<line x1="@(-gridSide)" x2="@gridSide" y1="@coord" y2="@coord" class="@($"grid-line grid-level-{level}")" />
+			<line y1="@(-gridSide)" y2="@gridSide" x1="@coord" x2="@coord" class="@($"grid-line grid-level-{level}")" />
+		}
 
 		@foreach (var p in Galaxy.Planets)
 		{
@@ -49,6 +65,17 @@
 
 @code
 {
+	private IEnumerable<(int,int)> GetGridLines()
+	{
+		yield return (-gridSide * 3 / 4, 3);
+		yield return (-gridSide / 4, 3);
+		yield return (-gridSide / 2, 2);
+		yield return (0, 1);
+		yield return (gridSide / 2, 2);
+		yield return (gridSide / 4, 3);
+		yield return (gridSide * 3 / 4, 3);
+	}
+
 	int gridMid => 0;
 	int gridSide => Galaxy.Size / 2;
 
@@ -60,7 +87,6 @@
 	private ViewBox Box { get; set; }
 	private Position zoomPosition;
 	private double ScaleRate { get; set; }
-
 
 	[Parameter]
 	public Galaxy Galaxy { get; set; }
@@ -127,7 +153,6 @@
 			Height = height,
 			Width = width
 		};
-
 	}
 
 	public void ResetViewBox()
