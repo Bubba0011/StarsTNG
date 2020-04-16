@@ -25,11 +25,13 @@
 @if (Galaxy != null)
 {
 	<svg viewBox="@Box"
-		  width="1500" height="800"
+		  width="100vw" height="80vh"
 		  class="swig"
+		  id="svg"
 		  @ref="SVG"
 		  @onclick="TargetObject"
-		  @onwheel="Zoom">
+		  @onwheel="Zoom"
+		  @onmousemove="Hover">
 
 		<rect x="@(-gridSide)" y="@(-gridSide)" width="@Galaxy.Size" height="@Galaxy.Size" class="galaxy-box" />
 
@@ -50,24 +52,18 @@
 	int gridMid => 0;
 	int gridSide => Galaxy.Size / 2;
 
+	int screenHeight = 800; // TODO: Set div to fullscreen and get size here
+	int screenWidth = 1500; // TODO: Set div to fullscreen and get size here
+
 	ElementReference SVG;
 
 	private ViewBox Box { get; set; }
 	private Position zoomPosition;
 	private double ScaleRate { get; set; }
 
-	private Galaxy _galaxy;
 
 	[Parameter]
-	public Galaxy Galaxy
-	{
-		get => _galaxy;
-		set
-		{
-			_galaxy = value;
-			ResetViewBox();
-		}
-	}
+	public Galaxy Galaxy { get; set; }
 
 	[Parameter]
 	public RenderFragment ChildContent { get; set; }
@@ -79,6 +75,11 @@
 	{
 		ScaleRate = 1;
 		ResetViewBox();
+	}
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		await SetScreenSize();
 	}
 
 	private async Task TargetObject(MouseEventArgs e)
@@ -95,6 +96,18 @@
 		UpdateViewBox(zoomPosition.X, zoomPosition.Y, wheel);
 	}
 
+	private async Task Hover(MouseEventArgs e)
+	{
+		await JSRuntime.InvokeVoidAsync("hover", SVG, e);
+	}
+
+	private async Task SetScreenSize()
+	{
+		var screen = await JSRuntime.InvokeAsync<ViewBox>("retrieveScreenSize");
+		screenHeight = screen.Height;
+		screenWidth = screen.Width;
+	}
+
 	private void UpdateViewBox(int zoomX, int zoomY, int wheel)
 	{
 		var zoomIntensity = 0.2;
@@ -103,26 +116,28 @@
 		int x = Box.X - (int)(zoomX / (ScaleRate * zoom) - zoomX / ScaleRate);
 		int y = Box.Y - (int)(zoomY / (ScaleRate * zoom) - zoomY / ScaleRate);
 		ScaleRate *= zoom;
-		int height = (int)(Galaxy.Size / ScaleRate);
+
+		int height = (int)(screenHeight / ScaleRate);
+		int width = (int)(screenWidth / ScaleRate);
 
 		Box = new ViewBox()
 		{
 			X = x,
 			Y = y,
 			Height = height,
-			Width = height
+			Width = width
 		};
 
 	}
 
-	private void ResetViewBox()
+	public void ResetViewBox()
 	{
 		Box = new ViewBox()
 		{
-			X = -(Galaxy.Size / 2),
+			X = -(1500/ 2),
 			Y = -(Galaxy.Size / 2),
-			Height = Galaxy.Size,
-			Width = Galaxy.Size
+			Height = screenHeight,
+			Width = screenWidth
 		};
 	}
 

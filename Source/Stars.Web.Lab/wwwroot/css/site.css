@@ -28,6 +28,7 @@ app {
 
 .main {
     flex: 1;
+    overflow: hidden !important;
 }
 
     .main .top-row {
@@ -167,10 +168,10 @@ app {
         top: 0;
     }
 
-    .main > div {
+    /*.main > div {
         padding-left: 2rem !important;
         padding-right: 1.5rem !important;
-    }
+    }*/
 
     .navbar-toggler {
         display: none;

@@ -11,6 +11,7 @@
 
 function retrieveElementPosition(ele, evt) {
     var pt = ele.createSVGPoint();
+    var rect = ele.getBoundingClientRect();
     pt.x = evt.clientX;
     pt.y = evt.clientY;
 
@@ -22,4 +23,20 @@ function retrieveElementPosition(ele, evt) {
         Y: ~~cursorpt.y
     };
     return coords
+}
+
+function retrieveScreenSize() {
+    let ele = document.getElementById('svg');
+    return {
+        Width: ele.clientWidth,
+        Height: ele.clientHeight
+	}
+}
+
+function hover(ele, evt) {
+    var rect = ele.getBoundingClientRect();
+
+    document.getElementById("SVGcoords").innerHTML = `SVG: X ${evt.clientX - rect.x}, Y ${evt.clientY - rect.y}`;
+    var coords = retrieveElementPosition(ele, evt);
+    document.getElementById("Calccoords").innerHTML = `Calc: X ${coords.X}, Y ${coords.Y}`;
 }

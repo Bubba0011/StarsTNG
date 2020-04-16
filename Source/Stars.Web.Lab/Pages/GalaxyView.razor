@@ -18,11 +18,12 @@
 		left: 10px;
 		bottom: 10px;
 	}
+
 </style>
 
 <div>
 	<div class="main-container">
-		<UiGalaxy Galaxy="galaxy" OnPlanetSelected="PlanetClicked">
+		<UiGalaxy Galaxy="galaxy" OnPlanetSelected="PlanetClicked" @ref="UI">
 			<circle cx="@stats.Center.X" cy="@stats.Center.Y" r="15" stroke="blue" fill="transparent" />
 			<circle cx="@stats.MinPlanet.Position.X" cy="@stats.MinPlanet.Position.Y" r="10" stroke="green" fill="transparent" />
 			<circle cx="@stats.MaxPlanet.Position.X" cy="@stats.MaxPlanet.Position.Y" r="10" stroke="red" fill="transparent" />
@@ -40,6 +41,8 @@
 			</div>
 		}
 	</div>
+	<div id="SVGcoords"></div>
+	<div id="Calccoords"></div>
 
 	<div>
 		<h5>Closest Neighbor</h5>
@@ -52,8 +55,9 @@
 		Galaxy Size:<input @bind-value="settings.GalaxySize" />
 		Min. Distance:<input @bind-value="settings.MinimumDistanceBetweenPlanets" />
 		Planets:<input @bind-value="settings.PlanetCount" />
-		<button @onclick="Generate">Generate New Galaxy</button>
+		<button @onclick="Reset">Generate New Galaxy</button>
 	</div>
+
 
 	@if (errorMessage != null)
 	{
@@ -69,6 +73,7 @@
 	private string errorMessage;
 	private Planet selectedPlanet;
 	private Position relativePlanetPosition;
+	private UiGalaxy UI;
 
 	protected override void OnInitialized()
 	{
@@ -95,6 +100,12 @@
 		{
 			errorMessage = "Error: " + ex.Message;
 		}
+	}
+
+	private void Reset()
+	{
+		Generate();
+		UI.ResetViewBox();
 	}
 
 	private static GalaxyStats GetStats(Galaxy galaxy)
