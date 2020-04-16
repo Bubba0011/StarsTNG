@@ -8,15 +8,26 @@
 		position: relative;
 	}
 
-	.planet-info-panel {
+	.info-panel {
 		position: absolute;
 		background-color: rgba(40,60,80,0.65);
 		color: white;
 		border-radius: 3px;
 		box-shadow: 0 0 1px 1px rgb(80,120,160);
 		padding: 4px;
-		left: 10px;
+	}
+
+	.top {
+		top: 10px;
+	}
+	.bottom {
 		bottom: 10px;
+	}
+	.left {
+		left: 10px;
+	}
+	.right {
+		right: 10px;
 	}
 
 </style>
@@ -36,28 +47,30 @@
 
 		@if (selectedPlanet != null)
 		{
-			<div class="planet-info-panel" @onclick="() => selectedPlanet = null">
+			<div class="info-panel bottom left" @onclick="() => selectedPlanet = null">
 				<PlanetInfoPanel Planet="selectedPlanet" />
 			</div>
 		}
-	</div>
-	<div id="SVGcoords"></div>
-	<div id="Calccoords"></div>
 
-	<div>
-		<h5>Closest Neighbor</h5>
-		<div>Min: @stats.Min ly</div>
-		<div>Max: @stats.Max ly</div>
-		<div>Avg: @stats.Avg ly</div>
+		<div class="info-panel bottom right">
+			<div id="SVGcoords"></div>
+			<div id="Calccoords"></div>
+		</div>
+
+		<div class="info-panel top left">
+			<h5>Closest Neighbor</h5>
+			<div>Min: @stats.Min ly</div>
+			<div>Max: @stats.Max ly</div>
+			<div>Avg: @stats.Avg ly</div>
+		</div>
 	</div>
 
-	<div>
+	<div style="margin: 5px;">
 		Galaxy Size:<input @bind-value="settings.GalaxySize" />
 		Min. Distance:<input @bind-value="settings.MinimumDistanceBetweenPlanets" />
 		Planets:<input @bind-value="settings.PlanetCount" />
 		<button @onclick="Reset">Generate New Galaxy</button>
 	</div>
-
 
 	@if (errorMessage != null)
 	{
