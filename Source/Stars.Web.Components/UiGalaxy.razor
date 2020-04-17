@@ -85,7 +85,9 @@
 
 	private ViewBox Box { get; set; }
 	private Position zoomPosition;
-	private double ScaleRate { get; set; }
+
+	[Parameter]
+	public double ScaleRate { get; set; } = 1;
 
 	[Parameter]
 	public Galaxy Galaxy { get; set; }
@@ -96,9 +98,11 @@
 	[Parameter]
 	public EventCallback<Planet> OnPlanetSelected { get; set; }
 
+	[Parameter]
+	public EventCallback<double> ScaleRateChanged { get; set; }
+
 	protected override void OnInitialized()
 	{
-		ScaleRate = 1;
 		ResetViewBox();
 	}
 
@@ -152,6 +156,8 @@
 			Height = height,
 			Width = width
 		};
+
+		ScaleRateChanged.InvokeAsync(ScaleRate);
 	}
 
 	public void ResetViewBox()

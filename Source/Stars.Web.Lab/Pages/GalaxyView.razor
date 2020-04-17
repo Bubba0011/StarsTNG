@@ -34,7 +34,7 @@
 
 <div>
 	<div class="main-container">
-		<UiGalaxy Galaxy="galaxy" OnPlanetSelected="PlanetClicked" @ref="UI">
+		<UiGalaxy Galaxy="galaxy" OnPlanetSelected="PlanetClicked" @ref="UI" @bind-ScaleRate="ZoomFactor">
 			<circle cx="@stats.Center.X" cy="@stats.Center.Y" r="15" stroke="blue" fill="transparent" />
 			<circle cx="@stats.MinPlanet.Position.X" cy="@stats.MinPlanet.Position.Y" r="10" stroke="green" fill="transparent" />
 			<circle cx="@stats.MaxPlanet.Position.X" cy="@stats.MaxPlanet.Position.Y" r="10" stroke="red" fill="transparent" />
@@ -55,6 +55,7 @@
 		<div class="info-panel bottom right">
 			<div id="SVGcoords"></div>
 			<div id="Calccoords"></div>
+			<div>Zoom: @($"{(100 * ZoomFactor):0}%")</div>
 		</div>
 
 		<div class="info-panel top left">
@@ -94,6 +95,8 @@
 	private Planet selectedPlanet;
 	private Position relativePlanetPosition;
 	private UiGalaxy UI;
+
+	private double ZoomFactor = 1;
 
 	protected override void OnInitialized()
 	{
