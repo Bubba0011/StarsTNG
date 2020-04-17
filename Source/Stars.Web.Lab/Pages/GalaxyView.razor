@@ -66,9 +66,16 @@
 	</div>
 
 	<div style="margin: 5px;">
-		Galaxy Size:<input @bind-value="settings.GalaxySize" />
-		Min. Distance:<input @bind-value="settings.MinimumDistanceBetweenPlanets" />
-		Planets:<input @bind-value="settings.PlanetCount" />
+		<LabelBox Label="Galaxy Size">
+			<input @bind-value="settings.GalaxySize" class="num-input" />
+		</LabelBox>
+		<LabelBox Label="Min. Distance">
+			<input @bind-value="settings.MinimumDistanceBetweenPlanets" class="num-input" />
+		</LabelBox>
+		<LabelBox Label="Planets">
+			<input @bind-value="settings.PlanetCount" id="inpPlanets" class="num-input" />
+		</LabelBox>
+		
 		<button @onclick="Reset">Generate New Galaxy</button>
 	</div>
 
