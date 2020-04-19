@@ -1,0 +1,105 @@
+﻿@page "/fun-svg"
+
+<SvgBox Width="@settings.Width" Height="@settings.Height" Zoom="@settings.Zoom" FocusOn="@settings.FocusOn" OnClick="SvgBoxClicked" OnWheel="SvgBoxZoomed">
+
+	<rect x="@settings.Model.TopLeft.X" y="@settings.Model.TopLeft.Y" width="@settings.Model.Dims.Width" height="@settings.Model.Dims.Height" 
+			fill="none" stroke="red" stroke-width="1px" />
+
+	<rect x="-300" y="-300" width="200" height="200" fill="blue" @onclick="() => Refocus(-200, -200, 200, 200)" />
+	<rect x="100" y="-300" width="200" height="200" fill="green" @onclick="() => Refocus(200, -200, 600, 200)" />
+	<rect x="100" y="100" width="200" height="200" fill="red" @onclick="() => Refocus(200, 200, 600, 400)" />
+	<rect x="-300" y="100" width="200" height="200" fill="yellow" @onclick="() => Refocus(-200, 200, 200, 400)" />
+
+	@if (settings.FocusOn.View.HasValue)
+	{
+		var focus = settings.FocusOn.View.Value;
+		<circle cx="@focus.X" cy="@focus.Y" r="4" fill="black" />
+	}
+
+</SvgBox>
+
+<div>
+	<LabelBox Label="Width">
+		<input @bind-value="settings.Width" class="num-input" />
+	</LabelBox>
+	<LabelBox Label="Height">
+		<input @bind-value="settings.Height" class="num-input" />
+	</LabelBox>
+	<LabelBox Label="Zoom">
+		<input @bind-value="settings.Zoom" class="num-input" />
+	</LabelBox>
+
+	<button @onclick="Reset">Reset</button>
+
+	@message
+</div>
+
+@code 
+{
+	string message;
+
+	private readonly RenderSettings settings = new RenderSettings();
+
+	private void Reset()
+	{
+		settings.FocusOn = new SvgBox.Focus()
+		{
+			View = SvgPos.Zero,
+		};
+
+		var zx = settings.Width / settings.Model.Dims.Width;
+		var zy = settings.Height / settings.Model.Dims.Height;
+
+		settings.Zoom = Math.Min(zx, zy);
+	}
+
+	private void Refocus(int x, int y, int vx, int vy)
+	{
+		var view = new SvgPos(x, y);
+
+		if (!view.Equals(settings.FocusOn.View))
+		{
+			settings.FocusOn = new SvgBox.Focus()
+			{
+				View = view,
+				Screen = new SvgPos(vx, vy),
+			};
+		}
+		else
+		{
+			settings.FocusOn = new SvgBox.Focus()
+			{
+				View = SvgPos.Zero,
+			};
+		}
+	}
+
+	private void SvgBoxClicked(SvgBox.SvgMouseEventArgs e)
+	{
+		message = $"{e.ScreenCoords} -> {e.SvgCoords}";
+	}
+
+	private void SvgBoxZoomed(SvgBox.SvgWheelEventArgs e)
+	{
+		settings.FocusOn = new SvgBox.Focus()
+		{
+			Screen = e.ScreenCoords,
+			View = e.SvgCoords,
+		};
+
+		settings.Zoom *= (e.WheelDelta < 0 ? 1.2 : 0.8);
+	}
+
+	class RenderSettings
+	{
+		public int Width { get; set; } = 1400;
+
+		public int Height { get; set; } = 900;
+
+		public double Zoom { get; set; } = 1.0;
+
+		public SvgBox.Focus FocusOn { get; set; } = new SvgBox.Focus() { View = SvgPos.Zero };
+
+		public SvgRect Model { get; set; } = new SvgRect(new SvgPos(-400, -400), new SvgDims(800, 800));
+	}
+}

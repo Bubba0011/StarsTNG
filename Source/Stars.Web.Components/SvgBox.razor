@@ -1,0 +1,108 @@
+﻿@inject IJSRuntime JSRuntime
+
+<style>
+	.svgBox {
+		cursor: crosshair;
+		background-color: @Color;
+	}
+</style>
+
+<svg class="svgBox" width="@Width" height="@Height" viewBox="@GetViewBox()" @onwheel="HandleWheelEvent" @onclick="HandleClickEvent" @ref="svgRef">
+	@ChildContent
+</svg>
+
+@code
+{
+	private ElementReference svgRef;
+
+	[Parameter]
+	public RenderFragment ChildContent { get; set; }
+
+	[Parameter]
+	public string Color { get; set; } = "pink";
+
+	[Parameter]
+	public int Width { get; set; } = 800;
+
+	[Parameter]
+	public int Height { get; set; } = 600;
+
+	[Parameter]
+	public double Zoom { get; set; } = 1.0;
+
+	[Parameter]
+	public Focus FocusOn { get; set; }
+
+	[Parameter]
+	public EventCallback<SvgMouseEventArgs> OnClick { get; set; }
+
+	[Parameter]
+	public EventCallback<SvgWheelEventArgs> OnWheel { get; set; }
+
+	private string GetViewBox()
+	{
+		var screenRect = new SvgRect()
+		{
+			TopLeft = SvgPos.Zero,
+			Dims = new SvgDims(Width, Height),
+		};
+
+		var viewBox = screenRect / Zoom;
+
+		if (FocusOn.View.HasValue)
+		{
+			var screenFocus = FocusOn.Screen ?? screenRect.Center;
+			var screenFocusDelta = screenFocus - SvgPos.Zero;
+
+			viewBox.TopLeft = FocusOn.View.Value - screenFocusDelta / Zoom;
+		}
+
+		return viewBox.ToString();
+	}
+
+	private async Task HandleWheelEvent(WheelEventArgs e)
+	{
+		if (OnWheel.HasDelegate)
+		{
+			var args = new SvgWheelEventArgs()
+			{
+				ScreenCoords = await JSRuntime.GetPositionFromCorner<SvgPos>(svgRef, e),
+				SvgCoords = await JSRuntime.GetElementPosition<SvgPos>(svgRef, e),
+				WheelDelta = e.DeltaY,
+			};
+
+			await OnWheel.InvokeAsync(args);
+		}
+	}
+
+	private async Task HandleClickEvent(MouseEventArgs e)
+	{
+		if (OnClick.HasDelegate)
+		{
+			var args = new SvgMouseEventArgs()
+			{
+				ScreenCoords = await JSRuntime.GetPositionFromCorner<SvgPos>(svgRef, e),
+				SvgCoords = await JSRuntime.GetElementPosition<SvgPos>(svgRef, e),
+			};
+
+			await OnClick.InvokeAsync(args);
+		}
+	}
+
+	public struct Focus
+	{
+		public SvgPos? View { get; set; }
+		public SvgPos? Screen { get; set; }
+	}
+
+	public class SvgMouseEventArgs : EventArgs
+	{
+		public SvgPos SvgCoords { get; set; }
+		public SvgPos ScreenCoords { get; set; }
+	}
+
+	public class SvgWheelEventArgs : SvgMouseEventArgs
+	{
+		public double WheelDelta { get; set; }
+	}
+}
