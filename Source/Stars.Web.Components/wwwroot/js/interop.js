@@ -25,8 +25,8 @@ function retrieveElementPosition(ele, evt) {
     return coords
 }
 
-function retrieveScreenSize() {
-    let ele = document.getElementById('svg');
+function retrieveScreenSize(elementId) {
+    let ele = document.getElementById(elementId);
     return {
         Width: ele.clientWidth,
         Height: ele.clientHeight

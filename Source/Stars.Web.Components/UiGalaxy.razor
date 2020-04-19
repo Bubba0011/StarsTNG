@@ -113,26 +113,26 @@
 
 	private async Task TargetObject(MouseEventArgs e)
 	{
-		Position clickCoords = await JSRuntime.InvokeAsync<Position>("retrieveElementPosition", SVG, e);
+		Position clickCoords = await JSRuntime.GetElementPosition<Position>(SVG, e);
 		var target = Galaxy.ClosestPlanet(clickCoords);
 		await OnPlanetSelected.InvokeAsync(target);
 	}
 
 	private async Task Zoom(WheelEventArgs e)
 	{
-		zoomPosition = await JSRuntime.InvokeAsync<Position>("retrievePosFromCorner", SVG, e);
+		zoomPosition = await JSRuntime.GetPositionFromCorner<Position>(SVG, e);
 		int wheel = e.DeltaY < 0 ? 1 : -1;
 		UpdateViewBox(zoomPosition.X, zoomPosition.Y, wheel);
 	}
 
 	private async Task Hover(MouseEventArgs e)
 	{
-		await JSRuntime.InvokeVoidAsync("hover", SVG, e);
+		await JSRuntime.Hover(SVG, e);
 	}
 
 	private async Task SetScreenSize()
 	{
-		var screen = await JSRuntime.InvokeAsync<ViewBox>("retrieveScreenSize");
+		var screen = await JSRuntime.GetScreenSize<ViewBox>("svg");
 		screenHeight = screen.Height;
 		screenWidth = screen.Width;
 	}
