@@ -2,7 +2,7 @@
 
 <SvgBox Width="@settings.Width" Height="@settings.Height" Zoom="@settings.Zoom" FocusOn="@settings.FocusOn" OnClick="SvgBoxClicked" OnWheel="SvgBoxZoomed">
 
-	<rect x="@settings.Model.TopLeft.X" y="@settings.Model.TopLeft.Y" width="@settings.Model.Dims.Width" height="@settings.Model.Dims.Height" 
+	<rect x="@settings.Model.TopLeft.X" y="@settings.Model.TopLeft.Y" width="@settings.Model.Width" height="@settings.Model.Height" 
 			fill="none" stroke="red" stroke-width="1px" />
 
 	<rect x="-300" y="-300" width="200" height="200" fill="blue" @onclick="() => Refocus(-200, -200, 200, 200)" />
@@ -44,32 +44,32 @@
 	{
 		settings.FocusOn = new SvgBox.Focus()
 		{
-			View = SvgPos.Zero,
+			View = Vector.Zero,
 		};
 
-		var zx = settings.Width / settings.Model.Dims.Width;
-		var zy = settings.Height / settings.Model.Dims.Height;
+		var zx = settings.Width / settings.Model.Dimensions.X;
+		var zy = settings.Height / settings.Model.Dimensions.Y;
 
 		settings.Zoom = Math.Min(zx, zy);
 	}
 
 	private void Refocus(int x, int y, int vx, int vy)
 	{
-		var view = new SvgPos(x, y);
+		var view = new Vector(x, y);
 
 		if (!view.Equals(settings.FocusOn.View))
 		{
 			settings.FocusOn = new SvgBox.Focus()
 			{
 				View = view,
-				Screen = new SvgPos(vx, vy),
+				Screen = new Vector(vx, vy),
 			};
 		}
 		else
 		{
 			settings.FocusOn = new SvgBox.Focus()
 			{
-				View = SvgPos.Zero,
+				View = Vector.Zero,
 			};
 		}
 	}
@@ -98,8 +98,8 @@
 
 		public double Zoom { get; set; } = 1.0;
 
-		public SvgBox.Focus FocusOn { get; set; } = new SvgBox.Focus() { View = SvgPos.Zero };
+		public SvgBox.Focus FocusOn { get; set; } = new SvgBox.Focus() { View = Vector.Zero };
 
-		public SvgRect Model { get; set; } = new SvgRect(new SvgPos(-400, -400), new SvgDims(800, 800));
+		public Rectangle Model { get; set; } = new Rectangle(new Vector(-400, -400), new Vector(800, 800));
 	}
 }

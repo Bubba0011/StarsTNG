@@ -41,10 +41,10 @@
 
 	private string GetViewBox()
 	{
-		var screenRect = new SvgRect()
+		var screenRect = new Rectangle()
 		{
-			TopLeft = SvgPos.Zero,
-			Dims = new SvgDims(Width, Height),
+			TopLeft = Vector.Zero,
+			Dimensions = new Vector(Width, Height),
 		};
 
 		var viewBox = screenRect / Zoom;
@@ -52,9 +52,7 @@
 		if (FocusOn.View.HasValue)
 		{
 			var screenFocus = FocusOn.Screen ?? screenRect.Center;
-			var screenFocusDelta = screenFocus - SvgPos.Zero;
-
-			viewBox.TopLeft = FocusOn.View.Value - screenFocusDelta / Zoom;
+			viewBox.TopLeft = FocusOn.View.Value - screenFocus / Zoom;
 		}
 
 		return viewBox.ToString();
@@ -66,8 +64,8 @@
 		{
 			var args = new SvgWheelEventArgs()
 			{
-				ScreenCoords = await JSRuntime.GetPositionFromCorner<SvgPos>(svgRef, e),
-				SvgCoords = await JSRuntime.GetElementPosition<SvgPos>(svgRef, e),
+				ScreenCoords = await JSRuntime.GetPositionFromCorner<Vector>(svgRef, e),
+				SvgCoords = await JSRuntime.GetElementPosition<Vector>(svgRef, e),
 				WheelDelta = e.DeltaY,
 			};
 
@@ -81,8 +79,8 @@
 		{
 			var args = new SvgMouseEventArgs()
 			{
-				ScreenCoords = await JSRuntime.GetPositionFromCorner<SvgPos>(svgRef, e),
-				SvgCoords = await JSRuntime.GetElementPosition<SvgPos>(svgRef, e),
+				ScreenCoords = await JSRuntime.GetPositionFromCorner<Vector>(svgRef, e),
+				SvgCoords = await JSRuntime.GetElementPosition<Vector>(svgRef, e),
 			};
 
 			await OnClick.InvokeAsync(args);
@@ -91,14 +89,14 @@
 
 	public struct Focus
 	{
-		public SvgPos? View { get; set; }
-		public SvgPos? Screen { get; set; }
+		public Vector? View { get; set; }
+		public Vector? Screen { get; set; }
 	}
 
 	public class SvgMouseEventArgs : EventArgs
 	{
-		public SvgPos SvgCoords { get; set; }
-		public SvgPos ScreenCoords { get; set; }
+		public Vector SvgCoords { get; set; }
+		public Vector ScreenCoords { get; set; }
 	}
 
 	public class SvgWheelEventArgs : SvgMouseEventArgs

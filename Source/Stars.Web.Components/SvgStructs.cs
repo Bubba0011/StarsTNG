@@ -2,67 +2,52 @@
 
 namespace Stars.Web.Components
 {
-	static class F
+	public struct Vector
 	{
-		public static string S(double d) => d.ToString("0.0", CultureInfo.InvariantCulture);
-	}
-
-	public struct SvgDims
-	{
-		public double Width { get; set; }
-		public double Height { get; set; }
-
-		public SvgDims(double width, double height)
-		{
-			Width = width;
-			Height = height;
-		}
-
-		public override string ToString() => $"{F.S(Width)} {F.S(Height)}";
-
-		public static SvgDims operator /(SvgDims lhs, double rhs) => new SvgDims(lhs.Width / rhs, lhs.Height / rhs);
-	}
-
-	public struct SvgPos
-	{
-		public static readonly SvgPos Zero = new SvgPos();
+		public static readonly Vector Zero = new Vector();
 
 		public double X { get; set; }
 		public double Y { get; set; }
 
-		public SvgPos(double x, double y)
+		public Vector(double x, double y)
 		{
 			X = x;
 			Y = y;
 		}
 
-		public override string ToString() => $"{F.S(X)} {F.S(Y)}";
+		public override string ToString() => $"{S(X)} {S(Y)}";
 
-		public static SvgPos operator +(SvgPos lhs, SvgDims rhs) => new SvgPos(lhs.X + rhs.Width, lhs.Y + rhs.Height);
-		public static SvgPos operator -(SvgPos lhs, SvgDims rhs) => new SvgPos(lhs.X - rhs.Width, lhs.Y - rhs.Height);
-		public static SvgDims operator -(SvgPos lhs, SvgPos rhs) => new SvgDims(lhs.X - rhs.X, lhs.Y - rhs.Y);
+		private static string S(double d) => d.ToString("0.0", CultureInfo.InvariantCulture);
+		public static Vector operator +(Vector lhs, Vector rhs) => new Vector(lhs.X + rhs.X, lhs.Y + rhs.Y);
+		public static Vector operator -(Vector lhs, Vector rhs) => new Vector(lhs.X - rhs.X, lhs.Y - rhs.Y);
+		public static Vector operator *(Vector lhs, double rhs) => new Vector(lhs.X * rhs, lhs.Y * rhs);
+		public static Vector operator *(double lhs, Vector rhs) => rhs * lhs;
+		public static Vector operator /(Vector lhs, double rhs) => new Vector(lhs.X / rhs, lhs.Y / rhs);
 	}
 
-	public struct SvgRect
+	public struct Rectangle
 	{
-		public SvgPos TopLeft { get; set; }
-		public SvgDims Dims { get; set; }
-		public SvgPos Center => TopLeft + (Dims / 2);
+		public Vector TopLeft { get; set; }
+		public Vector Dimensions { get; set; }
+		public Vector BottomRight => TopLeft + Dimensions;
+		public Vector Center => TopLeft + (Dimensions / 2);
+		public double Width => Dimensions.X;
+		public double Height => Dimensions.Y;
 
-		public SvgRect(SvgPos topLeft, SvgDims dims)
+		public Rectangle(Vector topLeft, Vector dimensions)
 		{
 			TopLeft = topLeft;
-			Dims = dims;
+			Dimensions = dimensions;
 		}
 
-		public override string ToString() => $"{TopLeft} {Dims}";
+		public override string ToString() => $"{TopLeft} {Dimensions}";
 
-		public static SvgRect operator /(SvgRect lhs, double rhs)
+		public static Rectangle operator /(Rectangle lhs, double rhs)
 		{
-			return new SvgRect()
+			return new Rectangle()
 			{
 				TopLeft = lhs.TopLeft,
-				Dims = lhs.Dims / rhs,
+				Dimensions = lhs.Dimensions / rhs,
 			};
 		}
 	}
