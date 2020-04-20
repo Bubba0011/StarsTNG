@@ -1,13 +1,6 @@
 ﻿@inject IJSRuntime JSRuntime
 
-<style>
-	.svgBox {
-		cursor: crosshair;
-		background-color: @Color;
-	}
-</style>
-
-<svg class="svgBox" width="@Width" height="@Height" viewBox="@GetViewBox()" @onwheel="HandleWheelEvent" @onclick="HandleClickEvent" @ref="svgRef">
+<svg class="@CssClass" width="@Width" height="@Height" viewBox="@GetViewBox()" @onwheel="HandleWheelEvent" @onclick="HandleClickEvent" @ref="svgRef">
 	@ChildContent
 </svg>
 
@@ -19,7 +12,7 @@
 	public RenderFragment ChildContent { get; set; }
 
 	[Parameter]
-	public string Color { get; set; } = "pink";
+	public string CssClass { get; set; }
 
 	[Parameter]
 	public int Width { get; set; } = 800;

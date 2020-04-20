@@ -1,6 +1,13 @@
 ﻿@page "/fun-svg"
 
-<SvgBox Width="@settings.Width" Height="@settings.Height" Zoom="@settings.Zoom" FocusOn="@settings.FocusOn" OnClick="SvgBoxClicked" OnWheel="SvgBoxZoomed">
+<style>
+	.svgBox {
+		cursor: crosshair;
+		background-color: hotpink;
+	}
+</style>
+
+<SvgBox CssClass="svgBox" Width="@settings.Width" Height="@settings.Height" Zoom="@settings.Zoom" FocusOn="@settings.FocusOn" OnClick="SvgBoxClicked" OnWheel="SvgBoxZoomed">
 
 	<rect x="@settings.Model.TopLeft.X" y="@settings.Model.TopLeft.Y" width="@settings.Model.Width" height="@settings.Model.Height" 
 			fill="none" stroke="red" stroke-width="1px" />
