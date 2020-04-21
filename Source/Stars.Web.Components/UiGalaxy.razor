@@ -34,7 +34,13 @@
 
 @if (Galaxy != null)
 {
-	<SvgBox CssClass="swig" OnClick="TargetObject" OnWheel="Zoom" Width="@Width" Height="@Height" Zoom="@ScaleRate" FocusOn="@focus">
+	<SvgBox CssClass="swig" 
+			OnClick="TargetObject" 
+			OnWheel="Zoom" 
+			Width="@Width" 
+			Height="@Height" 
+			Zoom="@ScaleRate"
+			FocusOn="@focus">
 
 		<rect x="@(-gridSide)" y="@(-gridSide)" width="@Galaxy.Size" height="@Galaxy.Size" class="galaxy-box" />
 
@@ -108,11 +114,4 @@
 
 		await ScaleRateChanged.InvokeAsync(ScaleRate);
 	}
-
-	/*
-	private async Task Hover(MouseEventArgs e)
-	{
-		await JSRuntime.Hover(SVG, e);
-	}
-	*/
 }

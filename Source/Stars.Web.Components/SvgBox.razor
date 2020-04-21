@@ -1,12 +1,24 @@
 ﻿@inject IJSRuntime JSRuntime
 
-<svg class="@CssClass" width="@Width" height="@Height" viewBox="@GetViewBox()" @onwheel="HandleWheelEvent" @onclick="HandleClickEvent" @ref="svgRef">
+<svg class="@CssClass"
+	 width="@Width"
+	 height="@Height"
+	 viewBox="@GetViewBox()"
+	 @onwheel="HandleWheelEvent"
+	 @onclick="HandleClickEvent"
+	 @onmousemove="HandleMouseMoveEvent"
+	 @onmousedown="HandleMouseDownEvent"
+	 @onmouseup="@(e => { if (e.Button == 2) { rightClickIsDown = false; } })"
+	 @oncontextmenu:preventDefault
+	 @oncontextmenu="@(e => null)"
+	 @ref="svgRef">
 	@ChildContent
 </svg>
 
 @code
 {
 	private ElementReference svgRef;
+	private bool rightClickIsDown = false;
 
 	[Parameter]
 	public RenderFragment ChildContent { get; set; }
@@ -73,10 +85,29 @@
 			var args = new SvgMouseEventArgs()
 			{
 				ScreenCoords = await JSRuntime.GetPositionFromCorner<Vector>(svgRef, e),
-				SvgCoords = await JSRuntime.GetElementPosition<Vector>(svgRef, e),
+				SvgCoords = await JSRuntime.GetElementPosition<Vector>(svgRef, e)
 			};
 
 			await OnClick.InvokeAsync(args);
+		}
+	}
+
+	private async Task HandleMouseDownEvent(MouseEventArgs e)
+	{
+		// 2 = right click
+		if (e.Button == 2)
+		{
+			rightClickIsDown = true;
+			await JSRuntime.SetOriginPosition(svgRef, e);
+		}
+	}
+
+
+	private async Task HandleMouseMoveEvent(MouseEventArgs e)
+	{
+		if (rightClickIsDown)
+		{
+			await JSRuntime.MoveViewBox(svgRef, e, Zoom);
 		}
 	}
 
