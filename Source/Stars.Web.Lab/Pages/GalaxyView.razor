@@ -4,9 +4,17 @@
 @using Stars.Core.Setup
 @using Stars.Web.Lab.Data
 
+@inject IJSRuntime JSRuntime
+
 <style>
 	.main-container {
 		position: relative;
+		width: 100%;
+		height: 100vh;
+	}
+
+	.setup-container {
+		margin: 5px;
 	}
 
 	.info-panel {
@@ -21,21 +29,23 @@
 	.top {
 		top: 10px;
 	}
+
 	.bottom {
 		bottom: 10px;
 	}
+
 	.left {
 		left: 10px;
 	}
+
 	.right {
 		right: 10px;
 	}
-
 </style>
 
 <div>
-	<div class="main-container">
-		<UiGalaxy Galaxy="galaxy" OnPlanetSelected="PlanetClicked" @ref="UI" @bind-ScaleRate="ZoomFactor">
+	<div class="main-container" id="mejn">
+		<UiGalaxy Galaxy="galaxy" OnPlanetSelected="PlanetClicked" @ref="UI" @bind-ScaleRate="ZoomFactor" Width="@screenWidth" Height="@screenHeight">
 			<circle cx="@stats.Center.X" cy="@stats.Center.Y" r="15" stroke="blue" fill="transparent" />
 			<circle cx="@stats.MinPlanet.Position.X" cy="@stats.MinPlanet.Position.Y" r="10" stroke="green" fill="transparent" />
 			<circle cx="@stats.MaxPlanet.Position.X" cy="@stats.MaxPlanet.Position.Y" r="10" stroke="red" fill="transparent" />
@@ -65,20 +75,20 @@
 			<div>Max: @stats.Max ly</div>
 			<div>Avg: @stats.Avg ly</div>
 		</div>
-	</div>
 
-	<div style="margin: 5px;">
-		<LabelBox Label="Galaxy Size">
-			<input @bind-value="settings.GalaxySize" class="num-input" />
-		</LabelBox>
-		<LabelBox Label="Min. Distance">
-			<input @bind-value="settings.MinimumDistanceBetweenPlanets" class="num-input" />
-		</LabelBox>
-		<LabelBox Label="Planets">
-			<input @bind-value="settings.PlanetCount" id="inpPlanets" class="num-input" />
-		</LabelBox>
-		
-		<button @onclick="Reset">Generate New Galaxy</button>
+		<div class="info-panel top right">
+			<LabelBox Label="Galaxy Size">
+				<input @bind-value="settings.GalaxySize" class="num-input" />
+			</LabelBox>
+			<LabelBox Label="Min. Distance">
+				<input @bind-value="settings.MinimumDistanceBetweenPlanets" class="num-input" />
+			</LabelBox>
+			<LabelBox Label="Planets">
+				<input @bind-value="settings.PlanetCount" id="inpPlanets" class="num-input" />
+			</LabelBox>
+
+			<button @onclick="Generate">Generate Galaxy</button>
+		</div>
 	</div>
 
 	@if (errorMessage != null)
@@ -98,15 +108,25 @@
 	private UiGalaxy UI;
 
 	private double ZoomFactor = 1;
+	int screenHeight = 800;
+	int screenWidth = 800;
 
 	protected override void OnInitialized()
 	{
 		Generate();
 	}
 
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		var screen = await JSRuntime.GetScreenSize<Dims>("mejn");
+		screenHeight = screen.Height;
+		screenWidth = screen.Width;
+		StateHasChanged();
+	}
+
 	private void PlanetClicked(Planet planet)
 	{
-		selectedPlanet = planet != selectedPlanet   ? planet    : null;
+		selectedPlanet = planet != selectedPlanet ? planet : null;
 	}
 
 	private void Generate()
@@ -126,9 +146,9 @@
 		}
 	}
 
-	private void Reset()
+	struct Dims
 	{
-		Generate();
-		UI.ResetViewBox();
+		public int Width { get; set; }
+		public int Height { get; set; }
 	}
 }

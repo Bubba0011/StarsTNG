@@ -1,10 +1,7 @@
-﻿@inject IJSRuntime JSRuntime
-
+﻿
 <style>
 	.swig {
 		background-color: rgb(20,20,20);
-		width: 100vw; 
-		height: 80vh;
 	}
 
 	.galaxy-box {
@@ -37,16 +34,10 @@
 
 @if (Galaxy != null)
 {
-	<svg viewBox="@Box"
-		  class="swig"
-		  id="svg"
-		  @ref="SVG"
-		  @onclick="TargetObject"
-		  @onwheel="Zoom"
-		  @onmousemove="Hover">
+	<SvgBox CssClass="swig" OnClick="TargetObject" OnWheel="Zoom" Width="@Width" Height="@Height" Zoom="@ScaleRate" FocusOn="@focus">
 
 		<rect x="@(-gridSide)" y="@(-gridSide)" width="@Galaxy.Size" height="@Galaxy.Size" class="galaxy-box" />
-		
+
 		@foreach (var (coord, level) in GetGridLines())
 		{
 			<line x1="@(-gridSide)" x2="@gridSide" y1="@coord" y2="@coord" class="@($"grid-line grid-level-{level}")" />
@@ -59,12 +50,13 @@
 		}
 
 		@ChildContent
-	</svg>
+
+	</SvgBox>
 }
 
 @code
 {
-	private IEnumerable<(int,int)> GetGridLines()
+	private IEnumerable<(int, int)> GetGridLines()
 	{
 		yield return (-gridSide * 3 / 4, 3);
 		yield return (-gridSide / 4, 3);
@@ -78,13 +70,13 @@
 	int gridMid => 0;
 	int gridSide => Galaxy.Size / 2;
 
-	int screenHeight = 800; // TODO: Set div to fullscreen and get size here
-	int screenWidth = 1500; // TODO: Set div to fullscreen and get size here
+	SvgBox.Focus focus = new SvgBox.Focus() { View = Vector.Zero };
 
-	ElementReference SVG;
+	[Parameter]
+	public int Width { get; set; }
 
-	private ViewBox Box { get; set; }
-	private Position zoomPosition;
+	[Parameter]
+	public int Height { get; set; }
 
 	[Parameter]
 	public double ScaleRate { get; set; } = 1;
@@ -101,85 +93,26 @@
 	[Parameter]
 	public EventCallback<double> ScaleRateChanged { get; set; }
 
-	protected override void OnInitialized()
+	private async Task TargetObject(SvgBox.SvgMouseEventArgs e)
 	{
-		ResetViewBox();
-	}
-
-	protected override async Task OnAfterRenderAsync(bool firstRender)
-	{
-		await SetScreenSize();
-	}
-
-	private async Task TargetObject(MouseEventArgs e)
-	{
-		Position clickCoords = await JSRuntime.GetElementPosition<Position>(SVG, e);
-		var target = Galaxy.ClosestPlanet(clickCoords);
+		var pos = new Position((int)e.SvgCoords.X, (int)e.SvgCoords.Y);
+		var target = Galaxy.ClosestPlanet(pos);
 		await OnPlanetSelected.InvokeAsync(target);
 	}
 
-	private async Task Zoom(WheelEventArgs e)
+	private async Task Zoom(SvgBox.SvgWheelEventArgs e)
 	{
-		zoomPosition = await JSRuntime.GetPositionFromCorner<Position>(SVG, e);
-		int wheel = e.DeltaY < 0 ? 1 : -1;
-		UpdateViewBox(zoomPosition.X, zoomPosition.Y, wheel);
+		ScaleRate *= (e.WheelDelta < 0 ? 1.25: 0.8);
+		focus.Screen = e.ScreenCoords;
+		focus.View = e.SvgCoords;
+
+		await ScaleRateChanged.InvokeAsync(ScaleRate);
 	}
 
+	/*
 	private async Task Hover(MouseEventArgs e)
 	{
 		await JSRuntime.Hover(SVG, e);
 	}
-
-	private async Task SetScreenSize()
-	{
-		var screen = await JSRuntime.GetScreenSize<ViewBox>("svg");
-		screenHeight = screen.Height;
-		screenWidth = screen.Width;
-	}
-
-	private void UpdateViewBox(int zoomX, int zoomY, int wheel)
-	{
-		var zoomIntensity = 0.2;
-		var zoom = Math.Exp(wheel * zoomIntensity);
-		// Calculate new corner node so the mouse position is the same before and after the zoom
-		int x = Box.X - (int)(zoomX / (ScaleRate * zoom) - zoomX / ScaleRate);
-		int y = Box.Y - (int)(zoomY / (ScaleRate * zoom) - zoomY / ScaleRate);
-		ScaleRate *= zoom;
-
-		int height = (int)(screenHeight / ScaleRate);
-		int width = (int)(screenWidth / ScaleRate);
-
-		Box = new ViewBox()
-		{
-			X = x,
-			Y = y,
-			Height = height,
-			Width = width
-		};
-
-		ScaleRateChanged.InvokeAsync(ScaleRate);
-	}
-
-	public void ResetViewBox()
-	{
-		Box = new ViewBox()
-		{
-			X = -(1500/ 2),
-			Y = -(Galaxy.Size / 2),
-			Height = screenHeight,
-			Width = screenWidth
-		};
-	}
-
-	public struct ViewBox
-	{
-		public int X { get; set; }
-		public int Y { get; set; }
-		public int Width { get; set; }
-		public int Height { get; set; }
-		public int MidX => X + Width / 2;
-		public int MidY => Y + Height / 2;
-
-		public override string ToString() => $"{X} {Y} {Width} {Height}";
-	}
+	*/
 }
