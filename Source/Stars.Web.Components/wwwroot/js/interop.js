@@ -24,26 +24,30 @@ function retrieveElementPosition(ele, evt) {
     return coords
 }
 
-let origin = {
-    X: 0,
-    Y: 0
-};
-
-function setOrigin(ele, evt) {
-    origin = retrievePosFromCorner(ele, evt);
-}
-
-function moveViewBox(ele, evt, zoom) {
-    let coords = retrievePosFromCorner(ele, evt);
-
-    let diff = {
-        X: origin.X - coords.X,
-        Y: origin.Y - coords.Y
+function onMouseDown(e, zoom) {
+    console.log(zoom)
+    if (e.button != 2) {
+        return;
     }
 
-    ele.viewBox.baseVal.x += diff.X/zoom;
-    ele.viewBox.baseVal.y += diff.Y/zoom;
-    origin = coords;
+    let svg = document.querySelector("svg");
+    let focus = {
+        x: e.clientX,
+        y: e.clientY
+    }
+    let zoomScale = zoom;
+
+    function onMouseMove(e) {
+        svg.viewBox.baseVal.x += (focus.x - e.clientX)/zoomScale;
+        svg.viewBox.baseVal.y += (focus.y - e.clientY)/zoomScale;
+        focus.x = e.clientX;
+        focus.y = e.clientY;
+	}
+    function onMouseUp() {
+        svg.removeEventListener("mousemove", onMouseMove);
+	}
+    svg.addEventListener("mousemove", onMouseMove);
+    svg.addEventListener("mouseup", onMouseUp);
 }
 
 function retrieveScreenSize(elementId) {
@@ -52,12 +56,4 @@ function retrieveScreenSize(elementId) {
         Width: ele.clientWidth,
         Height: ele.clientHeight
 	}
-}
-
-function hover(ele, evt) {
-    let rect = ele.getBoundingClientRect();
-
-    document.getElementById("SVGcoords").innerHTML = `SVG: X ${evt.clientX - rect.x}, Y ${evt.clientY - rect.y}`;
-    let coords = retrieveElementPosition(ele, evt);
-    document.getElementById("Calccoords").innerHTML = `Calc: X ${coords.X}, Y ${coords.Y}`;
 }

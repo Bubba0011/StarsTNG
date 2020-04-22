@@ -4,11 +4,9 @@
 	 width="@Width"
 	 height="@Height"
 	 viewBox="@GetViewBox()"
+	 onmousedown="onMouseDown(event, @Zoom.ToString("F", CultureInfo.InvariantCulture))"
 	 @onwheel="HandleWheelEvent"
 	 @onclick="HandleClickEvent"
-	 @onmousemove="HandleMouseMoveEvent"
-	 @onmousedown="HandleMouseDownEvent"
-	 @onmouseup="@(e => { if (e.Button == 2) { rightClickIsDown = false; } })"
 	 @oncontextmenu:preventDefault
 	 @oncontextmenu="@(e => null)"
 	 @ref="svgRef">
@@ -89,25 +87,6 @@
 			};
 
 			await OnClick.InvokeAsync(args);
-		}
-	}
-
-	private async Task HandleMouseDownEvent(MouseEventArgs e)
-	{
-		// 2 = right click
-		if (e.Button == 2)
-		{
-			rightClickIsDown = true;
-			await JSRuntime.SetOriginPosition(svgRef, e);
-		}
-	}
-
-
-	private async Task HandleMouseMoveEvent(MouseEventArgs e)
-	{
-		if (rightClickIsDown)
-		{
-			await JSRuntime.MoveViewBox(svgRef, e, Zoom);
 		}
 	}
 
