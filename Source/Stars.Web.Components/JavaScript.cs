@@ -19,5 +19,9 @@ namespace Stars.Web.Components
 		{
 			return js.InvokeAsync<T>("retrieveScreenSize", elementId);
 		}
+		public static ValueTask OnMouseDown(this IJSRuntime js, double zoom, MouseEventArgs e)
+		{
+			return js.InvokeVoidAsync("onMouseDown", e, zoom);
+		}
 	}
 }

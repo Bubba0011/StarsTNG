@@ -118,10 +118,14 @@
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
-		var screen = await JSRuntime.GetScreenSize<Dims>("mejn");
-		screenHeight = screen.Height;
-		screenWidth = screen.Width;
-		StateHasChanged();
+		if (firstRender)
+		{
+			var screen = await JSRuntime.GetScreenSize<Dims>("mejn");
+			screenHeight = screen.Height;
+			screenWidth = screen.Width;
+			StateHasChanged();
+
+		}
 	}
 
 	private void PlanetClicked(Planet planet)

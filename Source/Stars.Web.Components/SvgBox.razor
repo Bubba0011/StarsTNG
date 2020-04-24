@@ -4,7 +4,7 @@
 	 width="@Width"
 	 height="@Height"
 	 viewBox="@GetViewBox()"
-	 onmousedown="onMouseDown(event, @Zoom.ToString("F", CultureInfo.InvariantCulture))"
+	 @onmousedown="HandleMouseDownEvent"
 	 @onwheel="HandleWheelEvent"
 	 @onclick="HandleClickEvent"
 	 @oncontextmenu:preventDefault
@@ -16,8 +16,6 @@
 @code
 {
 	private ElementReference svgRef;
-	private bool rightClickIsDown = false;
-
 	[Parameter]
 	public RenderFragment ChildContent { get; set; }
 
@@ -88,6 +86,11 @@
 
 			await OnClick.InvokeAsync(args);
 		}
+	}
+
+	private async Task HandleMouseDownEvent(MouseEventArgs e)
+	{
+		await JSRuntime.OnMouseDown(Zoom, e);
 	}
 
 	public struct Focus
