@@ -19,9 +19,18 @@ namespace Stars.Web.Components
 		{
 			return js.InvokeAsync<T>("retrieveScreenSize", elementId);
 		}
-		public static ValueTask OnMouseDown(this IJSRuntime js, double zoom, MouseEventArgs e)
+		public static ValueTask OnMouseDown(this IJSRuntime js, MouseEventArgs e)
 		{
-			return js.InvokeVoidAsync("onMouseDown", e, zoom);
+			return js.InvokeVoidAsync("onMouseDown", e);
+		}
+		public static ValueTask<T> OnWheel<T>(this IJSRuntime js, ElementReference element, WheelEventArgs e)
+		{
+			return js.InvokeAsync<T>("onWheel", element, e);
+		}
+
+		public static ValueTask ResetUI(this IJSRuntime js)
+		{
+			return js.InvokeVoidAsync("resetUI");
 		}
 	}
 }

@@ -45,7 +45,7 @@
 
 <div>
 	<div class="main-container" id="mejn">
-		<UiGalaxy Galaxy="galaxy" OnPlanetSelected="PlanetClicked" @ref="UI" @bind-ScaleRate="ZoomFactor" Width="@screenWidth" Height="@screenHeight">
+		<UiGalaxy Galaxy="galaxy" OnPlanetSelected="PlanetClicked" @ref="UI" OnZoomFactorChanged="ZoomChanged" ZoomFactor="Zoom">
 			<circle cx="@stats.Center.X" cy="@stats.Center.Y" r="15" stroke="blue" fill="transparent" />
 			<circle cx="@stats.MinPlanet.Position.X" cy="@stats.MinPlanet.Position.Y" r="10" stroke="green" fill="transparent" />
 			<circle cx="@stats.MaxPlanet.Position.X" cy="@stats.MaxPlanet.Position.Y" r="10" stroke="red" fill="transparent" />
@@ -66,7 +66,7 @@
 		<div class="info-panel bottom right">
 			<div id="SVGcoords"></div>
 			<div id="Calccoords"></div>
-			<div>Zoom: @($"{(100 * ZoomFactor):0}%")</div>
+			<div>Zoom: @($"{(100 * Zoom):0}%")</div>
 		</div>
 
 		<div class="info-panel top left">
@@ -107,25 +107,11 @@
 	private Position relativePlanetPosition;
 	private UiGalaxy UI;
 
-	private double ZoomFactor = 1;
-	int screenHeight = 800;
-	int screenWidth = 800;
+	private double Zoom = 1;
 
 	protected override void OnInitialized()
 	{
 		Generate();
-	}
-
-	protected override async Task OnAfterRenderAsync(bool firstRender)
-	{
-		if (firstRender)
-		{
-			var screen = await JSRuntime.GetScreenSize<Dims>("mejn");
-			screenHeight = screen.Height;
-			screenWidth = screen.Width;
-			StateHasChanged();
-
-		}
 	}
 
 	private void PlanetClicked(Planet planet)
@@ -150,9 +136,9 @@
 		}
 	}
 
-	struct Dims
+	private void ZoomChanged(double zoomFactor)
 	{
-		public int Width { get; set; }
-		public int Height { get; set; }
+		Zoom = 1/zoomFactor;
 	}
+
 }

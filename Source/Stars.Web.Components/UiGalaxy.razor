@@ -36,10 +36,8 @@
 {
 	<SvgBox CssClass="swig" 
 			OnClick="TargetObject" 
-			OnWheel="Zoom" 
-			Width="@Width" 
-			Height="@Height" 
-			Zoom="@ScaleRate"
+			OnWheel="Zoom"
+			ZoomFactor="@ZoomFactor"
 			FocusOn="@focus">
 
 		<rect x="@(-gridSide)" y="@(-gridSide)" width="@Galaxy.Size" height="@Galaxy.Size" class="galaxy-box" />
@@ -79,13 +77,7 @@
 	SvgBox.Focus focus = new SvgBox.Focus() { View = Vector.Zero };
 
 	[Parameter]
-	public int Width { get; set; }
-
-	[Parameter]
-	public int Height { get; set; }
-
-	[Parameter]
-	public double ScaleRate { get; set; } = 1;
+	public double ZoomFactor { get; set; }
 
 	[Parameter]
 	public Galaxy Galaxy { get; set; }
@@ -97,7 +89,7 @@
 	public EventCallback<Planet> OnPlanetSelected { get; set; }
 
 	[Parameter]
-	public EventCallback<double> ScaleRateChanged { get; set; }
+	public EventCallback<double> OnZoomFactorChanged { get; set; }
 
 	private async Task TargetObject(SvgBox.SvgMouseEventArgs e)
 	{
@@ -108,10 +100,6 @@
 
 	private async Task Zoom(SvgBox.SvgWheelEventArgs e)
 	{
-		ScaleRate *= (e.WheelDelta < 0 ? 1.25: 0.8);
-		focus.Screen = e.ScreenCoords;
-		focus.View = e.SvgCoords;
-
-		await ScaleRateChanged.InvokeAsync(ScaleRate);
+		await OnZoomFactorChanged.InvokeAsync(e.ZoomFactor);
 	}
 }

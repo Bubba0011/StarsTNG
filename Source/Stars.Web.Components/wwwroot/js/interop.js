@@ -1,4 +1,8 @@
-﻿function retrievePosFromCorner(element, event) {
+﻿let UI = {
+    zoomFactor: 1.0
+}
+
+function retrievePosFromCorner(element, event) {
     let rect = element.getBoundingClientRect();
     const x = event.clientX - rect.x
     const y = event.clientY - rect.y
@@ -24,8 +28,20 @@ function retrieveElementPosition(ele, evt) {
     return coords
 }
 
-function onMouseDown(e, zoom) {
-    console.log(zoom)
+function onWheel(ele, evt) {
+    let wheelDelta = (evt.deltaY < 0 ? 1.25 : 0.8);
+    let screenCoords = retrievePosFromCorner(ele, evt);
+    let svgCoords = retrieveElementPosition(ele, evt);
+    UI.zoomFactor *= wheelDelta;
+
+    ele.viewBox.baseVal.width *= wheelDelta;
+    ele.viewBox.baseVal.height *= wheelDelta;
+    ele.viewBox.baseVal.x = (svgCoords.X - screenCoords.X * UI.zoomFactor);
+    ele.viewBox.baseVal.y = (svgCoords.Y - screenCoords.Y * UI.zoomFactor);
+    return UI.zoomFactor;
+}
+
+function onMouseDown(e) {
     if (e.button != 2) {
         return;
     }
@@ -35,11 +51,10 @@ function onMouseDown(e, zoom) {
         x: e.clientX,
         y: e.clientY
     }
-    let zoomScale = zoom;
 
     function onMouseMove(e) {
-        svg.viewBox.baseVal.x += (focus.x - e.clientX)/zoomScale;
-        svg.viewBox.baseVal.y += (focus.y - e.clientY)/zoomScale;
+        svg.viewBox.baseVal.x += (focus.x - e.clientX)*UI.zoomFactor;
+        svg.viewBox.baseVal.y += (focus.y - e.clientY)*UI.zoomFactor;
         focus.x = e.clientX;
         focus.y = e.clientY;
 	}
@@ -53,7 +68,11 @@ function onMouseDown(e, zoom) {
 function retrieveScreenSize(elementId) {
     let ele = document.getElementById(elementId);
     return {
-        Width: ele.clientWidth,
-        Height: ele.clientHeight
+        X: ele.clientWidth,
+        Y: ele.clientHeight
 	}
+}
+
+function resetUI() {
+    UI.zoomFactor = 1.0;
 }

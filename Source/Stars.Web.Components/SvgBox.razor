@@ -1,21 +1,20 @@
 ﻿@inject IJSRuntime JSRuntime
 
 <svg class="@CssClass"
-	 width="@Width"
-	 height="@Height"
-	 viewBox="@GetViewBox()"
+	 viewBox="@ViewBox"
 	 @onmousedown="HandleMouseDownEvent"
-	 @onwheel="HandleWheelEvent"
 	 @onclick="HandleClickEvent"
+	 @onwheel="HandleWheel"
 	 @oncontextmenu:preventDefault
 	 @oncontextmenu="@(e => null)"
 	 @ref="svgRef">
 	@ChildContent
 </svg>
-
 @code
 {
 	private ElementReference svgRef;
+
+	public string ViewBox { get; set; }
 	[Parameter]
 	public RenderFragment ChildContent { get; set; }
 
@@ -23,13 +22,7 @@
 	public string CssClass { get; set; }
 
 	[Parameter]
-	public int Width { get; set; } = 800;
-
-	[Parameter]
-	public int Height { get; set; } = 600;
-
-	[Parameter]
-	public double Zoom { get; set; } = 1.0;
+	public double ZoomFactor { get; set; }
 
 	[Parameter]
 	public Focus FocusOn { get; set; }
@@ -40,20 +33,31 @@
 	[Parameter]
 	public EventCallback<SvgWheelEventArgs> OnWheel { get; set; }
 
-	private string GetViewBox()
+	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
+		if (firstRender)
+		{
+			await JSRuntime.ResetUI();
+			ViewBox = await GetViewBoxAsync();
+			StateHasChanged();
+		}
+	}
+
+	private async Task<string> GetViewBoxAsync()
+	{
+		var screen = await JSRuntime.GetScreenSize<Vector>("mejn");
 		var screenRect = new Rectangle()
 		{
 			TopLeft = Vector.Zero,
-			Dimensions = new Vector(Width, Height),
+			Dimensions = new Vector(screen.X, screen.Y),
 		};
 
-		var viewBox = screenRect / Zoom;
+		var viewBox = screenRect / ZoomFactor;
 
 		if (FocusOn.View.HasValue)
 		{
 			var screenFocus = FocusOn.Screen ?? screenRect.Center;
-			viewBox.TopLeft = FocusOn.View.Value - screenFocus / Zoom;
+			viewBox.TopLeft = FocusOn.View.Value - screenFocus / ZoomFactor;
 		}
 
 		return viewBox.ToString();
@@ -88,9 +92,23 @@
 		}
 	}
 
+	// Handled in Javascript entirely
 	private async Task HandleMouseDownEvent(MouseEventArgs e)
 	{
-		await JSRuntime.OnMouseDown(Zoom, e);
+		await JSRuntime.OnMouseDown(e);
+	}
+
+	private async Task HandleWheel(WheelEventArgs e)
+	{
+		if (OnWheel.HasDelegate)
+		{
+			ZoomFactor = await JSRuntime.OnWheel<double>(svgRef, e);
+			var args = new SvgWheelEventArgs()
+			{
+				ZoomFactor = ZoomFactor
+			};
+			await OnWheel.InvokeAsync(args);
+		}
 	}
 
 	public struct Focus
@@ -108,5 +126,6 @@
 	public class SvgWheelEventArgs : SvgMouseEventArgs
 	{
 		public double WheelDelta { get; set; }
+		public double ZoomFactor { get; set; }
 	}
 }
