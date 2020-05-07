@@ -27,7 +27,10 @@ namespace Stars.Web.Components
 		{
 			return js.InvokeAsync<T>("onWheel", element, e);
 		}
-
+		public static ValueTask BindWheelEvent(this IJSRuntime js, ElementReference element)
+		{
+			return js.InvokeVoidAsync("bindWheelEvent", element);
+		}
 		public static ValueTask ResetUI(this IJSRuntime js)
 		{
 			return js.InvokeVoidAsync("resetUI");

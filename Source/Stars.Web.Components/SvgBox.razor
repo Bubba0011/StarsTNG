@@ -4,7 +4,6 @@
 	 viewBox="@ViewBox"
 	 @onmousedown="HandleMouseDownEvent"
 	 @onclick="HandleClickEvent"
-	 @onwheel="HandleWheel"
 	 @oncontextmenu:preventDefault
 	 @oncontextmenu="@(e => null)"
 	 @ref="svgRef">
@@ -38,6 +37,7 @@
 		if (firstRender)
 		{
 			await JSRuntime.ResetUI();
+			await JSRuntime.BindWheelEvent(svgRef);
 			ViewBox = await GetViewBoxAsync();
 			StateHasChanged();
 		}
@@ -63,21 +63,6 @@
 		return viewBox.ToString();
 	}
 
-	private async Task HandleWheelEvent(WheelEventArgs e)
-	{
-		if (OnWheel.HasDelegate)
-		{
-			var args = new SvgWheelEventArgs()
-			{
-				ScreenCoords = await JSRuntime.GetPositionFromCorner<Vector>(svgRef, e),
-				SvgCoords = await JSRuntime.GetElementPosition<Vector>(svgRef, e),
-				WheelDelta = e.DeltaY,
-			};
-
-			await OnWheel.InvokeAsync(args);
-		}
-	}
-
 	private async Task HandleClickEvent(MouseEventArgs e)
 	{
 		if (OnClick.HasDelegate)
@@ -96,19 +81,6 @@
 	private async Task HandleMouseDownEvent(MouseEventArgs e)
 	{
 		await JSRuntime.OnMouseDown(e);
-	}
-
-	private async Task HandleWheel(WheelEventArgs e)
-	{
-		if (OnWheel.HasDelegate)
-		{
-			ZoomFactor = await JSRuntime.OnWheel<double>(svgRef, e);
-			var args = new SvgWheelEventArgs()
-			{
-				ZoomFactor = ZoomFactor
-			};
-			await OnWheel.InvokeAsync(args);
-		}
 	}
 
 	public struct Focus

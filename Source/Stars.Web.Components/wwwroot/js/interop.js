@@ -28,16 +28,16 @@ function retrieveElementPosition(ele, evt) {
     return coords
 }
 
-function onWheel(ele, evt) {
-    let wheelDelta = (evt.deltaY < 0 ? 1.25 : 0.8);
-    let screenCoords = retrievePosFromCorner(ele, evt);
-    let svgCoords = retrieveElementPosition(ele, evt);
+function onWheel(evt) {
+    let wheelDelta = (evt.deltaY > 0 ? 1.25 : 0.8);
+    let screenCoords = retrievePosFromCorner(UI.svg, evt);
+    let svgCoords = retrieveElementPosition(UI.svg, evt);
     UI.zoomFactor *= wheelDelta;
 
-    ele.viewBox.baseVal.width *= wheelDelta;
-    ele.viewBox.baseVal.height *= wheelDelta;
-    ele.viewBox.baseVal.x = (svgCoords.X - screenCoords.X * UI.zoomFactor);
-    ele.viewBox.baseVal.y = (svgCoords.Y - screenCoords.Y * UI.zoomFactor);
+    UI.svg.viewBox.baseVal.width *= wheelDelta;
+    UI.svg.viewBox.baseVal.height *= wheelDelta;
+    UI.svg.viewBox.baseVal.x = (svgCoords.X - screenCoords.X * UI.zoomFactor);
+    UI.svg.viewBox.baseVal.y = (svgCoords.Y - screenCoords.Y * UI.zoomFactor);
     return UI.zoomFactor;
 }
 
@@ -75,4 +75,9 @@ function retrieveScreenSize(elementId) {
 
 function resetUI() {
     UI.zoomFactor = 1.0;
+}
+
+function bindWheelEvent(svg) {
+    svg.addEventListener("wheel", onWheel);
+    UI.svg = svg;
 }
