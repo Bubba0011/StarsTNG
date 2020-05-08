@@ -35,5 +35,9 @@ namespace Stars.Web.Components
 		{
 			return js.InvokeVoidAsync("resetUI");
 		}
+		public static ValueTask BindCallbackMethod<T>(this IJSRuntime js, DotNetObjectReference<T> obj, string name) where T : class
+		{
+			return js.InvokeVoidAsync("bindCallbackMethod", obj, name);
+		}
 	}
 }

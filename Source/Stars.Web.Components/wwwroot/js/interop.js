@@ -1,5 +1,6 @@
 ﻿let UI = {
-    zoomFactor: 1.0
+    zoomFactor: 1.0,
+    dotNetObjects: {}
 }
 
 function retrievePosFromCorner(element, event) {
@@ -38,6 +39,8 @@ function onWheel(evt) {
     UI.svg.viewBox.baseVal.height *= wheelDelta;
     UI.svg.viewBox.baseVal.x = (svgCoords.X - screenCoords.X * UI.zoomFactor);
     UI.svg.viewBox.baseVal.y = (svgCoords.Y - screenCoords.Y * UI.zoomFactor);
+    UI.dotNetObjects.galaxyView.invokeMethodAsync('ZoomCallback', UI.zoomFactor.toPrecision(2));
+
     return UI.zoomFactor;
 }
 
@@ -80,4 +83,8 @@ function resetUI() {
 function bindWheelEvent(svg) {
     svg.addEventListener("wheel", onWheel);
     UI.svg = svg;
+}
+
+function bindCallbackMethod(obj, name) {
+    UI.dotNetObjects[name] = obj;
 }

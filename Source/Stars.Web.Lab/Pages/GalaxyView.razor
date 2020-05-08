@@ -3,6 +3,7 @@
 @using Stars.Core
 @using Stars.Core.Setup
 @using Stars.Web.Lab.Data
+@using System.Globalization 
 
 @inject IJSRuntime JSRuntime
 
@@ -45,7 +46,7 @@
 
 <div>
 	<div class="main-container" id="mejn">
-		<UiGalaxy Galaxy="galaxy" OnPlanetSelected="PlanetClicked" @ref="UI" OnZoomFactorChanged="ZoomChanged" ZoomFactor="Zoom">
+		<UiGalaxy Galaxy="galaxy" OnPlanetSelected="PlanetClicked" @ref="UI">
 			<circle cx="@stats.Center.X" cy="@stats.Center.Y" r="15" stroke="blue" fill="transparent" />
 			<circle cx="@stats.MinPlanet.Position.X" cy="@stats.MinPlanet.Position.Y" r="10" stroke="green" fill="transparent" />
 			<circle cx="@stats.MaxPlanet.Position.X" cy="@stats.MaxPlanet.Position.Y" r="10" stroke="red" fill="transparent" />
@@ -114,6 +115,16 @@
 		Generate();
 	}
 
+	protected override void OnAfterRender(bool firstRender)
+	{
+		base.OnAfterRender(firstRender);
+		if (firstRender)
+		{
+			var reference = DotNetObjectReference.Create(this);
+			JSRuntime.BindCallbackMethod(reference, "galaxyView");
+		}
+	}
+
 	private void PlanetClicked(Planet planet)
 	{
 		selectedPlanet = planet != selectedPlanet ? planet : null;
@@ -135,10 +146,15 @@
 			errorMessage = "Error: " + ex.Message;
 		}
 	}
-
-	private void ZoomChanged(double zoomFactor)
+	[JSInvokable("ZoomCallback")]
+	public void ZoomChanged(string zoomFactor)
 	{
-		Zoom = 1/zoomFactor;
+		double zoomDouble = 1.0;
+		Double.TryParse(zoomFactor, NumberStyles.Any, CultureInfo.InvariantCulture, out zoomDouble);
+
+		Zoom = 1/zoomDouble;
+
+		StateHasChanged();
 	}
 
 }

@@ -36,8 +36,6 @@
 {
 	<SvgBox CssClass="swig" 
 			OnClick="TargetObject" 
-			OnWheel="Zoom"
-			ZoomFactor="@ZoomFactor"
 			FocusOn="@focus">
 
 		<rect x="@(-gridSide)" y="@(-gridSide)" width="@Galaxy.Size" height="@Galaxy.Size" class="galaxy-box" />
@@ -77,9 +75,6 @@
 	SvgBox.Focus focus = new SvgBox.Focus() { View = Vector.Zero };
 
 	[Parameter]
-	public double ZoomFactor { get; set; }
-
-	[Parameter]
 	public Galaxy Galaxy { get; set; }
 
 	[Parameter]
@@ -88,18 +83,11 @@
 	[Parameter]
 	public EventCallback<Planet> OnPlanetSelected { get; set; }
 
-	[Parameter]
-	public EventCallback<double> OnZoomFactorChanged { get; set; }
 
 	private async Task TargetObject(SvgBox.SvgMouseEventArgs e)
 	{
 		var pos = new Position((int)e.SvgCoords.X, (int)e.SvgCoords.Y);
 		var target = Galaxy.ClosestPlanet(pos);
 		await OnPlanetSelected.InvokeAsync(target);
-	}
-
-	private async Task Zoom(SvgBox.SvgWheelEventArgs e)
-	{
-		await OnZoomFactorChanged.InvokeAsync(e.ZoomFactor);
 	}
 }

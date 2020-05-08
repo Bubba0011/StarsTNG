@@ -21,16 +21,10 @@
 	public string CssClass { get; set; }
 
 	[Parameter]
-	public double ZoomFactor { get; set; }
-
-	[Parameter]
 	public Focus FocusOn { get; set; }
 
 	[Parameter]
 	public EventCallback<SvgMouseEventArgs> OnClick { get; set; }
-
-	[Parameter]
-	public EventCallback<SvgWheelEventArgs> OnWheel { get; set; }
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
@@ -52,12 +46,12 @@
 			Dimensions = new Vector(screen.X, screen.Y),
 		};
 
-		var viewBox = screenRect / ZoomFactor;
+		var viewBox = screenRect;
 
 		if (FocusOn.View.HasValue)
 		{
 			var screenFocus = FocusOn.Screen ?? screenRect.Center;
-			viewBox.TopLeft = FocusOn.View.Value - screenFocus / ZoomFactor;
+			viewBox.TopLeft = FocusOn.View.Value - screenFocus;
 		}
 
 		return viewBox.ToString();
