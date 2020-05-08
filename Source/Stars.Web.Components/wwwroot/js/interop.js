@@ -1,12 +1,15 @@
 ﻿let UI = {
     zoomFactor: 1.0,
+    zoomPrecision: 2,
+    screenCords: {},
+    svgCoords: {},
     dotNetObjects: {}
 }
 
-function retrievePosFromCorner(element, event) {
-    let rect = element.getBoundingClientRect();
-    const x = event.clientX - rect.x
-    const y = event.clientY - rect.y
+function retrievePosFromCorner(e) {
+    let rect = UI.svg.getBoundingClientRect();
+    const x = e.clientX - rect.x
+    const y = e.clientY - rect.y
     let coords = {
         X: ~~x,
         Y: ~~y
@@ -14,13 +17,13 @@ function retrievePosFromCorner(element, event) {
     return coords
 }
 
-function retrieveElementPosition(ele, evt) {
-    let pt = ele.createSVGPoint();
-    pt.x = evt.clientX;
-    pt.y = evt.clientY;
+function retrieveElementPosition(e) {
+    let pt = UI.svg.createSVGPoint();
+    pt.x = e.clientX;
+    pt.y = e.clientY;
 
     // The cursor point, translated into svg coordinates
-    let cursorpt = pt.matrixTransform(ele.getScreenCTM().inverse());
+    let cursorpt = pt.matrixTransform(UI.svg.getScreenCTM().inverse());
 
     let coords = {
         X: ~~cursorpt.x,
@@ -29,19 +32,23 @@ function retrieveElementPosition(ele, evt) {
     return coords
 }
 
-function onWheel(evt) {
-    let wheelDelta = (evt.deltaY > 0 ? 1.25 : 0.8);
-    let screenCoords = retrievePosFromCorner(UI.svg, evt);
-    let svgCoords = retrieveElementPosition(UI.svg, evt);
+function onWheel(e) {
+    let wheelDelta = (e.deltaY > 0 ? 1.25 : 0.8);
+    UI.screenCoords = retrievePosFromCorner(e);
+    UI.svgCoords = retrieveElementPosition(e);
     UI.zoomFactor *= wheelDelta;
 
-    UI.svg.viewBox.baseVal.width *= wheelDelta;
-    UI.svg.viewBox.baseVal.height *= wheelDelta;
-    UI.svg.viewBox.baseVal.x = (svgCoords.X - screenCoords.X * UI.zoomFactor);
-    UI.svg.viewBox.baseVal.y = (svgCoords.Y - screenCoords.Y * UI.zoomFactor);
-    UI.dotNetObjects.galaxyView.invokeMethodAsync('ZoomCallback', UI.zoomFactor.toPrecision(2));
+    updateViewBox(wheelDelta);
+    UI.dotNetObjects.galaxyView.invokeMethodAsync('ZoomCallback', UI.zoomFactor.toPrecision(UI.zoomPrecision));
+}
 
-    return UI.zoomFactor;
+function updateViewBox(wheelDelta) {
+    vb = UI.svg.viewBox.baseVal;
+
+    vb.width *= wheelDelta;
+    vb.height *= wheelDelta;
+    vb.x = (UI.svgCoords.X - UI.screenCoords.X * UI.zoomFactor);
+    vb.y = (UI.svgCoords.Y - UI.screenCoords.Y * UI.zoomFactor);
 }
 
 function onMouseDown(e) {
@@ -81,8 +88,8 @@ function resetUI() {
 }
 
 function bindWheelEvent(svg) {
-    svg.addEventListener("wheel", onWheel);
     UI.svg = svg;
+    UI.svg.addEventListener("wheel", onWheel);
 }
 
 function bindCallbackMethod(obj, name) {

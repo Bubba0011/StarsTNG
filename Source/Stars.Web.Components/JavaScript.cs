@@ -9,11 +9,11 @@ namespace Stars.Web.Components
 	{
 		public static ValueTask<T> GetElementPosition<T>(this IJSRuntime js, ElementReference element, MouseEventArgs e)
 		{
-			return js.InvokeAsync<T>("retrieveElementPosition", element, e);
+			return js.InvokeAsync<T>("retrieveElementPosition", e);
 		}
 		public static ValueTask<T> GetPositionFromCorner<T>(this IJSRuntime js, ElementReference element, MouseEventArgs e)
 		{
-			return js.InvokeAsync<T>("retrievePosFromCorner", element, e);
+			return js.InvokeAsync<T>("retrievePosFromCorner", e);
 		}
 		public static ValueTask<T> GetScreenSize<T>(this IJSRuntime js, string elementId)
 		{
@@ -23,21 +23,14 @@ namespace Stars.Web.Components
 		{
 			return js.InvokeVoidAsync("onMouseDown", e);
 		}
-		public static ValueTask<T> OnWheel<T>(this IJSRuntime js, ElementReference element, WheelEventArgs e)
-		{
-			return js.InvokeAsync<T>("onWheel", element, e);
-		}
-		public static ValueTask BindWheelEvent(this IJSRuntime js, ElementReference element)
-		{
-			return js.InvokeVoidAsync("bindWheelEvent", element);
-		}
-		public static ValueTask ResetUI(this IJSRuntime js)
-		{
-			return js.InvokeVoidAsync("resetUI");
-		}
 		public static ValueTask BindCallbackMethod<T>(this IJSRuntime js, DotNetObjectReference<T> obj, string name) where T : class
 		{
 			return js.InvokeVoidAsync("bindCallbackMethod", obj, name);
+		}
+		public static ValueTask InitializeJS(this IJSRuntime js, ElementReference element)
+		{
+			js.InvokeVoidAsync("resetUI");
+			return js.InvokeVoidAsync("bindWheelEvent", element);
 		}
 	}
 }

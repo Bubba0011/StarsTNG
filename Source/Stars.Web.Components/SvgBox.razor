@@ -30,8 +30,7 @@
 	{
 		if (firstRender)
 		{
-			await JSRuntime.ResetUI();
-			await JSRuntime.BindWheelEvent(svgRef);
+			await JSRuntime.InitializeJS(svgRef);
 			ViewBox = await GetViewBoxAsync();
 			StateHasChanged();
 		}
