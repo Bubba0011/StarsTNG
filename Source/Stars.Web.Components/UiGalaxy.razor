@@ -27,7 +27,11 @@
 	}
 
 	.planet {
-		fill: rgb(100,120,160);
+		fill: rgb(40,60,60);
+	}
+
+	.colony {
+		fill: rgb(120,220,140);
 	}
 </style>
 
@@ -47,7 +51,7 @@
 
 		@foreach (var p in Galaxy.Planets)
 		{
-			<circle cx="@p.Position.X" cy="@p.Position.Y" r="1.5" class="planet" />
+			<circle cx="@p.Position.X" cy="@p.Position.Y" r="1.5" class="@(p.OwnerId.HasValue ? "colony" : "planet")" />
 		}
 
 		@ChildContent
@@ -82,7 +86,7 @@
 	SvgBox.Focus focus = new SvgBox.Focus() { View = Vector.Zero };
 
 	[Parameter]
-	public Galaxy Galaxy { get; set; }
+	public IGalaxy Galaxy { get; set; }
 
 	[Parameter]
 	public RenderFragment ChildContent { get; set; }

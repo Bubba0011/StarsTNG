@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net.NetworkInformation;
 
 namespace Stars.Core
 {
-	public class Galaxy
+	public class Galaxy : IGalaxy
 	{
 		public IList<Planet> Planets { get; set; } = new List<Planet>();
 
@@ -12,24 +11,10 @@ namespace Stars.Core
 
 		public int Size { get; set; }
 
-		public Bounds Bounds => new Bounds(Size);
+		public GalaxyBounds Bounds => new GalaxyBounds(Size);
 
-		public Planet ClosestPlanet(Position target)
-		{
-			return Planets.OrderBy(i => i.Position.DistanceTo(target)).First();
-		}
-	}
+		IEnumerable<Planet> IGalaxy.Planets => Planets;
 
-	public struct Bounds
-	{
-		public int Mid => 0;
-		public int Min => -Size / 2;
-		public int Max => Size / 2;
-		public int Size { get; }
-
-		public Bounds(int size)
-		{
-			Size = size;
-		}
+		IEnumerable<Player> IGalaxy.Players => Players;
 	}
 }

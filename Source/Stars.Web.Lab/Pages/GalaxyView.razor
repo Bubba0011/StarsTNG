@@ -119,6 +119,7 @@
 	protected override void OnAfterRender(bool firstRender)
 	{
 		base.OnAfterRender(firstRender);
+
 		if (firstRender)
 		{
 			var reference = DotNetObjectReference.Create(this);
@@ -135,11 +136,14 @@
 	{
 		errorMessage = null;
 		selectedPlanet = null;
-		var generator = new GalaxyGenerator();
 
 		try
 		{
+			var generator = new GalaxyGenerator();
 			galaxy = generator.Generate(settings);
+
+			galaxy.Planets.First().OwnerId = 1;
+
 			stats = GalaxyStats.Create(galaxy);
 		}
 		catch (Exception ex)

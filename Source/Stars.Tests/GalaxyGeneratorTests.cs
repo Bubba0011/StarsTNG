@@ -63,7 +63,7 @@ namespace Stars.Tests
 			};
 
 			var galaxy = generator.Generate(settings);
-			var bounds = new Bounds(size - padding);
+			var bounds = new GalaxyBounds(size - padding);
 
 			Assert.All(galaxy.Planets, planet => Assert.True(PointInRange(planet.Position)));
 
