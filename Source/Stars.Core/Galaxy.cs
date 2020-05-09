@@ -13,7 +13,7 @@ namespace Stars.Core
 
 		public GalaxyBounds Bounds => new GalaxyBounds(Size);
 
-		IEnumerable<Planet> IGalaxy.Planets => Planets;
+		IEnumerable<IPlanet> IGalaxy.Planets => Planets;
 
 		IEnumerable<Player> IGalaxy.Players => Players;
 	}

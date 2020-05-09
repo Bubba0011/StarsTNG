@@ -27,11 +27,15 @@
 	}
 
 	.planet {
-		fill: rgb(40,60,60);
+		fill: rgb(20,40,40);
 	}
 
-	.colony {
-		fill: rgb(120,220,140);
+	.planet-scanned {
+		fill: rgb(40,80,80);
+	}
+
+	.planet-owned {
+		fill: rgb(120,240,180);
 	}
 </style>
 
@@ -51,7 +55,7 @@
 
 		@foreach (var p in Galaxy.Planets)
 		{
-			<circle cx="@p.Position.X" cy="@p.Position.Y" r="1.5" class="@(p.OwnerId.HasValue ? "colony" : "planet")" />
+			<circle cx="@p.Position.X" cy="@p.Position.Y" r="1.5" class="@GetClass(p)" />
 		}
 
 		@ChildContent
@@ -92,12 +96,19 @@
 	public RenderFragment ChildContent { get; set; }
 
 	[Parameter]
-	public EventCallback<Planet> OnPlanetSelected { get; set; }
+	public EventCallback<IPlanet> OnPlanetSelected { get; set; }
 
 	private async Task TargetObject(SvgBox.SvgMouseEventArgs e)
 	{
 		var pos = new Position((int)e.SvgCoords.X, (int)e.SvgCoords.Y);
 		var target = Galaxy.ClosestPlanet(pos);
 		await OnPlanetSelected.InvokeAsync(target);
+	}
+
+	private string GetClass(IPlanet planet)
+	{
+		if (planet.OwnerId.HasValue) return "planet-owned";
+		if (planet.Details != null) return "planet-scanned";
+		return "planet";
 	}
 }

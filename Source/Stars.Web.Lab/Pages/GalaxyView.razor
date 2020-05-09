@@ -102,11 +102,10 @@
 @code
 {
 	private GalaxyGeneratorSettings settings = new GalaxyGeneratorSettings() { PlanetCount = 333 };
-	private Galaxy galaxy;
+	private IGalaxy galaxy;
 	private GalaxyStats stats;
 	private string errorMessage;
-	private Planet selectedPlanet;
-	private Position relativePlanetPosition;
+	private IPlanet selectedPlanet;
 	private UiGalaxy UI;
 
 	private double Zoom = 1;
@@ -127,9 +126,9 @@
 		}
 	}
 
-	private void PlanetClicked(Planet planet)
+	private void PlanetClicked(IPlanet planet)
 	{
-		selectedPlanet = planet != selectedPlanet ? planet : null;
+		selectedPlanet = planet.Id != selectedPlanet?.Id ? planet : null;
 	}
 
 	private void Generate()
@@ -139,11 +138,17 @@
 
 		try
 		{
+			// Generate
 			var generator = new GalaxyGenerator();
-			galaxy = generator.Generate(settings);
+			var galaxy = generator.Generate(settings);
 
+			// Populate
+			galaxy.Players.Add(new Player() { Id = 1, Name = "The Federation" });
+			galaxy.Players.Add(new Player() { Id = 2, Name = "The Borg" });
 			galaxy.Planets.First().OwnerId = 1;
+			galaxy.Planets.Last().OwnerId = 2;
 
+			this.galaxy = new PlayerView(galaxy, 1);
 			stats = GalaxyStats.Create(galaxy);
 		}
 		catch (Exception ex)
