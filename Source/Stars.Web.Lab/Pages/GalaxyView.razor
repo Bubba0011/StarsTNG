@@ -42,6 +42,11 @@
 	.right {
 		right: 10px;
 	}
+
+	.planet-marker {
+		stroke: rgb(250, 100, 0);
+		fill: none;
+	}
 </style>
 
 <div>
@@ -49,7 +54,7 @@
 		<UiGalaxy Galaxy="galaxy" OnPlanetSelected="PlanetClicked" @ref="UI">
 			@if (selectedPlanet != null)
 			{
-				<circle cx="@selectedPlanet.Position.X" cy="@selectedPlanet.Position.Y" r="5" stroke="yellow" fill="transparent" />
+				<circle cx="@selectedPlanet.Position.X" cy="@selectedPlanet.Position.Y" r="5" class="planet-marker" />
 			}
 		</UiGalaxy>
 
@@ -149,9 +154,8 @@
 		double zoomDouble = 1.0;
 		Double.TryParse(zoomFactor, NumberStyles.Any, CultureInfo.InvariantCulture, out zoomDouble);
 
-		Zoom = 1/zoomDouble;
+		Zoom = 1 / zoomDouble;
 
 		StateHasChanged();
 	}
-
 }

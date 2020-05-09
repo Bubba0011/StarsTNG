@@ -5,13 +5,13 @@
 	}
 
 	.galaxy-box {
-		stroke: darkgray;
+		stroke: rgb(20,40,60);
 		stroke-width: 2px;
 		fill: black;
 	}
 
 	.grid-line {
-		stroke: darkgray;
+		stroke: rgb(20,40,60);
 	}
 
 	.grid-level-1 {
@@ -27,8 +27,7 @@
 	}
 
 	.planet {
-		fill: lightblue;
-		r: 1.5px;
+		fill: rgb(100,120,160);
 	}
 </style>
 
@@ -48,7 +47,7 @@
 
 		@foreach (var p in Galaxy.Planets)
 		{
-			<circle cx="@p.Position.X" cy="@p.Position.Y" class="planet" />
+			<circle cx="@p.Position.X" cy="@p.Position.Y" r="1.5" class="planet" />
 		}
 
 		@ChildContent
@@ -82,7 +81,6 @@
 
 	[Parameter]
 	public EventCallback<Planet> OnPlanetSelected { get; set; }
-
 
 	private async Task TargetObject(SvgBox.SvgMouseEventArgs e)
 	{
