@@ -47,10 +47,6 @@
 <div>
 	<div class="main-container" id="mejn">
 		<UiGalaxy Galaxy="galaxy" OnPlanetSelected="PlanetClicked" @ref="UI">
-			<circle cx="@stats.Center.X" cy="@stats.Center.Y" r="15" stroke="blue" fill="transparent" />
-			<circle cx="@stats.MinPlanet.Position.X" cy="@stats.MinPlanet.Position.Y" r="10" stroke="green" fill="transparent" />
-			<circle cx="@stats.MaxPlanet.Position.X" cy="@stats.MaxPlanet.Position.Y" r="10" stroke="red" fill="transparent" />
-
 			@if (selectedPlanet != null)
 			{
 				<circle cx="@selectedPlanet.Position.X" cy="@selectedPlanet.Position.Y" r="5" stroke="yellow" fill="transparent" />
@@ -100,7 +96,7 @@
 
 @code
 {
-	private GalaxyGeneratorSettings settings = new GalaxyGeneratorSettings();
+	private GalaxyGeneratorSettings settings = new GalaxyGeneratorSettings() { PlanetCount = 333 };
 	private Galaxy galaxy;
 	private GalaxyStats stats;
 	private string errorMessage;
