@@ -37,12 +37,12 @@
 			OnClick="TargetObject" 
 			FocusOn="@focus">
 
-		<rect x="@(-gridSide)" y="@(-gridSide)" width="@Galaxy.Size" height="@Galaxy.Size" class="galaxy-box" />
+		<rect x="@Galaxy.Bounds.Min" y="@Galaxy.Bounds.Min" width="@Galaxy.Bounds.Size" height="@Galaxy.Bounds.Size" class="galaxy-box" />
 
 		@foreach (var (coord, level) in GetGridLines())
 		{
-			<line x1="@(-gridSide)" x2="@gridSide" y1="@coord" y2="@coord" class="@($"grid-line grid-level-{level}")" />
-			<line y1="@(-gridSide)" y2="@gridSide" x1="@coord" x2="@coord" class="@($"grid-line grid-level-{level}")" />
+			<line x1="@Galaxy.Bounds.Min" x2="@Galaxy.Bounds.Max" y1="@coord" y2="@coord" class="@($"grid-line grid-level-{level}")" />
+			<line y1="@Galaxy.Bounds.Min" y2="@Galaxy.Bounds.Max" x1="@coord" x2="@coord" class="@($"grid-line grid-level-{level}")" />
 		}
 
 		@foreach (var p in Galaxy.Planets)
@@ -59,17 +59,25 @@
 {
 	private IEnumerable<(int, int)> GetGridLines()
 	{
-		yield return (-gridSide * 3 / 4, 3);
-		yield return (-gridSide / 4, 3);
-		yield return (-gridSide / 2, 2);
-		yield return (0, 1);
-		yield return (gridSide / 2, 2);
-		yield return (gridSide / 4, 3);
-		yield return (gridSide * 3 / 4, 3);
-	}
+		var bounds = Galaxy.Bounds;
+		var L2Min = Mid(bounds.Mid, bounds.Min);
+		var L2Max = Mid(bounds.Mid, bounds.Max);
 
-	int gridMid => 0;
-	int gridSide => Galaxy.Size / 2;
+		// L3
+		yield return (Mid(bounds.Min, L2Min), 3);
+		yield return (Mid(bounds.Mid, L2Min), 3);
+		yield return (Mid(bounds.Mid, L2Max), 3);
+		yield return (Mid(bounds.Max, L2Max), 3);
+
+		// L2
+		yield return (L2Min, 2);
+		yield return (L2Max, 2);
+
+		// L1
+		yield return (bounds.Mid, 1);
+
+		int Mid(int a, int b) => (a + b) / 2;
+	}
 
 	SvgBox.Focus focus = new SvgBox.Focus() { View = Vector.Zero };
 
