@@ -72,10 +72,9 @@
 		</div>
 
 		<div class="info-panel top left">
-			<h5>Closest Neighbor</h5>
-			<div>Min: @stats.Min ly</div>
-			<div>Max: @stats.Max ly</div>
-			<div>Avg: @stats.Avg ly</div>
+			<h5>Game</h5>
+			<div @onclick="NextTurn">Turn: @game.Turn</div>
+			<div @onclick="NextPlayer">Player: @(game.Galaxy.Players.Single(p => p.Id == playerId).Name)</div>
 		</div>
 
 		<div class="info-panel top right">
@@ -102,8 +101,9 @@
 @code
 {
 	private GalaxyGeneratorSettings settings = new GalaxyGeneratorSettings() { PlanetCount = 333 };
+	private Game game;
+	private int playerId;
 	private IGalaxy galaxy;
-	private GalaxyStats stats;
 	private string errorMessage;
 	private IPlanet selectedPlanet;
 	private UiGalaxy UI;
@@ -138,23 +138,42 @@
 
 		try
 		{
+			// Configure
+			var gameGenSettings = new GameGeneratorSettings()
+			{
+				GalaxySettings = settings,
+				PlayerNames = { "Federation", "The Borg", "Romulans" },
+			};
+
 			// Generate
-			var generator = new GalaxyGenerator();
-			var galaxy = generator.Generate(settings);
+			var generator = new GameGenerator();
+			var game = generator.Generate(gameGenSettings);
 
-			// Populate
-			galaxy.Players.Add(new Player() { Id = 1, Name = "The Federation" });
-			galaxy.Players.Add(new Player() { Id = 2, Name = "The Borg" });
-			galaxy.Planets.First().OwnerId = 1;
-			galaxy.Planets.Last().OwnerId = 2;
-
-			this.galaxy = new PlayerView(galaxy, 1);
-			stats = GalaxyStats.Create(galaxy);
+			this.playerId = game.Galaxy.Players.First().Id;
+			this.game = game;
+			this.galaxy = new PlayerView(game.Galaxy, playerId);
 		}
 		catch (Exception ex)
 		{
 			errorMessage = "Error: " + ex.Message;
 		}
+	}
+
+	private void NextTurn()
+	{
+		game.Update();
+	}
+
+	private void NextPlayer()
+	{
+		playerId += 1;
+
+		if (playerId > game.Galaxy.Players.Last().Id)
+		{
+			playerId = game.Galaxy.Players.First().Id;
+		}
+
+		galaxy = new PlayerView(game.Galaxy, playerId);
 	}
 
 	[JSInvokable("ZoomCallback")]

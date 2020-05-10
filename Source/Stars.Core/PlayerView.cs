@@ -42,9 +42,9 @@ namespace Stars.Core
 
 		private bool InScannerRange(Position position)
 		{
-			const double ScannerRange = 100;
+			//const double ScannerRange = 100;
 
-			return colonies.Any(c => c.Position.DistanceTo(position) <= ScannerRange);
+			return colonies.Any(c => c.Position.DistanceTo(position) <= c.ScannerRange);
 		}
 	}
 
