@@ -30,11 +30,15 @@ namespace Stars.Core.Setup
 				galaxy.Players.Add(player);
 
 				var uninhabitedPlanets = galaxy.Planets
-					.Where(p => p.OwnerId == null)
+					.Where(p => p.Settlement == null)
 					.ToArray();
 
 				var homeworld = rnd.PickOne(uninhabitedPlanets);
-				homeworld.OwnerId = player.Id;
+
+				homeworld.Settlement = new Settlement()
+				{
+					OwnerId = player.Id
+				};
 			}
 
 			var gameSettings = new GameSettings();

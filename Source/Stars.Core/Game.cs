@@ -1,4 +1,6 @@
-﻿namespace Stars.Core
+﻿using System.Linq;
+
+namespace Stars.Core
 {
 	public class Game
 	{
@@ -22,7 +24,10 @@
 
 			foreach (var planet in Galaxy.Planets)
 			{
-				planet.ScannerRange += 10;
+				if (planet.Settlement != null)
+				{
+					planet.Settlement.ScannerRange += 10;
+				}
 			}
 		}
 	}

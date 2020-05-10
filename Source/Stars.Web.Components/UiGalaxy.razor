@@ -37,6 +37,11 @@
 	.planet-owned {
 		fill: rgb(120,240,180);
 	}
+
+	.scanner {
+		fill: rgb(60, 20, 20);
+		clip-path: url(#clippy);
+	}
 </style>
 
 @if (Galaxy != null)
@@ -44,8 +49,18 @@
 	<SvgBox CssClass="swig" 
 			OnClick="TargetObject" 
 			FocusOn="@focus">
+		<defs>
+			<clipPath id="clippy">
+				<rect x="@Galaxy.Bounds.Min" y="@Galaxy.Bounds.Min" width="@Galaxy.Bounds.Size" height="@Galaxy.Bounds.Size" />
+			</clipPath>
+		</defs>
 
 		<rect x="@Galaxy.Bounds.Min" y="@Galaxy.Bounds.Min" width="@Galaxy.Bounds.Size" height="@Galaxy.Bounds.Size" class="galaxy-box" />
+
+		@foreach (var p in Galaxy.Planets.Where(p => p.Settlement != null))
+		{
+			<circle cx="@p.Position.X" cy="@p.Position.Y" r="@p.Settlement.ScannerRange" class="scanner" />
+		}
 
 		@foreach (var (coord, level) in GetGridLines())
 		{
@@ -84,7 +99,7 @@
 		// L1
 		yield return (bounds.Mid, 1);
 
-		int Mid(int a, int b) => (a + b) / 2;
+		static int Mid(int a, int b) => (a + b) / 2;
 	}
 
 	SvgBox.Focus focus = new SvgBox.Focus() { View = Vector.Zero };
@@ -107,7 +122,7 @@
 
 	private string GetClass(IPlanet planet)
 	{
-		if (planet.OwnerId.HasValue) return "planet-owned";
+		if (planet.Settlement != null) return "planet-owned";
 		if (planet.Details != null) return "planet-scanned";
 		return "planet";
 	}

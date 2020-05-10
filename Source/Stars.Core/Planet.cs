@@ -6,8 +6,12 @@
 		public Position Position { get; set; }
 		public string? Name { get; set; }
 		public PlanetDetails? Details { get; set; }
-		public int? OwnerId { get; set; }
+		public Settlement? Settlement { get; set; }
+	}
 
+	public class Settlement
+	{
+		public int OwnerId { get; set; }
 		public int ScannerRange { get; set; }
 	}
 

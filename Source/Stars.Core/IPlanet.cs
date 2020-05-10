@@ -6,6 +6,6 @@
 		public Position Position { get; }
 		public string? Name { get; }
 		public PlanetDetails? Details { get; }
-		public int? OwnerId { get; }
+		public Settlement? Settlement { get; }
 	}
 }

@@ -20,13 +20,13 @@ namespace Stars.Core
 			this.playerId = playerId;
 
 			colonies = galaxy.Planets
-				.Where(p => p.OwnerId == playerId)
+				.Where(p => p.Settlement?.OwnerId == playerId)
 				.ToList();
 		}
 
 		private IPlanet Project(Planet planet)
 		{
-			if (planet.OwnerId == playerId)
+			if (planet.Settlement?.OwnerId == playerId)
 			{
 				return new ScannedPlanet(planet);
 			}
@@ -44,7 +44,7 @@ namespace Stars.Core
 		{
 			//const double ScannerRange = 100;
 
-			return colonies.Any(c => c.Position.DistanceTo(position) <= c.ScannerRange);
+			return colonies.Any(c => c.Position.DistanceTo(position) <= c.Settlement.ScannerRange);
 		}
 	}
 
@@ -56,7 +56,7 @@ namespace Stars.Core
 		public Position Position => planet.Position;
 		public string? Name => planet.Name;
 		public PlanetDetails? Details => planet.Details;
-		public int? OwnerId => planet.OwnerId;
+		public Settlement? Settlement => planet.Settlement;
 
 		public ScannedPlanet(Planet planet)
 		{
@@ -72,7 +72,7 @@ namespace Stars.Core
 		public Position Position => planet.Position;
 		public string? Name => planet.Name;
 		public PlanetDetails? Details => null;
-		public int? OwnerId => null;
+		public Settlement? Settlement => null; 
 
 		public UnknowPlanet(Planet planet)
 		{
