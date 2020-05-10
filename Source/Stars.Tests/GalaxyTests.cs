@@ -20,7 +20,7 @@ namespace Stars.Tests
 		{
 			var galaxy = new Galaxy
 			{
-				Size = 800
+				Bounds = new GalaxyBounds(800)
 			};
 
 			galaxy.Planets = new Planet[] {

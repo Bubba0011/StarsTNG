@@ -44,7 +44,7 @@ namespace Stars.Tests
 
 			var galaxy = generator.Generate(settings);
 
-			Assert.Equal(size, galaxy.Size);
+			Assert.Equal(size, galaxy.Bounds.Size);
 		}
 
 		[Theory]

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace Stars.Core
 {
@@ -9,9 +8,7 @@ namespace Stars.Core
 
 		public IList<Player> Players { get; set; } = new List<Player>();
 
-		public int Size { get; set; }
-
-		public GalaxyBounds Bounds => new GalaxyBounds(Size);
+		public GalaxyBounds Bounds { get; set; }
 
 		IEnumerable<IPlanet> IGalaxy.Planets => Planets;
 

@@ -25,7 +25,7 @@ namespace Stars.Core.Setup
 
 			Galaxy galaxy = new Galaxy()
 			{
-				Size = settings.GalaxySize
+				Bounds = new GalaxyBounds(settings.GalaxySize)
 			};
 
 			galaxy.Planets = RandomPositions(settings)
