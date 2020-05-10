@@ -7,12 +7,8 @@
 		public string? Name { get; set; }
 		public PlanetDetails? Details { get; set; }
 		public Settlement? Settlement { get; set; }
-	}
 
-	public class Settlement
-	{
-		public int OwnerId { get; set; }
-		public int ScannerRange { get; set; }
+		ISettlement? IPlanet.Settlement => Settlement;
 	}
 
 	public class PlanetDetails

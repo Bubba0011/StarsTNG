@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
 namespace Stars.Core
 {
@@ -26,8 +27,19 @@ namespace Stars.Core
 			{
 				if (planet.Settlement != null)
 				{
-					planet.Settlement.ScannerRange += 10;
+					UpdateSettlement(planet.Settlement);
 				}
+			}
+
+			void UpdateSettlement(Settlement settlement)
+			{
+				// TODO: Player.Race.GrowthRate...
+				double rate = 1.05;
+				double rawDelta = settlement.Population * rate;
+				int cleanDelta = 100 * (int)Math.Round(rawDelta / 100, 0);
+				settlement.Population += cleanDelta;
+
+				settlement.ScannerRange = (int)Math.Sqrt(settlement.Population / 100);
 			}
 		}
 	}

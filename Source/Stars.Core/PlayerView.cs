@@ -56,7 +56,7 @@ namespace Stars.Core
 		public Position Position => planet.Position;
 		public string? Name => planet.Name;
 		public PlanetDetails? Details => planet.Details;
-		public Settlement? Settlement => planet.Settlement;
+		public ISettlement? Settlement => planet.Settlement;
 
 		public ScannedPlanet(Planet planet)
 		{
@@ -72,7 +72,7 @@ namespace Stars.Core
 		public Position Position => planet.Position;
 		public string? Name => planet.Name;
 		public PlanetDetails? Details => null;
-		public Settlement? Settlement => null; 
+		public ISettlement? Settlement => null; 
 
 		public UnknowPlanet(Planet planet)
 		{

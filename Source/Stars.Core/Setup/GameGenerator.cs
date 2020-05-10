@@ -37,7 +37,8 @@ namespace Stars.Core.Setup
 
 				homeworld.Settlement = new Settlement()
 				{
-					OwnerId = player.Id
+					OwnerId = player.Id,
+					Population = 10_000,
 				};
 			}
 
