@@ -33,7 +33,7 @@ namespace Stars.Core.Setup
 					.Where(p => p.OwnerId == null)
 					.ToArray();
 
-				var homeworld = uninhabitedPlanets[rnd.Next(0, uninhabitedPlanets.Length)];
+				var homeworld = rnd.PickOne(uninhabitedPlanets);
 				homeworld.OwnerId = player.Id;
 			}
 
