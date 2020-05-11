@@ -63,11 +63,13 @@ namespace Stars.Tests
 			};
 
 			var galaxy = generator.Generate(settings);
-			var bounds = new GalaxyBounds(size - padding);
+			var bounds = new GalaxyBounds(size);
+			var min = bounds.Min + padding;
+			var max = bounds.Max - padding;
 
 			Assert.All(galaxy.Planets, planet => Assert.True(PointInRange(planet.Position)));
 
-			bool CoordInRange(int coord) => coord >= bounds.Min && coord <= bounds.Max;
+			bool CoordInRange(int coord) => coord >= min && coord <= max;
 			bool PointInRange(Position position) => CoordInRange(position.X) && CoordInRange(position.Y);;
 		}
 
