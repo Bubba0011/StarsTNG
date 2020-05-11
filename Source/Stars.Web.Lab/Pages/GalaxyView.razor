@@ -3,7 +3,7 @@
 @using Stars.Core
 @using Stars.Core.Setup
 @using Stars.Web.Lab.Data
-@using System.Globalization 
+@using System.Globalization
 
 @inject IJSRuntime JSRuntime
 
@@ -42,40 +42,15 @@
 	.right {
 		right: 10px;
 	}
-
-	.planet-marker {
-		stroke: rgb(250, 100, 0);
-		fill: none;
-	}
 </style>
 
 <div>
 	<div class="main-container" id="mejn">
-		<UiGalaxy Galaxy="galaxy" OnPlanetSelected="PlanetClicked" @ref="UI">
-			@if (selectedPlanet != null)
-			{
-				<circle cx="@selectedPlanet.Position.X" cy="@selectedPlanet.Position.Y" r="5" class="planet-marker" />
-			}
-		</UiGalaxy>
+		<UiGalaxy Galaxy="galaxy" Zoom="Zoom" OnPlanetSelected="PlanetClicked" @bind-SelectedPlanet="selectedPlanet" @ref="UI" />
+		<PlanetInfoPanel Planet="selectedPlanet" OnPanelClicked="PlanetClicked" IsEnabled="true"/>
 
-		@if (selectedPlanet != null)
-		{
-			<div class="info-panel bottom left" @onclick="() => selectedPlanet = null">
-				<PlanetInfoPanel Planet="selectedPlanet" />
-			</div>
-		}
+		<TurnOrderPanel Game="game" PlayerId="playerId" OnNextTurn="NextTurn" OnNextPlayer="NextPlayer" IsEnabled="true"/>
 
-		<div class="info-panel bottom right">
-			<div id="SVGcoords"></div>
-			<div id="Calccoords"></div>
-			<div>Zoom: @($"{(100 * Zoom):0}%")</div>
-		</div>
-
-		<div class="info-panel top left">
-			<h5>Game</h5>
-			<div @onclick="NextTurn">Turn: @game.Turn</div>
-			<div @onclick="NextPlayer">Player: @(game.Galaxy.Players.Single(p => p.Id == playerId).Name)</div>
-		</div>
 
 		<div class="info-panel top right">
 			<LabelBox Label="Galaxy Size">
@@ -128,7 +103,7 @@
 
 	private void PlanetClicked(IPlanet planet)
 	{
-		selectedPlanet = planet.Id != selectedPlanet?.Id ? planet : null;
+		selectedPlanet = planet?.Id != selectedPlanet?.Id ? planet : null;
 	}
 
 	private void Generate()

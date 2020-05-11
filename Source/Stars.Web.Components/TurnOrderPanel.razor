@@ -1,0 +1,42 @@
+﻿
+@if (IsEnabled)
+{
+	<div class="info-panel top left">
+		<h5>Game</h5>
+		<div @onclick="NextTurn">Turn: @Game.Turn</div>
+		<div @onclick="NextPlayer">Player: @(Game.Galaxy.Players.Single(p => p.Id == PlayerId).Name)</div>
+	</div>
+}
+
+@code {
+
+	[Parameter]
+	public Game Game { get; set; }
+
+	[Parameter]
+	public int PlayerId { get; set; }
+	[Parameter]
+	public EventCallback OnNextTurn { get; set; }
+
+	[Parameter]
+	public EventCallback OnNextPlayer { get; set; }
+
+	[Parameter]
+	public bool IsEnabled { get; set; }
+
+	private async Task NextTurn()
+	{
+		if (OnNextTurn.HasDelegate)
+		{
+			await OnNextTurn.InvokeAsync(null);
+		}
+	}
+
+	private async Task NextPlayer()
+	{
+		if (OnNextPlayer.HasDelegate)
+		{
+			await OnNextPlayer.InvokeAsync(null);
+		}
+	}
+}

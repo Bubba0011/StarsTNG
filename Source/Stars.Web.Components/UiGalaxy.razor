@@ -33,40 +33,53 @@
 		fill: rgb(60, 20, 20);
 		clip-path: url(#clippy);
 	}
+
+	.planet-marker {
+		stroke: rgb(250, 100, 0);
+		fill: none;
+	}
 </style>
 
 @if (Galaxy != null)
 {
-	<SvgBox CssClass="swig" OnClick="TargetObject" FocusOn="@focus">
-		<defs>
-			<clipPath id="clippy">
-				<rect x="@Galaxy.Bounds.Min" y="@Galaxy.Bounds.Min" width="@Galaxy.Bounds.Size" height="@Galaxy.Bounds.Size" />
-			</clipPath>
-		</defs>
+<SvgBox CssClass="swig" OnClick="TargetObject" FocusOn="@focus">
+	<defs>
+		<clipPath id="clippy">
+			<rect x="@Galaxy.Bounds.Min" y="@Galaxy.Bounds.Min" width="@Galaxy.Bounds.Size" height="@Galaxy.Bounds.Size" />
+		</clipPath>
+	</defs>
 
-		<rect x="@Galaxy.Bounds.Min" y="@Galaxy.Bounds.Min" width="@Galaxy.Bounds.Size" height="@Galaxy.Bounds.Size" class="galaxy-box-background" />
+	<rect x="@Galaxy.Bounds.Min" y="@Galaxy.Bounds.Min" width="@Galaxy.Bounds.Size" height="@Galaxy.Bounds.Size" class="galaxy-box-background" />
 
-		@foreach (var p in Galaxy.Planets.Where(p => p.Settlement != null))
-		{
-			<circle cx="@p.Position.X" cy="@p.Position.Y" r="@p.Settlement.ScannerRange" class="scanner" />
-		}
+	@foreach (var p in Galaxy.Planets.Where(p => p.Settlement != null))
+	{
+		<circle cx="@p.Position.X" cy="@p.Position.Y" r="@p.Settlement.ScannerRange" class="scanner" />
+	}
 
-		<GalaxyGrid Galaxy="Galaxy" IsEnabled="true" />
+	<GalaxyGrid Galaxy="Galaxy" IsEnabled="true" />
 
-		<rect x="@Galaxy.Bounds.Min" y="@Galaxy.Bounds.Min" width="@Galaxy.Bounds.Size" height="@Galaxy.Bounds.Size" class="galaxy-box-outline" />
+	<rect x="@Galaxy.Bounds.Min" y="@Galaxy.Bounds.Min" width="@Galaxy.Bounds.Size" height="@Galaxy.Bounds.Size" class="galaxy-box-outline" />
 
-		@foreach (var p in Galaxy.Planets)
-		{
-			<circle cx="@p.Position.X" cy="@p.Position.Y" r="1.5" class="@GetClass(p)" />
-		}
+	@foreach (var p in Galaxy.Planets)
+	{
+		<circle cx="@p.Position.X" cy="@p.Position.Y" r="@GetRadius(2)" class="@GetClass(p)" />
+	}
 
-		@ChildContent
-	</SvgBox>
+	@if (SelectedPlanet != null)
+	{
+		<circle cx="@SelectedPlanet.Position.X" cy="@SelectedPlanet.Position.Y" r="@GetRadius(6)" stroke-width="@(GetStrokeWidth(4))" class="planet-marker" />
+	}
+
+	@ChildContent
+</SvgBox>
 }
 
 @code
 {
 	Focus focus = new Focus() { View = Vector.Zero };
+
+	[Parameter]
+	public IPlanet SelectedPlanet { get; set; }
 
 	[Parameter]
 	public IGalaxy Galaxy { get; set; }
@@ -77,10 +90,18 @@
 	[Parameter]
 	public EventCallback<IPlanet> OnPlanetSelected { get; set; }
 
+	[Parameter]
+	public EventCallback<IPlanet> SelectedPlanetChanged { get; set; }
+
+	[Parameter]
+	public double Zoom { get; set; }
+
 	private async Task TargetObject(SvgMouseEventArgs e)
 	{
 		var pos = new Position((int)e.SvgCoords.X, (int)e.SvgCoords.Y);
 		var target = Galaxy.ClosestPlanet(pos);
+
+		SelectedPlanet = target.Id != SelectedPlanet?.Id ? target : null;
 		await OnPlanetSelected.InvokeAsync(target);
 	}
 
@@ -92,5 +113,16 @@
 			return "planet-scanned";
 
 		return "planet";
+	}
+
+	private string GetRadius(double startValue)
+	{
+		var radius = (startValue / Math.Pow(Zoom, 0.5)).ToString(CultureInfo.InvariantCulture);
+		return radius;
+	}
+
+	private string GetStrokeWidth(double startValue)
+	{
+		return (Double.Parse(GetRadius(startValue),CultureInfo.InvariantCulture) * 0.2).ToString(CultureInfo.InvariantCulture);
 	}
 }
