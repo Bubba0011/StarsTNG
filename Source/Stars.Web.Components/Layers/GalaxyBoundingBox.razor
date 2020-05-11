@@ -1,0 +1,46 @@
+﻿<style>
+	.galaxy-bounding-box {
+		stroke: none;
+		stroke-width: 2px;
+		fill: none;
+	}
+
+	.background {
+		fill: black;
+	}
+
+	.outline {
+		stroke: rgb(20,40,60);
+	}
+</style>
+
+<rect x="@Bounds.Min" y="@Bounds.Min" width="@Bounds.Size" height="@Bounds.Size" class="@GetClass()" />
+
+@code 
+{
+	[Parameter]
+	public GalaxyBounds Bounds { get; set; }
+
+	[Parameter]
+	public bool IsFilled { get; set; }
+
+	[Parameter]
+	public bool IsOutlined { get; set; }
+
+	string GetClass()
+	{
+		string value = "galaxy-bounding-box";
+
+		if (IsOutlined)
+		{
+			value += " outline";
+		}
+
+		if (IsFilled)
+		{
+			value += " background";
+		}
+
+		return value;
+	}
+}

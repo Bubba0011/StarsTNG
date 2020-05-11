@@ -1,0 +1,41 @@
+﻿<style>
+	.planet {
+		fill: rgb(20,40,40);
+	}
+
+	.planet-scanned {
+		fill: rgb(40,80,80);
+	}
+
+	.planet-owned {
+		fill: rgb(120,240,180);
+	}
+</style>
+
+@if (Galaxy != null && IsEnabled)
+{
+	@foreach (var p in Galaxy.Planets)
+	{
+		<circle cx="@p.Position.X" cy="@p.Position.Y" r="1.5" class="@GetClass(p)" />
+	}
+}
+
+@code
+{
+	[Parameter]
+	public IGalaxy Galaxy { get; set; }
+
+	[Parameter]
+	public bool IsEnabled { get; set; } = true;
+
+	private string GetClass(IPlanet planet)
+	{
+		if (planet.Settlement != null)
+			return "planet-owned";
+
+		if (planet.Details != null)
+			return "planet-scanned";
+
+		return "planet";
+	}
+}

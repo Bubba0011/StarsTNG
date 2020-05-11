@@ -5,60 +5,16 @@
 	.swig {
 		background-color: rgb(20,20,20);
 	}
-
-	.galaxy-box-background {
-		stroke: none;
-		fill: black;
-	}
-
-	.galaxy-box-outline {
-		stroke: rgb(20,40,60);
-		stroke-width: 2px;
-		fill: none;
-	}
-
-	.planet {
-		fill: rgb(20,40,40);
-	}
-
-	.planet-scanned {
-		fill: rgb(40,80,80);
-	}
-
-	.planet-owned {
-		fill: rgb(120,240,180);
-	}
-
-	.scanner {
-		fill: rgb(60, 20, 20);
-		clip-path: url(#clippy);
-	}
 </style>
 
 @if (Galaxy != null)
 {
 	<SvgBox CssClass="swig" OnClick="TargetObject" FocusOn="@focus">
-		<defs>
-			<clipPath id="clippy">
-				<rect x="@Galaxy.Bounds.Min" y="@Galaxy.Bounds.Min" width="@Galaxy.Bounds.Size" height="@Galaxy.Bounds.Size" />
-			</clipPath>
-		</defs>
-
-		<rect x="@Galaxy.Bounds.Min" y="@Galaxy.Bounds.Min" width="@Galaxy.Bounds.Size" height="@Galaxy.Bounds.Size" class="galaxy-box-background" />
-
-		@foreach (var p in Galaxy.Planets.Where(p => p.Settlement != null))
-		{
-			<circle cx="@p.Position.X" cy="@p.Position.Y" r="@p.Settlement.ScannerRange" class="scanner" />
-		}
-
-		<GalaxyGrid Galaxy="Galaxy" IsEnabled="true" />
-
-		<rect x="@Galaxy.Bounds.Min" y="@Galaxy.Bounds.Min" width="@Galaxy.Bounds.Size" height="@Galaxy.Bounds.Size" class="galaxy-box-outline" />
-
-		@foreach (var p in Galaxy.Planets)
-		{
-			<circle cx="@p.Position.X" cy="@p.Position.Y" r="1.5" class="@GetClass(p)" />
-		}
+		<GalaxyBoundingBox Bounds="Galaxy.Bounds" IsFilled="true" />
+		<ScannerLayer Galaxy="Galaxy" />
+		<GalaxyGrid Galaxy="Galaxy" />
+		<GalaxyBoundingBox Bounds="Galaxy.Bounds" IsOutlined="true" />
+		<PlanetLayer Galaxy="Galaxy" />
 
 		@ChildContent
 	</SvgBox>
@@ -82,15 +38,5 @@
 		var pos = new Position((int)e.SvgCoords.X, (int)e.SvgCoords.Y);
 		var target = Galaxy.ClosestPlanet(pos);
 		await OnPlanetSelected.InvokeAsync(target);
-	}
-
-	private string GetClass(IPlanet planet)
-	{
-		if (planet.Settlement != null)
-			return "planet-owned";
-		if (planet.Details != null)
-			return "planet-scanned";
-
-		return "planet";
 	}
 }

@@ -1,0 +1,48 @@
+﻿<style>
+	.scanner {
+		fill: rgb(60, 20, 20);
+		clip-path: url(#clippy);
+	}
+</style>
+
+@if (IsEnabled && Galaxy != null)
+{
+	<clipPath id="clippy">
+		<rect x="@Galaxy.Bounds.Min" y="@Galaxy.Bounds.Min" width="@Galaxy.Bounds.Size" height="@Galaxy.Bounds.Size" />
+	</clipPath>
+
+	@foreach (var site in GetScannerSites())
+	{
+		<circle cx="@site.X" cy="@site.Y" r="@site.R" class="scanner" />
+	}
+}
+
+@code
+{
+	[Parameter]
+	public IGalaxy Galaxy { get; set; }
+
+	[Parameter]
+	public bool IsEnabled { get; set; } = true;
+
+	IEnumerable<ScannerSite> GetScannerSites()
+	{
+		return Galaxy.Planets
+			.Where(planet => planet.Settlement?.ScannerRange > 0)
+			.Select(planet => new ScannerSite(planet));
+	}
+
+	struct ScannerSite
+	{
+		public int X;
+		public int Y;
+		public int R;
+
+		public ScannerSite(IPlanet planet)
+		{
+			X = planet.Position.X;
+			Y = planet.Position.Y;
+			R = planet.Settlement.ScannerRange;
+		}
+	}
+}
