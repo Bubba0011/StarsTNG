@@ -1,30 +1,20 @@
 ﻿@using Stars.Web.Components.Svg
+@using Stars.Web.Components.Layers
 
 <style>
 	.swig {
 		background-color: rgb(20,20,20);
 	}
 
-	.galaxy-box {
-		stroke: rgb(20,40,60);
-		stroke-width: 2px;
+	.galaxy-box-background {
+		stroke: none;
 		fill: black;
 	}
 
-	.grid-line {
+	.galaxy-box-outline {
 		stroke: rgb(20,40,60);
-	}
-
-	.grid-level-1 {
-		stroke-width: 0.75px;
-	}
-
-	.grid-level-2 {
-		stroke-width: 0.5px;
-	}
-
-	.grid-level-3 {
-		stroke-width: 0.25px;
+		stroke-width: 2px;
+		fill: none;
 	}
 
 	.planet {
@@ -47,27 +37,23 @@
 
 @if (Galaxy != null)
 {
-	<SvgBox CssClass="swig" 
-			OnClick="TargetObject" 
-			FocusOn="@focus">
+	<SvgBox CssClass="swig" OnClick="TargetObject" FocusOn="@focus">
 		<defs>
 			<clipPath id="clippy">
 				<rect x="@Galaxy.Bounds.Min" y="@Galaxy.Bounds.Min" width="@Galaxy.Bounds.Size" height="@Galaxy.Bounds.Size" />
 			</clipPath>
 		</defs>
 
-		<rect x="@Galaxy.Bounds.Min" y="@Galaxy.Bounds.Min" width="@Galaxy.Bounds.Size" height="@Galaxy.Bounds.Size" class="galaxy-box" />
+		<rect x="@Galaxy.Bounds.Min" y="@Galaxy.Bounds.Min" width="@Galaxy.Bounds.Size" height="@Galaxy.Bounds.Size" class="galaxy-box-background" />
 
 		@foreach (var p in Galaxy.Planets.Where(p => p.Settlement != null))
 		{
 			<circle cx="@p.Position.X" cy="@p.Position.Y" r="@p.Settlement.ScannerRange" class="scanner" />
 		}
 
-		@foreach (var (coord, level) in GetGridLines())
-		{
-			<line x1="@Galaxy.Bounds.Min" x2="@Galaxy.Bounds.Max" y1="@coord" y2="@coord" class="@($"grid-line grid-level-{level}")" />
-			<line y1="@Galaxy.Bounds.Min" y2="@Galaxy.Bounds.Max" x1="@coord" x2="@coord" class="@($"grid-line grid-level-{level}")" />
-		}
+		<GalaxyGrid Galaxy="Galaxy" IsEnabled="true" />
+
+		<rect x="@Galaxy.Bounds.Min" y="@Galaxy.Bounds.Min" width="@Galaxy.Bounds.Size" height="@Galaxy.Bounds.Size" class="galaxy-box-outline" />
 
 		@foreach (var p in Galaxy.Planets)
 		{
@@ -75,34 +61,11 @@
 		}
 
 		@ChildContent
-
 	</SvgBox>
 }
 
 @code
 {
-	private IEnumerable<(int, int)> GetGridLines()
-	{
-		var bounds = Galaxy.Bounds;
-		var L2Min = Mid(bounds.Mid, bounds.Min);
-		var L2Max = Mid(bounds.Mid, bounds.Max);
-
-		// L3
-		yield return (Mid(bounds.Min, L2Min), 3);
-		yield return (Mid(bounds.Mid, L2Min), 3);
-		yield return (Mid(bounds.Mid, L2Max), 3);
-		yield return (Mid(bounds.Max, L2Max), 3);
-
-		// L2
-		yield return (L2Min, 2);
-		yield return (L2Max, 2);
-
-		// L1
-		yield return (bounds.Mid, 1);
-
-		static int Mid(int a, int b) => (a + b) / 2;
-	}
-
 	Focus focus = new Focus() { View = Vector.Zero };
 
 	[Parameter]
@@ -123,8 +86,11 @@
 
 	private string GetClass(IPlanet planet)
 	{
-		if (planet.Settlement != null) return "planet-owned";
-		if (planet.Details != null) return "planet-scanned";
+		if (planet.Settlement != null)
+			return "planet-owned";
+		if (planet.Details != null)
+			return "planet-scanned";
+
 		return "planet";
 	}
 }

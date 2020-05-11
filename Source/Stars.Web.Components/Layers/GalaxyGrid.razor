@@ -1,0 +1,57 @@
+﻿<style>
+	.grid-line {
+		stroke: rgb(20,40,60);
+	}
+
+	.grid-level-1 {
+		stroke-width: 0.75px;
+	}
+
+	.grid-level-2 {
+		stroke-width: 0.5px;
+	}
+
+	.grid-level-3 {
+		stroke-width: 0.25px;
+	}
+</style>
+
+@foreach (var (coord, level) in GetGridLines())
+{
+	<line x1="@Galaxy.Bounds.Min" x2="@Galaxy.Bounds.Max" y1="@coord" y2="@coord" class="@($"grid-line grid-level-{level}")" />
+	<line y1="@Galaxy.Bounds.Min" y2="@Galaxy.Bounds.Max" x1="@coord" x2="@coord" class="@($"grid-line grid-level-{level}")" />
+}
+
+@code
+{
+	[Parameter]
+	public IGalaxy Galaxy { get; set; }
+
+	[Parameter]
+	public bool IsEnabled { get; set; } = true;
+
+	private IEnumerable<(int, int)> GetGridLines()
+	{
+		if (Galaxy == null) yield break;
+		if (!IsEnabled) yield break;
+
+		var bounds = Galaxy.Bounds;
+		var L2Min = Mid(bounds.Mid, bounds.Min);
+		var L2Max = Mid(bounds.Mid, bounds.Max);
+
+		// L3
+		yield return (Mid(bounds.Min, L2Min), 3);
+		yield return (Mid(bounds.Mid, L2Min), 3);
+		yield return (Mid(bounds.Mid, L2Max), 3);
+		yield return (Mid(bounds.Max, L2Max), 3);
+
+		// L2
+		yield return (L2Min, 2);
+		yield return (L2Max, 2);
+
+		// L1
+		yield return (bounds.Mid, 1);
+
+		static int Mid(int a, int b) => (a + b) / 2;
+	}
+}
