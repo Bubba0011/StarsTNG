@@ -18,7 +18,7 @@ jobs:
       with:
         dotnet-version: 3.1.101
     - name: Install dependencies
-      run: dotnet restore
+      run: dotnet restore ./Source/StarsTNG.sln
     - name: Build
       run: dotnet build ./Source/StarsTNG.sln --configuration Release --no-restore
     - name: Test
