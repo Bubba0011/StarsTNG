@@ -1,0 +1,32 @@
+﻿<style>
+	.planet-marker {
+		stroke: rgb(250, 100, 0);
+		fill: none;
+	}
+</style>
+
+@if (SelectedPlanet != null)
+{
+	<circle cx="@SelectedPlanet.Position.X" cy="@SelectedPlanet.Position.Y" r="@GetRadius(6)" stroke-width="@(GetStrokeWidth(4))" class="planet-marker" />
+}
+@code {
+	[Parameter]
+	public IPlanet SelectedPlanet { get; set; }
+
+	[Parameter]
+	public EventCallback<IPlanet> SelectedPlanetChanged { get; set; }
+
+	[Parameter]
+	public double Zoom { get; set; }
+
+	private string GetRadius(double startValue)
+	{
+		var radius = (startValue / Math.Pow(Zoom, 0.5)).ToString(CultureInfo.InvariantCulture);
+		return radius;
+	}
+
+	private string GetStrokeWidth(double startValue)
+	{
+		return (Double.Parse(GetRadius(startValue), CultureInfo.InvariantCulture) * 0.2).ToString(CultureInfo.InvariantCulture);
+	}
+}

@@ -5,70 +5,19 @@
 	.swig {
 		background-color: rgb(20,20,20);
 	}
-
-	.galaxy-box-background {
-		stroke: none;
-		fill: black;
-	}
-
-	.galaxy-box-outline {
-		stroke: rgb(20,40,60);
-		stroke-width: 2px;
-		fill: none;
-	}
-
-	.planet {
-		fill: rgb(20,40,40);
-	}
-
-	.planet-scanned {
-		fill: rgb(40,80,80);
-	}
-
-	.planet-owned {
-		fill: rgb(120,240,180);
-	}
-
-	.scanner {
-		fill: rgb(60, 20, 20);
-		clip-path: url(#clippy);
-	}
-
-	.planet-marker {
-		stroke: rgb(250, 100, 0);
-		fill: none;
-	}
 </style>
 
 @if (Galaxy != null)
 {
-<SvgBox CssClass="swig" OnClick="TargetObject" FocusOn="@focus">
-	<defs>
-		<clipPath id="clippy">
-			<rect x="@Galaxy.Bounds.Min" y="@Galaxy.Bounds.Min" width="@Galaxy.Bounds.Size" height="@Galaxy.Bounds.Size" />
-		</clipPath>
-	</defs>
 
-	<rect x="@Galaxy.Bounds.Min" y="@Galaxy.Bounds.Min" width="@Galaxy.Bounds.Size" height="@Galaxy.Bounds.Size" class="galaxy-box-background" />
+	<SvgBox CssClass="swig" OnClick="TargetObject" FocusOn="@focus">
+		<GalaxyBoundingBox Bounds="Galaxy.Bounds" IsFilled="true" />
+		<ScannerLayer Galaxy="Galaxy" />
+		<GalaxyGrid Galaxy="Galaxy" />
+		<GalaxyBoundingBox Bounds="Galaxy.Bounds" IsOutlined="true" />
+		<PlanetLayer Galaxy="Galaxy" Zoom="Zoom"/>
+		<SelectionLayer @bind-SelectedPlanet="SelectedPlanet" Zoom="Zoom"/>
 
-	@foreach (var p in Galaxy.Planets.Where(p => p.Settlement != null))
-	{
-		<circle cx="@p.Position.X" cy="@p.Position.Y" r="@p.Settlement.ScannerRange" class="scanner" />
-	}
-
-	<GalaxyGrid Galaxy="Galaxy" IsEnabled="true" />
-
-	<rect x="@Galaxy.Bounds.Min" y="@Galaxy.Bounds.Min" width="@Galaxy.Bounds.Size" height="@Galaxy.Bounds.Size" class="galaxy-box-outline" />
-
-	@foreach (var p in Galaxy.Planets)
-	{
-		<circle cx="@p.Position.X" cy="@p.Position.Y" r="@GetRadius(2)" class="@GetClass(p)" />
-	}
-
-	@if (SelectedPlanet != null)
-	{
-		<circle cx="@SelectedPlanet.Position.X" cy="@SelectedPlanet.Position.Y" r="@GetRadius(6)" stroke-width="@(GetStrokeWidth(4))" class="planet-marker" />
-	}
 
 	@ChildContent
 </SvgBox>
@@ -105,24 +54,4 @@
 		await OnPlanetSelected.InvokeAsync(target);
 	}
 
-	private string GetClass(IPlanet planet)
-	{
-		if (planet.Settlement != null)
-			return "planet-owned";
-		if (planet.Details != null)
-			return "planet-scanned";
-
-		return "planet";
-	}
-
-	private string GetRadius(double startValue)
-	{
-		var radius = (startValue / Math.Pow(Zoom, 0.5)).ToString(CultureInfo.InvariantCulture);
-		return radius;
-	}
-
-	private string GetStrokeWidth(double startValue)
-	{
-		return (Double.Parse(GetRadius(startValue),CultureInfo.InvariantCulture) * 0.2).ToString(CultureInfo.InvariantCulture);
-	}
 }
