@@ -49,7 +49,7 @@
 
 	private void Reset()
 	{
-		settings.FocusOn = new SvgBox.Focus()
+		settings.FocusOn = new Focus()
 		{
 			View = Vector.Zero,
 		};
@@ -66,7 +66,7 @@
 
 		if (!view.Equals(settings.FocusOn.View))
 		{
-			settings.FocusOn = new SvgBox.Focus()
+			settings.FocusOn = new Focus()
 			{
 				View = view,
 				Screen = new Vector(vx, vy),
@@ -74,21 +74,21 @@
 		}
 		else
 		{
-			settings.FocusOn = new SvgBox.Focus()
+			settings.FocusOn = new Focus()
 			{
 				View = Vector.Zero,
 			};
 		}
 	}
 
-	private void SvgBoxClicked(SvgBox.SvgMouseEventArgs e)
+	private void SvgBoxClicked(SvgMouseEventArgs e)
 	{
 		message = $"{e.ScreenCoords} -> {e.SvgCoords}";
 	}
 
-	private void SvgBoxZoomed(SvgBox.SvgWheelEventArgs e)
+	private void SvgBoxZoomed(SvgWheelEventArgs e)
 	{
-		settings.FocusOn = new SvgBox.Focus()
+		settings.FocusOn = new Focus()
 		{
 			Screen = e.ScreenCoords,
 			View = e.SvgCoords,
@@ -105,7 +105,7 @@
 
 		public double Zoom { get; set; } = 1.0;
 
-		public SvgBox.Focus FocusOn { get; set; } = new SvgBox.Focus() { View = Vector.Zero };
+		public Focus FocusOn { get; set; } = new Focus() { View = Vector.Zero };
 
 		public Rectangle Model { get; set; } = new Rectangle(new Vector(-400, -400), new Vector(800, 800));
 	}

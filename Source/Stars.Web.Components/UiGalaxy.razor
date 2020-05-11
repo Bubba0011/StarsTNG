@@ -1,4 +1,5 @@
-﻿
+﻿@using Stars.Web.Components.Svg
+
 <style>
 	.swig {
 		background-color: rgb(20,20,20);
@@ -102,7 +103,7 @@
 		static int Mid(int a, int b) => (a + b) / 2;
 	}
 
-	SvgBox.Focus focus = new SvgBox.Focus() { View = Vector.Zero };
+	Focus focus = new Focus() { View = Vector.Zero };
 
 	[Parameter]
 	public IGalaxy Galaxy { get; set; }
@@ -113,7 +114,7 @@
 	[Parameter]
 	public EventCallback<IPlanet> OnPlanetSelected { get; set; }
 
-	private async Task TargetObject(SvgBox.SvgMouseEventArgs e)
+	private async Task TargetObject(SvgMouseEventArgs e)
 	{
 		var pos = new Position((int)e.SvgCoords.X, (int)e.SvgCoords.Y);
 		var target = Galaxy.ClosestPlanet(pos);

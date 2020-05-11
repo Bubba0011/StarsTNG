@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace Stars.Web.Components
+namespace Stars.Web.Components.Svg
 {
 	public struct Vector
 	{
