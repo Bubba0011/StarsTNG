@@ -42,30 +42,20 @@
 	.right {
 		right: 10px;
 	}
+
+	.small-font {
+		font-size: small;
+	}
 </style>
 
 <div>
 	<div class="main-container" id="mejn">
 		<UiGalaxy Galaxy="galaxy" Zoom="Zoom" OnPlanetSelected="PlanetClicked" @bind-SelectedPlanet="selectedPlanet" @ref="UI" />
-		<PlanetInfoPanel Planet="selectedPlanet" OnPanelClicked="PlanetClicked" IsEnabled="true"/>
-
-		<TurnOrderPanel Game="game" PlayerId="playerId" OnNextTurn="NextTurn" OnNextPlayer="NextPlayer" IsEnabled="true"/>
-
-
-		<div class="info-panel top right">
-			<LabelBox Label="Galaxy Size">
-				<input @bind-value="settings.GalaxySize" class="num-input" />
-			</LabelBox>
-			<LabelBox Label="Min. Distance">
-				<input @bind-value="settings.MinimumDistanceBetweenPlanets" class="num-input" />
-			</LabelBox>
-			<LabelBox Label="Planets">
-				<input @bind-value="settings.PlanetCount" id="inpPlanets" class="num-input" />
-			</LabelBox>
-
-			<button @onclick="Generate">Generate Galaxy</button>
-		</div>
+		<PlanetInfoPanel Planet="selectedPlanet" OnPanelClicked="PlanetClicked" IsEnabled="true" />
+		<TurnOrderPanel Game="game" PlayerId="playerId" OnNextTurn="NextTurn" OnNextPlayer="NextPlayer" IsEnabled="true" />
+		<GalaxyGenerationPanel OnGenerate="Generate" @bind-Settings="settings" IsEnabled="true" />
 	</div>
+
 
 	@if (errorMessage != null)
 	{

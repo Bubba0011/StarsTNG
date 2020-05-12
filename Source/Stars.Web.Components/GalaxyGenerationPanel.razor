@@ -1,0 +1,39 @@
+﻿@if (IsEnabled)
+{
+	<div class="info-panel top right">
+		<LabelBox Label="Galaxy Size">
+			<input @bind-value="Settings.GalaxySize" class="num-input" />
+		</LabelBox>
+		<LabelBox Label="Min. Distance">
+			<input @bind-value="Settings.MinimumDistanceBetweenPlanets" class="num-input" />
+		</LabelBox>
+		<LabelBox Label="Planets">
+			<input @bind-value="Settings.PlanetCount" id="inpPlanets" class="num-input" />
+		</LabelBox>
+
+		<button @onclick="Generate">Generate Galaxy</button>
+	</div>
+}
+
+@code {
+	[Parameter]
+	public GalaxyGeneratorSettings Settings { get; set; }
+
+	[Parameter]
+	public EventCallback OnGenerate { get; set; }
+
+	[Parameter]
+	public EventCallback<GalaxyGeneratorSettings> SettingsChanged { get; set; }
+
+	[Parameter]
+	public bool IsEnabled { get; set; }
+
+
+	private void Generate()
+	{
+		if (OnGenerate.HasDelegate)
+		{
+			OnGenerate.InvokeAsync(null);
+		}
+	}
+}
