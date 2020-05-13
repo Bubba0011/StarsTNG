@@ -8,13 +8,14 @@
 	</div>
 }
 
-@code {
-
+@code 
+{
 	[Parameter]
 	public Game Game { get; set; }
 
 	[Parameter]
 	public int PlayerId { get; set; }
+
 	[Parameter]
 	public EventCallback OnNextTurn { get; set; }
 

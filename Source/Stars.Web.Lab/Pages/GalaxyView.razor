@@ -6,7 +6,7 @@
 @using System.Globalization
 
 @inject IJSRuntime JSRuntime
-@inject GameStoreService GameStore;
+@inject GameStoreService GameStore
 
 <style>
 	.main-container {
@@ -51,8 +51,8 @@
 
 <div>
 	<div class="main-container" id="mejn">
-		<UiGalaxy Galaxy="galaxy" Zoom="Zoom" OnPlanetSelected="PlanetClicked" @bind-SelectedPlanet="selectedPlanet" />
-		<PlanetInfoPanel Planet="selectedPlanet" OnPanelClicked="PlanetClicked" IsEnabled="true" />
+		<UiGalaxy Galaxy="galaxy" Zoom="Zoom" @bind-SelectedPlanet="selectedPlanet" />
+		<PlanetInfoPanel Planet="selectedPlanet" IsEnabled="true" />
 		<TurnOrderPanel Game="game" PlayerId="playerId" OnNextTurn="NextTurn" OnNextPlayer="NextPlayer" IsEnabled="true" />
 		<GalaxyGenerationPanel OnGenerate="Generate" @bind-Settings="settings" IsEnabled="true" />
 	</div>
@@ -88,11 +88,6 @@
 			var reference = DotNetObjectReference.Create(this);
 			JSRuntime.BindCallbackMethod(reference, "galaxyView");
 		}
-	}
-
-	private void PlanetClicked(IPlanet planet)
-	{
-		selectedPlanet = planet?.Id != selectedPlanet?.Id ? planet : null;
 	}
 
 	private async Task Generate()

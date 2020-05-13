@@ -35,9 +35,6 @@
 	public RenderFragment ChildContent { get; set; }
 
 	[Parameter]
-	public EventCallback<IPlanet> OnPlanetSelected { get; set; }
-
-	[Parameter]
 	public EventCallback<IPlanet> SelectedPlanetChanged { get; set; }
 
 	[Parameter]
@@ -49,6 +46,6 @@
 		var target = Galaxy.ClosestPlanet(pos);
 
 		SelectedPlanet = target.Id != SelectedPlanet?.Id ? target : null;
-		await OnPlanetSelected.InvokeAsync(target);
+		await SelectedPlanetChanged.InvokeAsync(SelectedPlanet);
 	}
 }
