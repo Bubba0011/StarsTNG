@@ -9,7 +9,6 @@
 
 @if (Galaxy != null)
 {
-
 	<SvgBox CssClass="swig" OnClick="TargetObject" FocusOn="@focus">
 		<GalaxyBoundingBox Bounds="Galaxy.Bounds" IsFilled="true" />
 		<ScannerLayer Galaxy="Galaxy" />
@@ -18,9 +17,8 @@
 		<PlanetLayer Galaxy="Galaxy" Zoom="Zoom"/>
 		<SelectionLayer @bind-SelectedPlanet="SelectedPlanet" Zoom="Zoom"/>
 
-
-	@ChildContent
-</SvgBox>
+		@ChildContent
+	</SvgBox>
 }
 
 @code
@@ -53,5 +51,4 @@
 		SelectedPlanet = target.Id != SelectedPlanet?.Id ? target : null;
 		await OnPlanetSelected.InvokeAsync(target);
 	}
-
 }

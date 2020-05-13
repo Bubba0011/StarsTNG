@@ -6,6 +6,7 @@
 @using System.Globalization
 
 @inject IJSRuntime JSRuntime
+@inject GameStoreService GameStore;
 
 <style>
 	.main-container {
@@ -50,12 +51,11 @@
 
 <div>
 	<div class="main-container" id="mejn">
-		<UiGalaxy Galaxy="galaxy" Zoom="Zoom" OnPlanetSelected="PlanetClicked" @bind-SelectedPlanet="selectedPlanet" @ref="UI" />
+		<UiGalaxy Galaxy="galaxy" Zoom="Zoom" OnPlanetSelected="PlanetClicked" @bind-SelectedPlanet="selectedPlanet" />
 		<PlanetInfoPanel Planet="selectedPlanet" OnPanelClicked="PlanetClicked" IsEnabled="true" />
 		<TurnOrderPanel Game="game" PlayerId="playerId" OnNextTurn="NextTurn" OnNextPlayer="NextPlayer" IsEnabled="true" />
 		<GalaxyGenerationPanel OnGenerate="Generate" @bind-Settings="settings" IsEnabled="true" />
 	</div>
-
 
 	@if (errorMessage != null)
 	{
@@ -68,16 +68,15 @@
 	private GalaxyGeneratorSettings settings = new GalaxyGeneratorSettings() { PlanetCount = 333 };
 	private Game game;
 	private int playerId;
-	private IGalaxy galaxy;
 	private string errorMessage;
+	private IGalaxy galaxy;
 	private IPlanet selectedPlanet;
-	private UiGalaxy UI;
 
 	private double Zoom = 1;
 
 	protected override void OnInitialized()
 	{
-		Generate();
+		Reload();
 	}
 
 	protected override void OnAfterRender(bool firstRender)
@@ -96,32 +95,31 @@
 		selectedPlanet = planet?.Id != selectedPlanet?.Id ? planet : null;
 	}
 
-	private void Generate()
+	private async Task Generate()
 	{
 		errorMessage = null;
-		selectedPlanet = null;
 
 		try
 		{
-			// Configure
-			var gameGenSettings = new GameGeneratorSettings()
-			{
-				GalaxySettings = settings,
-				PlayerNames = { "Federation", "The Borg", "Romulans" },
-			};
-
-			// Generate
-			var generator = new GameGenerator();
-			var game = generator.Generate(gameGenSettings);
-
-			this.playerId = game.Galaxy.Players.First().Id;
-			this.game = game;
-			this.galaxy = new PlayerView(game.Galaxy, playerId);
+			await GameStore.RegenerateAsync(settings);
+			Reload();
+			StateHasChanged();
 		}
 		catch (Exception ex)
 		{
 			errorMessage = "Error: " + ex.Message;
 		}
+	}
+
+	private void Reload()
+	{
+		selectedPlanet = null;
+
+		var game = GameStore.GetGame();
+
+		this.playerId = game.Galaxy.Players.First().Id;
+		this.game = game;
+		this.galaxy = new PlayerView(game.Galaxy, playerId);
 	}
 
 	private void NextTurn()
