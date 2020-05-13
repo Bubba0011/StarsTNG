@@ -23,6 +23,7 @@ namespace Stars.Web.Lab
 			services.AddRazorPages();
 			services.AddServerSideBlazor();
 			services.AddSingleton<GameStoreService>();
+			services.AddSingleton<GameServerService>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

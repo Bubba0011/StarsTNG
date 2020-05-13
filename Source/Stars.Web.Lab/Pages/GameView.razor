@@ -1,0 +1,122 @@
+﻿@page "/game/{PlayerId:int}"
+@page "/game"
+
+@using Stars.Core
+@using Stars.Web.Lab.Data
+@using System.Globalization
+
+@inject IJSRuntime JSRuntime
+@inject GameServerService GameServers
+
+@implements IDisposable
+
+<style>
+	.main-container {
+		position: relative;
+		width: 100%;
+		height: 100vh;
+	}
+
+	.setup-container {
+		margin: 5px;
+	}
+
+	.info-panel {
+		position: absolute;
+		background-color: rgba(40,60,80,0.65);
+		color: white;
+		border-radius: 3px;
+		box-shadow: 0 0 1px 1px rgb(80,120,160);
+		padding: 4px;
+	}
+
+	.top {
+		top: 10px;
+	}
+
+	.bottom {
+		bottom: 10px;
+	}
+
+	.left {
+		left: 10px;
+	}
+
+	.right {
+		right: 10px;
+	}
+
+	.small-font {
+		font-size: small;
+	}
+</style>
+
+<div>
+	<div class="main-container" id="mejn">
+		<UiGalaxy Galaxy="Galaxy" Zoom="Zoom" @bind-SelectedPlanet="selectedPlanet" />
+		<PlanetInfoPanel Planet="selectedPlanet" IsEnabled="true" />
+		<!--
+		<TurnOrderPanel Game="game" PlayerId="playerId" OnNextTurn="NextTurn" OnNextPlayer="NextPlayer" IsEnabled="true" />
+		-->
+	</div>
+</div>
+
+@code
+{
+	// Model
+	private GameClient client;
+	private IGalaxy Galaxy => client.GalaxyView;
+
+	// Selection
+	private IPlanet selectedPlanet;
+
+	// Render
+	private double Zoom = 1.0;
+
+	[Parameter]
+	public int PlayerId { get; set; }
+
+	protected override void OnInitialized()
+	{
+		if (PlayerId < 1)
+		{
+			PlayerId = 1;
+		}
+
+		client = GameServers.GetGameClient(PlayerId);
+		client.Updated += GameUpdated;
+	}
+
+	public void Dispose()
+	{
+		client.Updated -= GameUpdated;
+		client.Dispose();
+	}
+
+	private void GameUpdated(object sender, EventArgs e)
+	{
+		InvokeAsync(() => StateHasChanged());
+	}
+
+	protected override void OnAfterRender(bool firstRender)
+	{
+		base.OnAfterRender(firstRender);
+
+		if (firstRender)
+		{
+			var reference = DotNetObjectReference.Create(this);
+			JSRuntime.BindCallbackMethod(reference, "galaxyView");
+		}
+	}
+
+	[JSInvokable("ZoomCallback")]
+	public void ZoomChanged(string zoomFactor)
+	{
+		double zoomDouble = 1.0;
+		Double.TryParse(zoomFactor, NumberStyles.Any, CultureInfo.InvariantCulture, out zoomDouble);
+
+		Zoom = 1 / zoomDouble;
+
+		StateHasChanged();
+	}
+}
