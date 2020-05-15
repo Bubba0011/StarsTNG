@@ -1,3 +1,6 @@
+using Blazorise;
+using Blazorise.AntDesign;
+using Blazorise.Icons.FontAwesome;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -20,6 +23,11 @@ namespace Stars.Web.Lab
 		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
 		public void ConfigureServices(IServiceCollection services)
 		{
+			services
+				.AddBlazorise(options => options.ChangeTextOnKeyPress = true)
+				.AddAntDesignProviders()
+				.AddFontAwesomeIcons();
+
 			services.AddRazorPages();
 			services.AddServerSideBlazor();
 			services.AddSingleton<GameStoreService>();
@@ -41,6 +49,10 @@ namespace Stars.Web.Lab
 			app.UseStaticFiles();
 
 			app.UseRouting();
+
+			app.ApplicationServices
+				.UseAntDesignProviders()
+				.UseFontAwesomeIcons();
 
 			app.UseEndpoints(endpoints =>
 			{

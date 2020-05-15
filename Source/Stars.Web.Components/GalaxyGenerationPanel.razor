@@ -1,21 +1,47 @@
 ﻿@if (IsEnabled)
 {
-	<div class="info-panel top right">
-		<LabelBox Label="Galaxy Size">
-			<input @bind-value="Settings.GalaxySize" class="num-input" />
-		</LabelBox>
-		<LabelBox Label="Min. Distance">
-			<input @bind-value="Settings.MinimumDistanceBetweenPlanets" class="num-input" />
-		</LabelBox>
-		<LabelBox Label="Planets">
-			<input @bind-value="Settings.PlanetCount" id="inpPlanets" class="num-input" />
-		</LabelBox>
+	<style>
+		.smeg {
+			display: inline-block;
+			vertical-align: top;
+			max-width: 150px;
+		}
+	</style>
 
-		<button @onclick="Generate">Generate Galaxy</button>
+	<div class="info-panel top right">
+		<Addons Class="smeg">
+			<Addon AddonType="AddonType.Start">
+				<AddonLabel>Galaxy Size</AddonLabel>
+			</Addon>
+			<Addon AddonType="AddonType.Body">
+				<NumericEdit TValue="int" @bind-Value="Settings.GalaxySize" Size="Size.Small" />
+			</Addon>
+		</Addons>
+
+		<Addons Class="smeg">
+			<Addon AddonType="AddonType.Start">
+				<AddonLabel>Planet Count</AddonLabel>
+			</Addon>
+			<Addon AddonType="AddonType.Body">
+				<NumericEdit TValue="int" @bind-Value="Settings.PlanetCount" Size="Size.Small" />
+			</Addon>
+		</Addons>
+
+		<Addons Class="smeg">
+			<Addon AddonType="AddonType.Start">
+				<AddonLabel>Min. Distance</AddonLabel>
+			</Addon>
+			<Addon AddonType="AddonType.Body">
+				<NumericEdit TValue="int" @bind-Value="Settings.MinimumDistanceBetweenPlanets" Size="Size.Small" />
+			</Addon>
+		</Addons>
+
+		<Button Class="smeg" Color="Color.Primary" Clicked="Generate" Size="ButtonSize.Small">Generate Galaxy</Button>
 	</div>
 }
 
-@code {
+@code
+{
 	[Parameter]
 	public GalaxyGeneratorSettings Settings { get; set; }
 
@@ -27,7 +53,6 @@
 
 	[Parameter]
 	public bool IsEnabled { get; set; }
-
 
 	private void Generate()
 	{
