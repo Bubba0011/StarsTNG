@@ -1,6 +1,6 @@
 ﻿using Stars.Core.Interfaces;
 
-namespace Stars.Core.Hulls
+namespace Stars.Core.Ships.Hulls
 {
     public class Warship : IHull
     {

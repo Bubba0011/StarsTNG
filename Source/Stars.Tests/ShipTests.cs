@@ -1,6 +1,6 @@
 ﻿using Stars.Core;
-using Stars.Core.Hulls;
 using Stars.Core.Interfaces;
+using Stars.Core.Ships;
 using Xunit;
 
 namespace Stars.Tests
@@ -8,11 +8,17 @@ namespace Stars.Tests
     public class ShipTests
     {
         [Fact]
-        public void ShipHasHull()
+        public void ShipHasClass()
         {
-            IHull hull = new Warship(HullType.Destroyer);
-            var ship = new Ship(hull);
-            Assert.NotNull(ship.Hull);
+            var ship = ShipFactory.Instance.BuildShip("Zippy");
+            Assert.NotNull(ship.ShipClass);
+        }
+
+        [Fact]
+        public void ShipHasValidClass()
+        {
+            var ship = ShipFactory.Instance.BuildShip("Zippy");
+            Assert.True(ship.ShipClass.IsValid());
         }
     }
 }
