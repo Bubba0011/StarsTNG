@@ -5,5 +5,10 @@
 		<Nullable>enable</Nullable>
 		<LangVersion>8.0</LangVersion>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <Folder Include="Ships\Modules\MassDampener\" />
+	  <Folder Include="Ships\Modules\JumpDrive\" />
+	</ItemGroup>
 	
 </Project>

@@ -1,4 +1,4 @@
-﻿using Stars.Core.Hulls;
+﻿using Stars.Core.Ships.Hulls;
 
 namespace Stars.Core.Interfaces
 {
