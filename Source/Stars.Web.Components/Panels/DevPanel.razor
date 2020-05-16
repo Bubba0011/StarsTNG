@@ -1,0 +1,47 @@
+﻿@inject IJSRuntime JSRuntime 
+
+@if (IsEnabled)
+{
+	<div class="info-panel bottom right">
+		<h5>Zoom</h5>
+		<p>Zoom: @(100 * 1/zoom)%</p>
+		<br />
+		<h5>Mouse Coords</h5>
+		<p>Svg: @svgCoords.X, @svgCoords.Y</p>
+	</div>
+}
+
+@code {
+	[Parameter]
+	public bool IsEnabled { get; set; }
+
+	private double zoom { get; set; } = 1.0;
+	private Vector svgCoords { get; set; }
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			var reference = DotNetObjectReference.Create(this);
+			await JSRuntime.BindCallbackMethod(reference, "devPanel", "zoomEvent");
+			await JSRuntime.BindCallbackMethod(reference, "devPanel", "mouseMoveEvent");
+		}
+	}
+
+	[JSInvokable("ZoomCallback")]
+	public void ZoomChanged(string zoomFactor)
+	{
+		double zoomDouble = 1.0;
+		Double.TryParse(zoomFactor, NumberStyles.Any, CultureInfo.InvariantCulture, out zoomDouble);
+
+		zoom = 1 / zoomDouble;
+
+		StateHasChanged();
+	}
+
+	[JSInvokable("SVGCoordsCallback")]
+	public void SvgCoords(Vector vector) {
+		svgCoords = vector;
+		InvokeAsync(() => StateHasChanged());
+	}
+}
