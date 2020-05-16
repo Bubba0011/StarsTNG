@@ -1,11 +1,5 @@
 ﻿@page "/galaxy"
 
-@using Stars.Core
-@using Stars.Core.Setup
-@using Stars.Web.Lab.Data
-@using System.Globalization
-
-@inject IJSRuntime JSRuntime
 @inject GameStoreService GameStore
 
 <style>
@@ -51,10 +45,11 @@
 
 <div>
 	<div class="main-container" id="mejn">
-		<UiGalaxy Galaxy="galaxy" Zoom="Zoom" @bind-SelectedPlanet="selectedPlanet" />
+		<UiGalaxy Galaxy="galaxy" @bind-SelectedPlanet="selectedPlanet" />
 		<PlanetInfoPanel Planet="selectedPlanet" IsEnabled="true" />
 		<TurnOrderPanel Game="game" PlayerId="playerId" OnNextTurn="NextTurn" OnNextPlayer="NextPlayer" IsEnabled="true" />
 		<GalaxyGenerationPanel OnGenerate="Generate" @bind-Settings="settings" IsEnabled="true" />
+		<DevPanel IsEnabled="true" />
 	</div>
 
 	@if (errorMessage != null)
@@ -72,22 +67,9 @@
 	private IGalaxy galaxy;
 	private IPlanet selectedPlanet;
 
-	private double Zoom = 1;
-
 	protected override void OnInitialized()
 	{
 		Reload();
-	}
-
-	protected override void OnAfterRender(bool firstRender)
-	{
-		base.OnAfterRender(firstRender);
-
-		if (firstRender)
-		{
-			var reference = DotNetObjectReference.Create(this);
-			JSRuntime.BindCallbackMethod(reference, "galaxyView");
-		}
 	}
 
 	private async Task Generate()
@@ -133,16 +115,5 @@
 
 		galaxy = new PlayerView(game.Galaxy, playerId);
 		selectedPlanet = null;
-	}
-
-	[JSInvokable("ZoomCallback")]
-	public void ZoomChanged(string zoomFactor)
-	{
-		double zoomDouble = 1.0;
-		Double.TryParse(zoomFactor, NumberStyles.Any, CultureInfo.InvariantCulture, out zoomDouble);
-
-		Zoom = 1 / zoomDouble;
-
-		StateHasChanged();
 	}
 }

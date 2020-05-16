@@ -3,7 +3,7 @@
     zoomPrecision: 2,
     screenCords: {},
     svgCoords: {},
-    dotNetObjects: {}
+    eventHandlers: {}
 }
 
 function retrievePosFromCorner(e) {
@@ -11,8 +11,8 @@ function retrievePosFromCorner(e) {
     const x = e.clientX - rect.x
     const y = e.clientY - rect.y
     let coords = {
-        X: ~~x,
-        Y: ~~y
+        X: Math.floor(x),
+        Y: Math.floor(y)
     };
     return coords
 }
@@ -26,8 +26,8 @@ function retrieveElementPosition(e) {
     let cursorpt = pt.matrixTransform(UI.svg.getScreenCTM().inverse());
 
     let coords = {
-        X: ~~cursorpt.x,
-        Y: ~~cursorpt.y
+        X: Math.floor(cursorpt.x),
+        Y: Math.floor(cursorpt.y)
     };
     return coords
 }
@@ -39,7 +39,10 @@ function onWheel(e) {
     UI.zoomFactor *= wheelDelta;
 
     updateViewBox(wheelDelta);
-    UI.dotNetObjects.galaxyView.invokeMethodAsync('ZoomCallback', UI.zoomFactor.toPrecision(UI.zoomPrecision));
+
+    for (let key in UI.eventHandlers.zoomEvent) {
+        UI.eventHandlers.zoomEvent[key].invokeMethodAsync('ZoomCallback', UI.zoomFactor.toPrecision(UI.zoomPrecision));
+	}
 }
 
 function updateViewBox(wheelDelta) {
@@ -83,15 +86,27 @@ function retrieveScreenSize(elementId) {
 	}
 }
 
+function devTooltip(e) {
+    let coords = retrieveElementPosition(e);
+    for (let key in UI.eventHandlers.mouseMoveEvent) {
+        UI.eventHandlers.mouseMoveEvent[key].invokeMethodAsync('SVGCoordsCallback', coords);
+    }
+}
+
 function resetUI() {
     UI.zoomFactor = 1.0;
+    let svg = UI.svg || document.querySelector('#svg');
+    svg.addEventListener("mousemove", devTooltip);
 }
 
 function bindWheelEvent(svg) {
-    UI.svg = svg;
-    UI.svg.addEventListener("wheel", onWheel);
+    let s = UI.svg || svg
+    s.addEventListener("wheel", onWheel);
+    UI.svg = s;
 }
 
-function bindCallbackMethod(obj, name) {
-    UI.dotNetObjects[name] = obj;
+function bindCallbackMethod(obj, name, eventName) {
+    let eventHandler = UI.eventHandlers[eventName] || [];
+    eventHandler[name] = obj;
+    UI.eventHandlers[eventName] = eventHandler;
 }

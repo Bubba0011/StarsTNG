@@ -2,6 +2,7 @@
 
 <svg class="@CssClass"
 	 viewBox="@ViewBox"
+	 id="svg"
 	 @onmousedown="HandleMouseDownEvent"
 	 @onclick="HandleClickEvent"
 	 @oncontextmenu:preventDefault
@@ -33,6 +34,8 @@
 		if (firstRender)
 		{
 			await JSRuntime.InitializeJS(svgRef);
+			//var reference = DotNetObjectReference.Create(this);
+			//await JSRuntime.BindCallbackMethod(reference, "svgBox");
 			ViewBox = await GetViewBoxAsync();
 			StateHasChanged();
 		}

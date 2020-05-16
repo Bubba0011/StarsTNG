@@ -27,10 +27,10 @@ namespace Stars.Web.Components
 			return js.InvokeVoidAsync("onMouseDown", e);
 		}
 
-		public static ValueTask BindCallbackMethod<T>(this IJSRuntime js, DotNetObjectReference<T> obj, string name) 
+		public static ValueTask BindCallbackMethod<T>(this IJSRuntime js, DotNetObjectReference<T> obj, string name, string eventName) 
 			where T : class
 		{
-			return js.InvokeVoidAsync("bindCallbackMethod", obj, name);
+			return js.InvokeVoidAsync("bindCallbackMethod", obj, name, eventName);
 		}
 
 		public static ValueTask InitializeJS(this IJSRuntime js, ElementReference element)

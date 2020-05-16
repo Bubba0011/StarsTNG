@@ -1,10 +1,6 @@
 ﻿@page "/game/{PlayerId:int}"
 @page "/game"
 
-@using Stars.Core
-@using Stars.Web.Lab.Data
-@using System.Globalization
-
 @inject IJSRuntime JSRuntime
 @inject GameServerService GameServers
 
@@ -53,7 +49,7 @@
 
 <div>
 	<div class="main-container" id="mejn">
-		<UiGalaxy Galaxy="Galaxy" Zoom="Zoom" @bind-SelectedPlanet="selectedPlanet" />
+		<UiGalaxy Galaxy="Galaxy" @bind-SelectedPlanet="selectedPlanet" />
 		<PlanetInfoPanel Planet="selectedPlanet" IsEnabled="true" />
 		<!--
 		<TurnOrderPanel Game="game" PlayerId="playerId" OnNextTurn="NextTurn" OnNextPlayer="NextPlayer" IsEnabled="true" />
@@ -69,9 +65,6 @@
 
 	// Selection
 	private IPlanet selectedPlanet;
-
-	// Render
-	private double Zoom = 1.0;
 
 	[Parameter]
 	public int PlayerId { get; set; }
@@ -98,25 +91,4 @@
 		InvokeAsync(() => StateHasChanged());
 	}
 
-	protected override void OnAfterRender(bool firstRender)
-	{
-		base.OnAfterRender(firstRender);
-
-		if (firstRender)
-		{
-			var reference = DotNetObjectReference.Create(this);
-			JSRuntime.BindCallbackMethod(reference, "galaxyView");
-		}
-	}
-
-	[JSInvokable("ZoomCallback")]
-	public void ZoomChanged(string zoomFactor)
-	{
-		double zoomDouble = 1.0;
-		Double.TryParse(zoomFactor, NumberStyles.Any, CultureInfo.InvariantCulture, out zoomDouble);
-
-		Zoom = 1 / zoomDouble;
-
-		StateHasChanged();
-	}
 }

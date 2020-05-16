@@ -1,7 +1,4 @@
-﻿@using Stars.Web.Components.Svg
-@using Stars.Web.Components.Layers
-
-<style>
+﻿<style>
 	.swig {
 		background-color: rgb(20,20,20);
 	}
@@ -14,11 +11,12 @@
 		<ScannerLayer Galaxy="Galaxy" />
 		<GalaxyGrid Galaxy="Galaxy" />
 		<GalaxyBoundingBox Bounds="Galaxy.Bounds" IsOutlined="true" />
-		<PlanetLayer Galaxy="Galaxy" Zoom="Zoom"/>
-		<SelectionLayer @bind-SelectedPlanet="SelectedPlanet" Zoom="Zoom"/>
+		<PlanetLayer Galaxy="Galaxy" />
+		<SelectionLayer @bind-SelectedPlanet="SelectedPlanet"/>
 
 		@ChildContent
 	</SvgBox>
+	
 }
 
 @code
@@ -37,9 +35,6 @@
 	[Parameter]
 	public EventCallback<IPlanet> SelectedPlanetChanged { get; set; }
 
-	[Parameter]
-	public double Zoom { get; set; }
-
 	private async Task TargetObject(SvgMouseEventArgs e)
 	{
 		var pos = new Position((int)e.SvgCoords.X, (int)e.SvgCoords.Y);
@@ -48,4 +43,5 @@
 		SelectedPlanet = target.Id != SelectedPlanet?.Id ? target : null;
 		await SelectedPlanetChanged.InvokeAsync(SelectedPlanet);
 	}
+
 }
