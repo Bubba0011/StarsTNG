@@ -39,7 +39,7 @@ namespace Stars.Tests
 			var settings = new GalaxyGeneratorSettings()
 			{
 				GalaxySize = size,
-				PlanetCount = 1,
+				PlanetCount = 0,
 			};
 
 			var galaxy = generator.Generate(settings);

@@ -23,14 +23,16 @@ namespace Stars.Tests
 				Bounds = new GalaxyBounds(800)
 			};
 
-			galaxy.Planets = new Planet[] {
+			galaxy.Planets = new Planet[]
+			{
 				new Planet { Position = new Position(400, 400)},
 				new Planet { Position = new Position(300, 300)},
 				new Planet { Position = new Position(200, 200)}
 			}.ToList();
 
 			var closest = galaxy.ClosestPlanet(new Position(360, 360));
-			Assert.True(closest is Planet);
+
+			Assert.IsType<Planet>(closest);
 			Assert.Equal(galaxy.Planets[0], closest);
 		}
 	}

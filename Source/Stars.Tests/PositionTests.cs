@@ -9,6 +9,7 @@ namespace Stars.Tests
 		public void DistanceToSelfIsZero()
 		{
 			var p = new Position(8, 2);
+
 			var distanceToSelf = p.DistanceTo(p);
 
 			Assert.Equal(0, distanceToSelf);
