@@ -12,16 +12,14 @@ namespace Stars.Core
 		public IEnumerable<IPlanet> Planets => galaxy.Planets.Select(Project);
 		public IEnumerable<Player> Players => galaxy.Players;
 
-		private readonly List<Planet> colonies;
+		private readonly List<ScannerSite> scanners;
 
 		public PlayerView(Galaxy galaxy, int playerId)
 		{
 			this.galaxy = galaxy;
 			this.playerId = playerId;
 
-			colonies = galaxy.Planets
-				.Where(p => p.Settlement?.OwnerId == playerId)
-				.ToList();
+			scanners = GetScanners().ToList();
 		}
 
 		private IPlanet Project(Planet planet)
@@ -42,9 +40,32 @@ namespace Stars.Core
 
 		private bool InScannerRange(Position position)
 		{
-			//const double ScannerRange = 100;
+			return scanners.Any(scanner => scanner.InRange(position));
+		}
 
-			return colonies.Any(c => c.Position.DistanceTo(position) <= c.Settlement.ScannerRange);
+		private IEnumerable<ScannerSite> GetScanners()
+		{
+			foreach (var planet in galaxy.Planets)
+			{
+				if (planet.Settlement?.OwnerId == playerId)
+				{
+					yield return new ScannerSite(planet.Position, planet.Settlement.ScannerRange);
+				}
+			}
+		}
+	}
+
+	struct ScannerSite
+	{
+		public Position Position { get; }
+		public double Range { get; }
+
+		public bool InRange(Position position) => Position.DistanceTo(position) <= Range;
+
+		public ScannerSite(Position pos, double range)
+		{
+			Position = pos;
+			Range = range;
 		}
 	}
 

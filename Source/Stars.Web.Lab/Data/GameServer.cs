@@ -71,7 +71,7 @@ namespace Stars.Web.Lab.Data
 					Update();
 				}
 			}
-			catch (TaskCanceledException ex)
+			catch (TaskCanceledException)
 			{
 			}
 			catch (Exception)

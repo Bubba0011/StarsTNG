@@ -11,6 +11,8 @@ namespace Stars.Core
 
 		public Game()
 		{
+			Settings = new GameSettings();
+			Galaxy = new Galaxy();
 		}
 
 		public Game(GameSettings settings, Galaxy galaxy)
@@ -31,15 +33,15 @@ namespace Stars.Core
 				}
 			}
 
-			void UpdateSettlement(Settlement settlement)
+			static void UpdateSettlement(Settlement settlement)
 			{
 				// TODO: Player.Race.GrowthRate...
-				double rate = 1.05;
+				double rate = 0.07;
 				double rawDelta = settlement.Population * rate;
 				int cleanDelta = 100 * (int)Math.Round(rawDelta / 100, 0);
 				settlement.Population += cleanDelta;
 
-				settlement.ScannerRange = (int)Math.Sqrt(settlement.Population / 100);
+				settlement.ScannerRange = Math.Min(200, (int)Math.Sqrt(settlement.Population / 5));
 			}
 		}
 	}
