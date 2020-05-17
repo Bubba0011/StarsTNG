@@ -12,21 +12,16 @@ namespace Stars.Web.Lab.Data
 		public  Game Game { get; }
 
 		public EventHandler GameUpdated;
+		public EventHandler<string> TriggerChanged;
 
 		public GameServer(Game game)
 		{
 			Game = game;
 		}
 
-		public void Update()
+		public PlayerView GetPlayerView(GameClient client)
 		{
-			Game.Update();
-			GameUpdated?.Invoke(this, EventArgs.Empty);
-		}
-
-		public PlayerView GetPlayerView(int playerId)
-		{
-			return new PlayerView(Game.Galaxy, playerId);
+			return new PlayerView(Game.Galaxy, client.PlayerId);
 		}
 
 		public IEnumerable<int> GetPlayerIds()
@@ -44,7 +39,8 @@ namespace Stars.Web.Lab.Data
 			if (sim == null)
 			{
 				cancelSource = new CancellationTokenSource();
-				sim = Task.Run(() => Run(updateInterval, cancelSource.Token));
+				var trigger = new UpdateTrigger(updateInterval);
+				sim = Task.Run(() => Run(trigger, cancelSource.Token));
 			}
 
 			return Task.CompletedTask;
@@ -61,13 +57,15 @@ namespace Stars.Web.Lab.Data
 			}
 		}
 
-		private async Task Run(TimeSpan updateInterval, CancellationToken cancel)
+		private async Task Run(UpdateTrigger trigger, CancellationToken cancel)
 		{
+			trigger.StatusChanged += OnTriggerStatus;
+
 			try
 			{
 				while (!cancel.IsCancellationRequested)
 				{
-					await Task.Delay(updateInterval, cancel);
+					await trigger.NextTrigger(cancel);
 					Update();
 				}
 			}
@@ -76,6 +74,60 @@ namespace Stars.Web.Lab.Data
 			}
 			catch (Exception)
 			{
+			}
+			finally
+			{
+				trigger.StatusChanged -= OnTriggerStatus;
+			}
+
+			void OnTriggerStatus(object sender, string status)
+			{
+				TriggerChanged?.Invoke(this, status);
+			}
+		}
+
+		private void Update()
+		{
+			Game.Update();
+			GameUpdated?.Invoke(this, EventArgs.Empty);
+		}
+	}
+
+	class UpdateTrigger
+	{
+		private readonly TimeSpan updateInterval;
+		private readonly string format;
+
+		public EventHandler<string> StatusChanged;
+
+		public UpdateTrigger(TimeSpan updateInterval)
+		{
+			this.updateInterval = updateInterval;
+
+			format = updateInterval.TotalMinutes >= 60
+				? "hh\\:mm\\:ss"
+				: "mm\\:ss";
+		}
+
+		public async Task NextTrigger(CancellationToken cancel)
+		{
+			static DateTime Now() => DateTime.UtcNow;
+
+			static TimeSpan Round(TimeSpan time)
+			{
+				var tmp = time + TimeSpan.FromSeconds(0.5);
+				return tmp - TimeSpan.FromMilliseconds(tmp.Milliseconds);
+			}
+
+			var triggerTime = Now() + updateInterval;
+
+			while (Now() < triggerTime)
+			{
+				var timeLeft = Round(triggerTime - Now());
+				string status = timeLeft.ToString(format);
+				StatusChanged?.Invoke(this, status);
+
+				await Task.Delay(1000, cancel);
 			}
 		}
 	}

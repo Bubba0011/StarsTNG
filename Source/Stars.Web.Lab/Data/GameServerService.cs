@@ -4,7 +4,7 @@ namespace Stars.Web.Lab.Data
 {
 	public class GameServerService
 	{
-		private GameServer server;
+		private readonly GameServer server;
 
 		public GameServerService(GameStoreService store)
 		{

@@ -54,6 +54,10 @@
 		<!--
 		<TurnOrderPanel Game="game" PlayerId="playerId" OnNextTurn="NextTurn" OnNextPlayer="NextPlayer" IsEnabled="true" />
 		-->
+		<div class="info-panel top left">
+			<div>Turn: @client.CurrentTurn</div>
+			<div>ETA: @client.TriggerStatus</div>
+		</div>
 	</div>
 </div>
 
@@ -77,18 +81,34 @@
 		}
 
 		client = GameServers.GetGameClient(PlayerId);
-		client.Updated += GameUpdated;
+		client.GameUpdated += GameUpdated;
+		client.TriggerUpdated += TriggerUpdated;
 	}
 
 	public void Dispose()
 	{
-		client.Updated -= GameUpdated;
+		client.TriggerUpdated -= TriggerUpdated;
+		client.GameUpdated -= GameUpdated;
 		client.Dispose();
+	}
+
+	private void Update()
+	{
+		if (selectedPlanet != null)
+		{
+			selectedPlanet = Galaxy.Planets.Single(p => p.Id == selectedPlanet.Id);
+		}
+
+		StateHasChanged();
 	}
 
 	private void GameUpdated(object sender, EventArgs e)
 	{
-		InvokeAsync(() => StateHasChanged());
+		InvokeAsync(Update);
 	}
 
+	private void TriggerUpdated(object sender, EventArgs e)
+	{
+		InvokeAsync(Update);
+	}
 }
