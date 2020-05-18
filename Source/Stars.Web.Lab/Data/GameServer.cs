@@ -9,7 +9,7 @@ namespace Stars.Web.Lab.Data
 {
 	public class GameServer
 	{
-		public  Game Game { get; }
+		public Game Game { get; }
 
 		public EventHandler GameUpdated;
 		public EventHandler<string> TriggerChanged;

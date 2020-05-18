@@ -94,8 +94,15 @@ function devTooltip(e) {
 }
 
 function resetUI() {
-    UI.zoomFactor = 1.0;
-    let svg = UI.svg || document.querySelector('#svg');
+    UI = {
+        zoomFactor: 1.0,
+        zoomPrecision: 2,
+        screenCords: {},
+        svgCoords: {},
+        eventHandlers: {}
+    };
+
+    let svg = document.querySelector('#svg');
     svg.addEventListener("mousemove", devTooltip);
 }
 
