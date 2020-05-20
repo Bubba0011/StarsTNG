@@ -5,7 +5,7 @@
 
 @if (games != null)
 {
-	<Table Narrow="true" >
+	<Table Narrow="true">
 		<TableHeader ThemeContrast="ThemeContrast.Dark">
 			<TableRow>
 				<TableHeaderCell>Id</TableHeaderCell>
@@ -31,9 +31,51 @@
 	</Table>
 
 	<Button Clicked="CreateGame">Create Game</Button>
+
+	<Modal @ref="modalRef">
+		<ModalBackdrop />
+		<ModalContent IsCentered="true" Size="ModalSize.Large">
+			<ModalHeader>
+				<ModalTitle>Create Game</ModalTitle>
+				<CloseButton Clicked="@CancelModal" />
+			</ModalHeader>
+
+			<ModalBody>
+				<Field>
+					<FieldLabel>Game Name</FieldLabel>
+					<TextEdit @bind-Text="gameName" Placeholder="The name of the game..." />
+				</Field>
+				<Field>
+					<FieldLabel>Galaxy Size</FieldLabel>
+					<NumericEdit @bind-Value="@gameSettings.GalaxySettings.GalaxySize" />
+				</Field>
+				<Field>
+					<FieldLabel>Number of Planets</FieldLabel>
+					<NumericEdit @bind-Value="@gameSettings.GalaxySettings.PlanetCount" />
+				</Field>
+				<Field>
+					<FieldLabel>Min. Distance Between Planets</FieldLabel>
+					<NumericEdit @bind-Value="@gameSettings.GalaxySettings.MinimumDistanceBetweenPlanets" />
+				</Field>
+				<Field>
+					<FieldLabel>Galaxy Padding</FieldLabel>
+					<NumericEdit @bind-Value="@gameSettings.GalaxySettings.Padding" />
+				</Field>
+				<Field>
+					<FieldLabel>Number of Players</FieldLabel>
+					<NumericEdit @bind-Value="@gamePlayerCount" />
+				</Field>
+			</ModalBody>
+
+			<ModalFooter>
+				<Button Color="Color.Secondary" Clicked="@CancelModal">Cancel</Button>
+				<Button Color="Color.Primary" Clicked="@OkModal">Create</Button>
+			</ModalFooter>
+		</ModalContent>
+	</Modal>
 }
 
-@code 
+@code
 {
 	private List<GameInfo> games;
 
@@ -51,16 +93,51 @@
 
 	private void CreateGame()
 	{
-		var settings = new GameGeneratorSettings()
+		ShowModal();
+	}
+
+	private Modal modalRef;
+	private GameGeneratorSettings gameSettings = new GameGeneratorSettings();
+	private string gameName;
+	private int gamePlayerCount;
+
+	private void ShowModal()
+	{
+		gameSettings = new GameGeneratorSettings()
 		{
-			GalaxySettings = new GalaxyGeneratorSettings(),
-			PlayerNames = { "1", "2", "3", "4" },
+			GalaxySettings = new GalaxyGeneratorSettings()
+			{
+				GalaxySize = 1000,
+				MinimumDistanceBetweenPlanets = 15,
+				Padding = 20,
+				PlanetCount = 400,
+			},
 		};
 
+		gameName = null;
+		gamePlayerCount = 4;
+
+		modalRef.Show();
+	}
+
+	private void OkModal()
+	{
+		modalRef.Hide();
+
+		gameSettings.PlayerNames = Enumerable
+			.Range(1, gamePlayerCount)
+			.Select(n => $"Player #{n}")
+			.ToArray();
+
 		var generator = new GameGenerator();
-		var game = generator.Generate(settings);
+		var game = generator.Generate(gameSettings);
 		int id = GameStore.AddGame(game);
 
 		LoadGames();
+	}
+
+	private void CancelModal()
+	{
+		modalRef.Hide();
 	}
 }
