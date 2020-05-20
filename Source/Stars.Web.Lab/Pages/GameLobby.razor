@@ -1,0 +1,66 @@
+﻿@page "/lobby"
+
+@inject Data.GameStoreService GameStore
+@inject Data.GameServerService ServerFarm
+
+@if (games != null)
+{
+	<Table Narrow="true" >
+		<TableHeader ThemeContrast="ThemeContrast.Dark">
+			<TableRow>
+				<TableHeaderCell>Id</TableHeaderCell>
+				<TableHeaderCell>Name</TableHeaderCell>
+				<TableHeaderCell>Size</TableHeaderCell>
+				<TableHeaderCell>Players</TableHeaderCell>
+				<TableHeaderCell></TableHeaderCell>
+			</TableRow>
+		</TableHeader>
+
+		<TableBody>
+			@foreach (var game in games)
+			{
+				<TableRow>
+					<TableRowCell>@game.GameId</TableRowCell>
+					<TableRowCell>@game.Name</TableRowCell>
+					<TableRowCell>@game.GalaxySize</TableRowCell>
+					<TableRowCell>@game.PlayerCount</TableRowCell>
+					<TableRowCell><NavLink href=@($"game/{game.GameId}/1")>View</NavLink></TableRowCell>
+				</TableRow>
+			}
+		</TableBody>
+	</Table>
+
+	<Button Clicked="CreateGame">Create Game</Button>
+}
+
+@code 
+{
+	private List<GameInfo> games;
+
+	protected override void OnInitialized()
+	{
+		LoadGames();
+	}
+
+	private void LoadGames()
+	{
+		games = GameStore
+			.GetGames()
+			.ToList();
+	}
+
+	private void CreateGame()
+	{
+		var settings = new GameGeneratorSettings()
+		{
+			GalaxySettings = new GalaxyGeneratorSettings(),
+			PlayerNames = { "1", "2", "3", "4" },
+		};
+
+		var generator = new GameGenerator();
+		var game = generator.Generate(settings);
+		int id = GameStore.AddGame(game);
+
+		LoadGames();
+	}
+}

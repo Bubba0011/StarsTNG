@@ -1,63 +1,83 @@
 ﻿using Stars.Core;
-using Stars.Core.Setup;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Stars.Web.Lab.Data
 {
+	public struct GameInfo
+	{
+		public int GameId { get; set; }
+		public string Name { get; set; }
+		public int GalaxySize { get; set; }
+		public int PlayerCount { get; set; }
+	}
+
 	public class GameStoreService
 	{
-		private readonly GalaxyGeneratorSettings DefaultSettings = new GalaxyGeneratorSettings()
-		{
-			PlanetCount = 333,
-		};
+		private readonly Dictionary<int, Game> store = new Dictionary<int, Game>();
 
-		private readonly object theLock = new object();
-		private Game theGame;
-
-		public Game GetGame()
+		public IEnumerable<GameInfo> GetGames()
 		{
-			return theGame ?? Regenerate(DefaultSettings);
-		}
-
-		public async Task<Game> GetGameAsync()
-		{
-			return theGame ?? await RegenerateAsync(DefaultSettings);
-		}
-
-		public Game Regenerate(GalaxyGeneratorSettings settings)
-		{
-			var newGame = GenerateGame(settings);
-			return SetGame(newGame);
-		}
-
-		public async Task<Game> RegenerateAsync(GalaxyGeneratorSettings settings)
-		{
-			var newGame = await Task.Run(() => GenerateGame(settings));
-			return SetGame(newGame);
-		}
-		
-		private Game SetGame(Game game)
-		{
-			lock (theLock)
+			lock (store)
 			{
-				theGame = game;
+				return store
+					.OrderBy(e => e.Key)
+					.Select(e => MakeInfo(e.Key, e.Value))
+					.ToArray();
 			}
 
-			return game;
+			GameInfo MakeInfo(int gameId, Game game)
+			{
+				return new GameInfo()
+				{
+					GameId = gameId,
+					Name = $"Game #{gameId}",
+					GalaxySize = game.Galaxy.Bounds.Size,
+					PlayerCount = game.Galaxy.Players.Count,
+				};
+			}
 		}
 
-		private Game GenerateGame(GalaxyGeneratorSettings settings)
+		public async IAsyncEnumerable<GameInfo> GetGamesAsync()
 		{
-			// Configure
-			var gameGenSettings = new GameGeneratorSettings()
-			{
-				GalaxySettings = settings,
-				PlayerNames = { "Federation", "The Borg", "Romulans" },
-			};
+			var games = GetGames();
 
-			// Generate
-			var generator = new GameGenerator();
-			return generator.Generate(gameGenSettings);
+			foreach (var game in games)
+			{
+				await Task.CompletedTask;
+				yield return game;
+			}
+		}
+
+		public int AddGame(Game game)
+		{
+			lock (store)
+			{
+				int id = store.Count + 1;
+				store[id] = game;
+				return id;
+			}
+		}
+
+		public Task<int> AddGameAsync(Game game)
+		{
+			int id = AddGame(game);
+			return Task.FromResult(id);
+		}
+
+		public Game GetGame(int gameId)
+		{
+			lock (store)
+			{
+				return store.ContainsKey(gameId) ? store[gameId] : null;
+			}
+		}
+
+		public Task<Game> GetGameAsync(int gameId)
+		{
+			var game = GetGame(gameId);
+			return Task.FromResult(game);
 		}
 	}
 }

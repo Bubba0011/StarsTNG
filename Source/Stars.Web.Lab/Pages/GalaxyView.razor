@@ -72,13 +72,13 @@
 		Reload();
 	}
 
-	private async Task Generate()
+	private void Generate()
 	{
 		errorMessage = null;
 
 		try
 		{
-			await GameStore.RegenerateAsync(settings);
+			game = null;
 			Reload();
 			StateHasChanged();
 		}
@@ -92,10 +92,14 @@
 	{
 		selectedPlanet = null;
 
-		var game = GameStore.GetGame();
+		if (game == null)
+		{
+			var gameSettings = new GameGeneratorSettings() { GalaxySettings = settings, PlayerNames = { "Feds", "Borg", "Vorlons" } };
+			var gen = new GameGenerator();
+			game = gen.Generate(gameSettings);
+		}
 
 		this.playerId = game.Galaxy.Players.First().Id;
-		this.game = game;
 		this.galaxy = new PlayerView(game.Galaxy, playerId);
 	}
 

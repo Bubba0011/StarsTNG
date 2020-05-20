@@ -1,4 +1,4 @@
-﻿@page "/game/{PlayerId:int}"
+﻿@page "/game/{GameId:int}/{PlayerId:int}"
 @page "/game"
 
 @inject IJSRuntime JSRuntime
@@ -49,21 +49,24 @@
 
 <div>
 	<div class="main-container" id="mejn">
-		<UiGalaxy Galaxy="Galaxy" @bind-SelectedPlanet="selectedPlanet" />
-		<PlanetInfoPanel Planet="selectedPlanet" IsEnabled="true" />
-		<!--
-		<TurnOrderPanel Game="game" PlayerId="playerId" OnNextTurn="NextTurn" OnNextPlayer="NextPlayer" IsEnabled="true" />
-		-->
-		<div class="info-panel top left">
-			<div>Turn: @client.CurrentTurn</div>
-			<div>ETA: @client.TriggerStatus</div>
-		</div>
+		@if (client != null)
+		{
+			<UiGalaxy Galaxy="Galaxy" @bind-SelectedPlanet="selectedPlanet" />
+			
+			<PlanetInfoPanel Planet="selectedPlanet" IsEnabled="true" />
+			<!--<TurnOrderPanel Game="game" PlayerId="playerId" OnNextTurn="NextTurn" OnNextPlayer="NextPlayer" IsEnabled="true" />-->
+			
+			<div class="info-panel top left">
+				<div>Turn: @client.CurrentTurn</div>
+				<div>ETA: @client.TriggerStatus</div>
+			</div>
+		}
 	</div>
 </div>
 
 @code
 {
-	// Model
+		// Model
 	private GameClient client;
 	private IGalaxy Galaxy => client.GalaxyView;
 
@@ -71,25 +74,36 @@
 	private IPlanet selectedPlanet;
 
 	[Parameter]
+	public int GameId { get; set; }
+
+	[Parameter]
 	public int PlayerId { get; set; }
 
 	protected override void OnInitialized()
 	{
+		if (GameId < 1)
+		{
+			GameId = 1;
+		}
+
 		if (PlayerId < 1)
 		{
 			PlayerId = 1;
 		}
 
-		client = GameServers.GetGameClient(PlayerId);
+		client = GameServers.GetGameClient(GameId, PlayerId);
 		client.GameUpdated += GameUpdated;
 		client.TriggerUpdated += TriggerUpdated;
 	}
 
 	public void Dispose()
 	{
-		client.TriggerUpdated -= TriggerUpdated;
-		client.GameUpdated -= GameUpdated;
-		client.Dispose();
+		if (client != null)
+		{
+			client.TriggerUpdated -= TriggerUpdated;
+			client.GameUpdated -= GameUpdated;
+			client.Dispose();
+		}
 	}
 
 	private void Update()
