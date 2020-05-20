@@ -1,18 +1,18 @@
 ﻿@inject IJSRuntime JSRuntime
 
-
 @if (IsEnabled)
 {
-	<div class="info-panel bottom right">
+	<InfoPanel Position="bottom right">
 		<h5>Zoom</h5>
 		<p>Zoom: @(100 * 1/zoom)%</p>
 		<br />
 		<h5>Mouse Coords</h5>
 		<p>Svg: @svgCoords.X, @svgCoords.Y</p>
-	</div>
+	</InfoPanel>
 }
 
-@code {
+@code 
+{
 	[Parameter]
 	public bool IsEnabled { get; set; }
 

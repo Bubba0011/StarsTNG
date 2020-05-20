@@ -1,5 +1,4 @@
 ﻿@page "/game/{GameId:int}/{PlayerId:int}"
-@page "/game"
 
 @inject IJSRuntime JSRuntime
 @inject GameServerService GameServers
@@ -17,31 +16,6 @@
 		margin: 5px;
 	}
 
-	.info-panel {
-		position: absolute;
-		background-color: rgba(40,60,80,0.65);
-		color: white;
-		border-radius: 3px;
-		box-shadow: 0 0 1px 1px rgb(80,120,160);
-		padding: 4px;
-	}
-
-	.top {
-		top: 10px;
-	}
-
-	.bottom {
-		bottom: 10px;
-	}
-
-	.left {
-		left: 10px;
-	}
-
-	.right {
-		right: 10px;
-	}
-
 	.small-font {
 		font-size: small;
 	}
@@ -56,17 +30,17 @@
 			<PlanetInfoPanel Planet="selectedPlanet" IsEnabled="true" />
 			<!--<TurnOrderPanel Game="game" PlayerId="playerId" OnNextTurn="NextTurn" OnNextPlayer="NextPlayer" IsEnabled="true" />-->
 			
-			<div class="info-panel top left">
+			<InfoPanel Position="top left">
 				<div>Turn: @client.CurrentTurn</div>
 				<div>ETA: @client.TriggerStatus</div>
-			</div>
+			</InfoPanel>
 		}
 	</div>
 </div>
 
 @code
 {
-		// Model
+	// Model
 	private GameClient client;
 	private IGalaxy Galaxy => client.GalaxyView;
 
@@ -81,16 +55,6 @@
 
 	protected override void OnInitialized()
 	{
-		if (GameId < 1)
-		{
-			GameId = 1;
-		}
-
-		if (PlayerId < 1)
-		{
-			PlayerId = 1;
-		}
-
 		client = GameServers.GetGameClient(GameId, PlayerId);
 		client.GameUpdated += GameUpdated;
 		client.TriggerUpdated += TriggerUpdated;

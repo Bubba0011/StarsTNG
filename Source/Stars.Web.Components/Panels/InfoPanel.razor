@@ -1,0 +1,47 @@
+﻿<style>
+	.info-panel {
+		position: absolute;
+		background-color: rgba(40,60,80,0.65);
+		color: white;
+		border-radius: 3px;
+		box-shadow: 0 0 1px 1px rgb(80,120,160);
+		padding: 4px;
+	}
+
+	.top {
+		top: 10px;
+	}
+
+	.bottom {
+		bottom: 10px;
+	}
+
+	.left {
+		left: 10px;
+	}
+
+	.right {
+		right: 10px;
+	}
+</style>
+
+<div class="@GetClass()" onclick="@OnClicked">
+	@ChildContent
+</div>
+
+@code
+{
+	[Parameter]
+	public RenderFragment ChildContent { get; set; }
+
+	[Parameter]
+	public string Position { get; set; }
+
+	[Parameter]
+	public EventCallback OnClicked { get; set; }
+
+	private string GetClass()
+	{
+		return $"info-panel {Position}";
+	}
+}

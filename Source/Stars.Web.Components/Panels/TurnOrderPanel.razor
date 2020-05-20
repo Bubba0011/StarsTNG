@@ -1,11 +1,11 @@
 ﻿
 @if (IsEnabled)
 {
-	<div class="info-panel top left">
+	<InfoPanel Position="top left">
 		<h5>Game</h5>
 		<div @onclick="NextTurn">Turn: @Game.Turn</div>
 		<div @onclick="NextPlayer">Player: @(Game.Galaxy.Players.Single(p => p.Id == PlayerId).Name)</div>
-	</div>
+	</InfoPanel>
 }
 
 @code 

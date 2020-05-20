@@ -1,7 +1,7 @@
 ﻿
 @if (Planet != null && IsEnabled)
 {
-	<div class="info-panel bottom left" @onclick="() => OnPanelClicked.InvokeAsync(null)">
+	<InfoPanel Position="bottom left" OnClicked="() => OnPanelClicked.InvokeAsync(null)">
 		<div class="small-font">
 			<h5>Planet #@Planet.Id</h5>
 
@@ -14,8 +14,9 @@
 				<p><b>Minerals</b> <MineralsPanel Minerals="Planet.Details.Minerals" /></p>
 			}
 		</div>
-	</div>
+	</InfoPanel>
 }
+
 @code
 {
 	[Parameter]
