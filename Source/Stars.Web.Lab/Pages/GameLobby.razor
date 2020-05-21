@@ -10,8 +10,10 @@
 			<TableRow>
 				<TableHeaderCell>Id</TableHeaderCell>
 				<TableHeaderCell>Name</TableHeaderCell>
-				<TableHeaderCell>Size</TableHeaderCell>
-				<TableHeaderCell>Players</TableHeaderCell>
+				<TableHeaderCell>Galaxy Size</TableHeaderCell>
+				<TableHeaderCell>No. of Planets</TableHeaderCell>
+				<TableHeaderCell>Space per Planet</TableHeaderCell>
+				<TableHeaderCell>No. of Players</TableHeaderCell>
 				<TableHeaderCell></TableHeaderCell>
 			</TableRow>
 		</TableHeader>
@@ -23,6 +25,8 @@
 					<TableRowCell>@game.GameId</TableRowCell>
 					<TableRowCell>@game.Name</TableRowCell>
 					<TableRowCell>@game.GalaxySize</TableRowCell>
+					<TableRowCell>@game.PlanetCount</TableRowCell>
+					<TableRowCell>@Density(game)</TableRowCell>
 					<TableRowCell>@game.PlayerCount</TableRowCell>
 					<TableRowCell><NavLink href=@($"game/{game.GameId}/1")>View</NavLink></TableRowCell>
 				</TableRow>
@@ -94,6 +98,14 @@
 	private void CreateGame()
 	{
 		ShowModal();
+	}
+
+	private static int Density(GameInfo game)
+	{
+		var area = Math.Pow(game.GalaxySize, 2);
+		var areaPerPlanet = area / game.PlanetCount;
+		var root = Math.Sqrt(areaPerPlanet);
+		return (int)Math.Round(root, 0);
 	}
 
 	private Modal modalRef;

@@ -10,6 +10,7 @@ namespace Stars.Web.Lab.Data
 		public int GameId { get; set; }
 		public string Name { get; set; }
 		public int GalaxySize { get; set; }
+		public int PlanetCount { get; set; }
 		public int PlayerCount { get; set; }
 	}
 
@@ -34,6 +35,7 @@ namespace Stars.Web.Lab.Data
 					GameId = gameId,
 					Name = game.Name,
 					GalaxySize = game.Galaxy.Bounds.Size,
+					PlanetCount = game.Galaxy.Planets.Count,
 					PlayerCount = game.Galaxy.Players.Count,
 				};
 			}
