@@ -44,7 +44,10 @@ namespace Stars.Core.Setup
 
 			var gameSettings = new GameSettings();
 
-			return new Game(gameSettings, galaxy);
+			return new Game(gameSettings, galaxy)
+			{
+				Name = settings.GameName,
+			};
 		}
 	}
 }

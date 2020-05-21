@@ -5,6 +5,7 @@ namespace Stars.Core
 {
 	public class Game
 	{
+		public string? Name { get; set; }
 		public GameSettings Settings { get; set; }
 		public Galaxy Galaxy { get; set; }
 		public int Turn { get; set; } = 1;

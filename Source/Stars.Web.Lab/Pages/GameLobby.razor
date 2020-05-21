@@ -37,39 +37,39 @@
 		<ModalContent IsCentered="true" Size="ModalSize.Large">
 			<ModalHeader>
 				<ModalTitle>Create Game</ModalTitle>
-				<CloseButton Clicked="@CancelModal" />
+				<CloseButton Clicked="CancelModal" />
 			</ModalHeader>
 
 			<ModalBody>
 				<Field>
 					<FieldLabel>Game Name</FieldLabel>
-					<TextEdit @bind-Text="gameName" Placeholder="The name of the game..." />
+					<TextEdit @bind-Text="gameSettings.GameName" Placeholder="The name of the game..." />
 				</Field>
 				<Field>
 					<FieldLabel>Galaxy Size</FieldLabel>
-					<NumericEdit @bind-Value="@gameSettings.GalaxySettings.GalaxySize" />
+					<NumericEdit @bind-Value="gameSettings.GalaxySettings.GalaxySize" />
 				</Field>
 				<Field>
 					<FieldLabel>Number of Planets</FieldLabel>
-					<NumericEdit @bind-Value="@gameSettings.GalaxySettings.PlanetCount" />
+					<NumericEdit @bind-Value="gameSettings.GalaxySettings.PlanetCount" />
 				</Field>
 				<Field>
 					<FieldLabel>Min. Distance Between Planets</FieldLabel>
-					<NumericEdit @bind-Value="@gameSettings.GalaxySettings.MinimumDistanceBetweenPlanets" />
+					<NumericEdit @bind-Value="gameSettings.GalaxySettings.MinimumDistanceBetweenPlanets" />
 				</Field>
 				<Field>
 					<FieldLabel>Galaxy Padding</FieldLabel>
-					<NumericEdit @bind-Value="@gameSettings.GalaxySettings.Padding" />
+					<NumericEdit @bind-Value="gameSettings.GalaxySettings.Padding" />
 				</Field>
 				<Field>
 					<FieldLabel>Number of Players</FieldLabel>
-					<NumericEdit @bind-Value="@gamePlayerCount" />
+					<NumericEdit @bind-Value="gamePlayerCount" />
 				</Field>
 			</ModalBody>
 
 			<ModalFooter>
-				<Button Color="Color.Secondary" Clicked="@CancelModal">Cancel</Button>
-				<Button Color="Color.Primary" Clicked="@OkModal">Create</Button>
+				<Button Color="Color.Secondary" Clicked="CancelModal">Cancel</Button>
+				<Button Color="Color.Primary" Clicked="OkModal">Create</Button>
 			</ModalFooter>
 		</ModalContent>
 	</Modal>
@@ -98,7 +98,6 @@
 
 	private Modal modalRef;
 	private GameGeneratorSettings gameSettings = new GameGeneratorSettings();
-	private string gameName;
 	private int gamePlayerCount;
 
 	private void ShowModal()
@@ -114,7 +113,6 @@
 			},
 		};
 
-		gameName = null;
 		gamePlayerCount = 4;
 
 		modalRef.Show();

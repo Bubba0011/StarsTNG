@@ -32,7 +32,7 @@ namespace Stars.Web.Lab.Data
 				return new GameInfo()
 				{
 					GameId = gameId,
-					Name = $"Game #{gameId}",
+					Name = game.Name,
 					GalaxySize = game.Galaxy.Bounds.Size,
 					PlayerCount = game.Galaxy.Players.Count,
 				};
