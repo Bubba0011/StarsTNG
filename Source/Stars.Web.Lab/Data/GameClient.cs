@@ -1,5 +1,6 @@
 ﻿using Stars.Core;
 using System;
+using System.Linq;
 
 namespace Stars.Web.Lab.Data
 {
@@ -25,6 +26,11 @@ namespace Stars.Web.Lab.Data
 			GalaxyView = server.GetPlayerView(this);
 		}
 
+		public void SetReadyFlag()
+		{
+			server.SetPlayerReadyFlag(PlayerId);
+		}
+
 		public void Dispose()
 		{
 			server.TriggerChanged -= OnTriggerUpdated;
@@ -37,9 +43,10 @@ namespace Stars.Web.Lab.Data
 			GameUpdated?.Invoke(this, e);
 		}
 
-		private void OnTriggerUpdated(object sender, string status)
+		private void OnTriggerUpdated(object sender, TriggerEventArgs e)
 		{
-			TriggerStatus = status;
+			var flags = string.Join("", e.PlayersReady.Select(r => r ? "1" : "0"));
+			TriggerStatus = $"{e.TimeLeft} ({flags})";
 			TriggerUpdated?.Invoke(this, EventArgs.Empty);
 		}
 	}

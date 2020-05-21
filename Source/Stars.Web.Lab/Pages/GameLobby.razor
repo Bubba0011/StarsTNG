@@ -28,7 +28,13 @@
 					<TableRowCell>@game.PlanetCount</TableRowCell>
 					<TableRowCell>@Density(game)</TableRowCell>
 					<TableRowCell>@game.PlayerCount</TableRowCell>
-					<TableRowCell><NavLink href=@($"game/{game.GameId}/1")>View</NavLink></TableRowCell>
+					<TableRowCell>
+						@for (int pid = 1; pid <= game.PlayerCount; pid++)
+						{
+							var txt = $"Player#{pid}";
+							<NavLink href=@($"game/{game.GameId}/{pid}")>@txt</NavLink>
+						}
+					</TableRowCell>
 				</TableRow>
 			}
 		</TableBody>
@@ -38,7 +44,7 @@
 
 	<Modal @ref="modalRef">
 		<ModalBackdrop />
-		<ModalContent IsCentered="true" Size="ModalSize.Large">
+		<ModalContent Size="ModalSize.Large">
 			<ModalHeader>
 				<ModalTitle>Create Game</ModalTitle>
 				<CloseButton Clicked="CancelModal" />
@@ -118,7 +124,7 @@
 		{
 			GalaxySettings = new GalaxyGeneratorSettings()
 			{
-				GalaxySize = 1000,
+				GalaxySize = 800,
 				MinimumDistanceBetweenPlanets = 15,
 				Padding = 20,
 				PlanetCount = 400,

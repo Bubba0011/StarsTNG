@@ -30,7 +30,7 @@
 			<PlanetInfoPanel Planet="selectedPlanet" IsEnabled="true" />
 			<!--<TurnOrderPanel Game="game" PlayerId="playerId" OnNextTurn="NextTurn" OnNextPlayer="NextPlayer" IsEnabled="true" />-->
 			
-			<InfoPanel Position="top left">
+			<InfoPanel Position="top left" OnClicked="client.SetReadyFlag">
 				<div>Turn: @client.CurrentTurn</div>
 				<div>ETA: @client.TriggerStatus</div>
 			</InfoPanel>

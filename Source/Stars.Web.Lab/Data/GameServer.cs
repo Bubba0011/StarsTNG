@@ -9,10 +9,12 @@ namespace Stars.Web.Lab.Data
 {
 	public class GameServer
 	{
+		private UpdateTrigger updateTrigger;
+
 		public Game Game { get; }
 
 		public EventHandler GameUpdated;
-		public EventHandler<string> TriggerChanged;
+		public EventHandler<TriggerEventArgs> TriggerChanged;
 
 		public GameServer(Game game)
 		{
@@ -29,6 +31,11 @@ namespace Stars.Web.Lab.Data
 			return Game.Galaxy.Players.Select(player => player.Id);
 		}
 
+		public void SetPlayerReadyFlag(int playerId)
+		{
+			updateTrigger?.MarkPlayerAsReady(playerId);
+		}
+
 		private CancellationTokenSource cancelSource;
 		private Task sim;
 
@@ -39,7 +46,7 @@ namespace Stars.Web.Lab.Data
 			if (sim == null)
 			{
 				cancelSource = new CancellationTokenSource();
-				var trigger = new UpdateTrigger(updateInterval);
+				var trigger = new UpdateTrigger(Game.Galaxy.Players.Count, 2, updateInterval, 6 * updateInterval);
 				sim = Task.Run(() => Run(trigger, cancelSource.Token));
 			}
 
@@ -59,6 +66,8 @@ namespace Stars.Web.Lab.Data
 
 		private async Task Run(UpdateTrigger trigger, CancellationToken cancel)
 		{
+			updateTrigger = trigger;
+
 			trigger.StatusChanged += OnTriggerStatus;
 
 			try
@@ -80,9 +89,9 @@ namespace Stars.Web.Lab.Data
 				trigger.StatusChanged -= OnTriggerStatus;
 			}
 
-			void OnTriggerStatus(object sender, string status)
+			void OnTriggerStatus(object sender, TriggerEventArgs e)
 			{
-				TriggerChanged?.Invoke(this, status);
+				TriggerChanged?.Invoke(this, e);
 			}
 		}
 
@@ -90,45 +99,6 @@ namespace Stars.Web.Lab.Data
 		{
 			Game.Update();
 			GameUpdated?.Invoke(this, EventArgs.Empty);
-		}
-	}
-
-	class UpdateTrigger
-	{
-		private readonly TimeSpan updateInterval;
-		private readonly string format;
-
-		public EventHandler<string> StatusChanged;
-
-		public UpdateTrigger(TimeSpan updateInterval)
-		{
-			this.updateInterval = updateInterval;
-
-			format = updateInterval.TotalMinutes >= 60
-				? "hh\\:mm\\:ss"
-				: "mm\\:ss";
-		}
-
-		public async Task NextTrigger(CancellationToken cancel)
-		{
-			static DateTime Now() => DateTime.UtcNow;
-
-			static TimeSpan Round(TimeSpan time)
-			{
-				var tmp = time + TimeSpan.FromSeconds(0.5);
-				return tmp - TimeSpan.FromMilliseconds(tmp.Milliseconds);
-			}
-
-			var triggerTime = Now() + updateInterval;
-
-			while (Now() < triggerTime)
-			{
-				var timeLeft = Round(triggerTime - Now());
-				string status = timeLeft.ToString(format);
-				StatusChanged?.Invoke(this, status);
-
-				await Task.Delay(1000, cancel);
-			}
 		}
 	}
 }
