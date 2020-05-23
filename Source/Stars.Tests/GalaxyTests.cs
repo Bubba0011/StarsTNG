@@ -1,5 +1,4 @@
 using Stars.Core;
-using System;
 using System.Linq;
 using Xunit;
 
@@ -33,8 +32,7 @@ namespace Stars.Tests
 			var galaxyView = galaxy.GetDefaultView();
 			var closest = galaxyView.ClosestPlanet(new Position(360, 360));
 
-			Assert.IsType<Planet>(closest);
-			Assert.Equal(galaxy.Planets[0], closest);
+			Assert.Equal(galaxy.Planets[0].Id, closest.Id);
 		}
 	}
 }

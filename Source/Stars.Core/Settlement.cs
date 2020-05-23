@@ -1,11 +1,11 @@
 ﻿namespace Stars.Core
 {
-	public class Settlement : ISettlement
+	public class Settlement
 	{
 		public int OwnerId { get; set; }
 		public int ScannerRange { get; set; }
 		public int Population { get; set; }
 
-		bool ISettlement.IsMine => false;
+		public ISettlement GetDefaultView() => new DefaultSettlementView(this);
 	}
 }

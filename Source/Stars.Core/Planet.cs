@@ -1,6 +1,6 @@
 ﻿namespace Stars.Core
 {
-	public class Planet : IPlanet
+	public class Planet
 	{
 		public int Id { get; set; }
 		public Position Position { get; set; }
@@ -8,7 +8,7 @@
 		public PlanetDetails? Details { get; set; }
 		public Settlement? Settlement { get; set; }
 
-		ISettlement? IPlanet.Settlement => Settlement;
+		public IPlanet GetDefaultView() => new DefaultPlanetView(this);
 	}
 
 	public class PlanetDetails

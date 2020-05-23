@@ -11,7 +11,7 @@ namespace Stars.Core.Views
 
 		public GalaxyBounds Bounds => galaxy.Bounds;
 		public IEnumerable<IPlanet> Planets => galaxy.Planets.Select(Project);
-		public IEnumerable<IPlayer> Players => galaxy.Players;
+		public IEnumerable<IPlayer> Players => galaxy.Players.Select(Project);
 
 		public PlayerGalaxyView(Galaxy galaxy, int playerId)
 		{
@@ -35,6 +35,11 @@ namespace Stars.Core.Views
 			{
 				return new UnknowPlanet(planet);
 			}
+		}
+
+		private IPlayer Project(Player player)
+		{
+			return player.GetDefaultView();
 		}
 
 		private bool InScannerRange(Position position)

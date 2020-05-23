@@ -1,6 +1,6 @@
-﻿namespace Stars.Core.Views
+﻿namespace Stars.Core
 {
-	class ScannedPlanet : IPlanet
+	class DefaultPlanetView : IPlanet
 	{
 		private readonly Planet planet;
 
@@ -10,7 +10,7 @@
 		public PlanetDetails? Details => planet.Details;
 		public ISettlement? Settlement => planet.Settlement?.GetDefaultView();
 
-		public ScannedPlanet(Planet planet)
+		public DefaultPlanetView(Planet planet)
 		{
 			this.planet = planet;
 		}
