@@ -40,6 +40,16 @@ namespace Stars.Core.Setup
 					OwnerId = player.Id,
 					Population = 10_000,
 				};
+
+				var fleet = new Fleet()
+				{
+					Id = galaxy.Fleets.Count + 1,
+					OwnerId = player.Id,
+					Position = homeworld.Position,
+					Name = $"{player.Name} Fleet #1",
+					ScannerRange = 100,
+				};
+				galaxy.Fleets.Add(fleet);
 			}
 
 			var gameSettings = new GameSettings();

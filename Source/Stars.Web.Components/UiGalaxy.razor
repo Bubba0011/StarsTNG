@@ -11,12 +11,14 @@
 		<ScannerLayer Galaxy="Galaxy" />
 		<GalaxyGrid Galaxy="Galaxy" />
 		<GalaxyBoundingBox Bounds="Galaxy.Bounds" IsOutlined="true" />
+
 		<PlanetLayer Galaxy="Galaxy" />
+		<FleetLayer Galaxy="Galaxy" />
+
 		<SelectionLayer @bind-SelectedPlanet="SelectedPlanet"/>
 
 		@ChildContent
 	</SvgBox>
-	
 }
 
 @code
@@ -43,5 +45,4 @@
 		SelectedPlanet = target.Id != SelectedPlanet?.Id ? target : null;
 		await SelectedPlanetChanged.InvokeAsync(SelectedPlanet);
 	}
-
 }

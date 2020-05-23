@@ -1,6 +1,6 @@
 ﻿namespace Stars.Core
 {
-	public class Planet
+	public class Planet : ISpaceObject
 	{
 		public int Id { get; set; }
 		public Position Position { get; set; }

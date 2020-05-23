@@ -12,6 +12,7 @@ namespace Stars.Core.Views
 		public GalaxyBounds Bounds => galaxy.Bounds;
 		public IEnumerable<IPlanet> Planets => galaxy.Planets.Select(Project);
 		public IEnumerable<IPlayer> Players => galaxy.Players.Select(Project);
+		public IEnumerable<IFleet> Fleets => GetFleets();
 
 		public PlayerGalaxyView(Galaxy galaxy, int playerId)
 		{
@@ -42,6 +43,21 @@ namespace Stars.Core.Views
 			return player.GetDefaultView();
 		}
 
+		private IEnumerable<IFleet> GetFleets()
+		{
+			foreach (var fleet in galaxy.Fleets)
+			{
+				if (fleet.OwnerId == playerId)
+				{
+					yield return new OwnedFleet(fleet);
+				}
+				else if (InScannerRange(fleet.Position))
+				{
+					yield return fleet.GetDefaultView(); // TODO
+				}
+			}
+		}
+
 		private bool InScannerRange(Position position)
 		{
 			return scanners.Any(scanner => scanner.InRange(position));
@@ -54,6 +70,14 @@ namespace Stars.Core.Views
 				if (planet.Settlement?.OwnerId == playerId)
 				{
 					yield return new ScannerSite(planet.Position, planet.Settlement.ScannerRange);
+				}
+			}
+
+			foreach (var fleet in galaxy.Fleets)
+			{
+				if (fleet.OwnerId == playerId)
+				{
+					yield return new ScannerSite(fleet.Position, fleet.ScannerRange);
 				}
 			}
 		}

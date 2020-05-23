@@ -37,10 +37,24 @@
 
 	IEnumerable<ScannerSite> GetScannerSites(bool owned)
 	{
-		return Galaxy.Planets
-			.Where(Planet => Planet.Settlement?.IsMine == owned)
-			.Where(planet => planet.Settlement?.ScannerRange > 0)
-			.Select(planet => new ScannerSite(planet));
+		var planets = Galaxy.Planets.Where(p => p.Settlement?.IsMine == owned);
+		var fleets = Galaxy.Fleets.Where(f => f.IsMine == owned);
+
+		foreach (var planet in planets)
+		{
+			if (planet.Settlement?.ScannerRange > 0)
+			{
+				yield return new ScannerSite(planet, planet.Settlement!.ScannerRange);
+			}
+		}
+
+		foreach (var fleet in fleets)
+		{
+			if (fleet.ScannerRange > 0)
+			{
+				yield return new ScannerSite(fleet, fleet.ScannerRange);
+			}
+		}
 	}
 
 	struct ScannerSite
@@ -49,11 +63,11 @@
 		public int Y;
 		public int R;
 
-		public ScannerSite(IPlanet planet)
+		public ScannerSite(ISpaceObject obj, int scannerRange)
 		{
-			X = planet.Position.X;
-			Y = planet.Position.Y;
-			R = planet.Settlement.ScannerRange;
+			X = obj.Position.X;
+			Y = obj.Position.Y;
+			R = scannerRange;
 		}
 	}
 }

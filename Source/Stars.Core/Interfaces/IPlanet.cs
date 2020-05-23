@@ -1,11 +1,10 @@
 ﻿namespace Stars.Core
 {
-	public interface IPlanet
+	public interface IPlanet : ISpaceObject
 	{
-		public int Id { get; }
-		public Position Position { get; }
-		public string? Name { get; }
-		public PlanetDetails? Details { get; }
-		public ISettlement? Settlement { get; }
+		int Id { get; }
+		string? Name { get; }
+		PlanetDetails? Details { get; }
+		ISettlement? Settlement { get; }
 	}
 }

@@ -9,6 +9,7 @@ namespace Stars.Core
 
 		public IEnumerable<IPlanet> Planets => galaxy.Planets.Select(p => p.GetDefaultView());
 		public IEnumerable<IPlayer> Players => galaxy.Players.Select(p => p.GetDefaultView());
+		public IEnumerable<IFleet> Fleets => galaxy.Fleets.Select(f => f.GetDefaultView());
 		public GalaxyBounds Bounds => galaxy.Bounds;
 
 		public DefaultGalaxyView(Galaxy galaxy)

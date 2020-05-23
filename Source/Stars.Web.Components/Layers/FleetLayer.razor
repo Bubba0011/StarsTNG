@@ -1,0 +1,26 @@
+﻿
+@foreach (var fleet in Galaxy.Fleets)
+{
+	var pos = fleet.Position;
+	var inOrbit = InOrbit(fleet);
+
+	@if (inOrbit)
+	{
+		<circle cx="@pos.X" cy="@pos.Y" r="4" stroke="purple" stroke-width="0.5" fill="none" />
+	}
+	else
+	{
+		<circle cx="@pos.X" cy="@pos.Y" r="2" stroke="pink" stroke-width="0.75" fill="hotpink" />
+	}
+}
+
+@code
+{
+	[Parameter]
+	public IGalaxy Galaxy { get; set; }
+
+	private bool InOrbit(IFleet fleet)
+	{
+		return Galaxy.Planets.Any(p => p.Position == fleet.Position);
+	}
+}
