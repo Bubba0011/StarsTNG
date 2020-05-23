@@ -7,9 +7,9 @@
 	}
 </style>
 
-@if (SelectedPlanet != null)
+@if (SelectedObject != null)
 {
-	<circle cx="@SelectedPlanet.Position.X" cy="@SelectedPlanet.Position.Y" r="@GetRadius(6)" stroke-width="@(GetStrokeWidth(4))" class="planet-marker" />
+	<circle cx="@SelectedObject.Position.X" cy="@SelectedObject.Position.Y" r="@GetRadius(6)" stroke-width="@(GetStrokeWidth(4))" class="planet-marker" />
 }
 
 @code 
@@ -17,10 +17,7 @@
 	private double zoom { get; set; } = 1.0;
 
 	[Parameter]
-	public IPlanet SelectedPlanet { get; set; }
-
-	[Parameter]
-	public EventCallback<IPlanet> SelectedPlanetChanged { get; set; }
+	public ISpaceObject SelectedObject { get; set; }
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{

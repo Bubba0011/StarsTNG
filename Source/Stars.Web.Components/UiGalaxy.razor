@@ -15,7 +15,7 @@
 		<PlanetLayer Galaxy="Galaxy" />
 		<FleetLayer Galaxy="Galaxy" />
 
-		<SelectionLayer @bind-SelectedPlanet="SelectedPlanet"/>
+		<SelectionLayer SelectedObject="SelectedObject"/>
 
 		@ChildContent
 	</SvgBox>
@@ -26,7 +26,7 @@
 	Focus focus = new Focus() { View = Vector.Zero };
 
 	[Parameter]
-	public IPlanet SelectedPlanet { get; set; }
+	public ISpaceObject SelectedObject { get; set; }
 
 	[Parameter]
 	public IGalaxy Galaxy { get; set; }
@@ -35,14 +35,30 @@
 	public RenderFragment ChildContent { get; set; }
 
 	[Parameter]
-	public EventCallback<IPlanet> SelectedPlanetChanged { get; set; }
+	public EventCallback<ISpaceObject> SelectedObjectChanged { get; set; }
 
 	private async Task TargetObject(SvgMouseEventArgs e)
 	{
 		var pos = new Position((int)e.SvgCoords.X, (int)e.SvgCoords.Y);
-		var target = Galaxy.ClosestPlanet(pos);
+		var target = Galaxy.ClosestSpaceObject(pos);
 
-		SelectedPlanet = target.Id != SelectedPlanet?.Id ? target : null;
-		await SelectedPlanetChanged.InvokeAsync(SelectedPlanet);
+		if (target != null)
+		{
+			if (SelectedObject?.Position == target.Position)
+			{
+				var objects = Galaxy.GetSpaceObjectsAt(target.Position).ToArray();
+
+				SelectedObject = objects
+					.SkipWhile(obj => obj.ObjectId != SelectedObject.ObjectId)
+					.Skip(1)
+					.FirstOrDefault();
+			}
+			else
+			{
+				SelectedObject = target;
+			}
+		}
+
+		await SelectedObjectChanged.InvokeAsync(SelectedObject);
 	}
 }

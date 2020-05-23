@@ -45,8 +45,19 @@
 
 <div>
 	<div class="main-container" id="mejn">
-		<UiGalaxy Galaxy="galaxy" @bind-SelectedPlanet="selectedPlanet" />
-		<PlanetInfoPanel Planet="selectedPlanet" IsEnabled="true" />
+		<UiGalaxy Galaxy="galaxy" @bind-SelectedObject="selectedObject" />
+
+		@if (selectedObject is IPlanet planet)
+		{
+			<PlanetInfoPanel Planet="planet" IsEnabled="true" />
+		}
+		else if (selectedObject is IFleet fleet)
+		{
+			<InfoPanel Position="bottom left">
+				@fleet.Name
+			</InfoPanel>
+		}
+
 		<TurnOrderPanel Game="game" PlayerId="playerId" OnNextTurn="NextTurn" OnNextPlayer="NextPlayer" IsEnabled="true" />
 		<GalaxyGenerationPanel OnGenerate="Generate" @bind-Settings="settings" IsEnabled="true" />
 		<DevPanel IsEnabled="true" />
@@ -65,7 +76,8 @@
 	private int playerId;
 	private string errorMessage;
 	private IGalaxy galaxy;
-	private IPlanet selectedPlanet;
+	private ISpaceObject selectedObject;
+	private IPlanet selectedPlanet => selectedObject as IPlanet;
 
 	protected override void OnInitialized()
 	{
@@ -90,11 +102,15 @@
 
 	private void Reload()
 	{
-		selectedPlanet = null;
+		selectedObject = null;
 
 		if (game == null)
 		{
-			var gameSettings = new GameGeneratorSettings() { GalaxySettings = settings, PlayerNames = { "Feds", "Borg", "Vorlons" } };
+			var gameSettings = new GameGeneratorSettings() 
+			{ 
+				GalaxySettings = settings, 
+				PlayerNames = { "Feds", "Borg", "Vorlons" } 
+			};
 			var gen = new GameGenerator();
 			game = gen.Generate(gameSettings);
 		}
@@ -118,6 +134,6 @@
 		}
 
 		galaxy = new PlayerGalaxyView(game.Galaxy, playerId);
-		selectedPlanet = null;
+		selectedObject = null;
 	}
 }

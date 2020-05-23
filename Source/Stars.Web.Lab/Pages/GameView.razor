@@ -25,11 +25,19 @@
 	<div class="main-container" id="mejn">
 		@if (client != null)
 		{
-			<UiGalaxy Galaxy="Galaxy" @bind-SelectedPlanet="selectedPlanet" />
-			
-			<PlanetInfoPanel Planet="selectedPlanet" IsEnabled="true" />
-			<!--<TurnOrderPanel Game="game" PlayerId="playerId" OnNextTurn="NextTurn" OnNextPlayer="NextPlayer" IsEnabled="true" />-->
-			
+			<UiGalaxy Galaxy="Galaxy" @bind-SelectedObject="selectedObject" />
+
+			@if (selectedObject is IPlanet planet)
+			{
+				<PlanetInfoPanel Planet="planet" IsEnabled="true" />
+			}
+			else if (selectedObject is IFleet fleet)
+			{
+				<InfoPanel Position="bottom left">
+					@fleet.Name
+				</InfoPanel>
+			}
+
 			<InfoPanel Position="top left" OnClicked="client.SetReadyFlag">
 				<div>Turn: @client.CurrentTurn</div>
 				<div>ETA: @client.TriggerStatus</div>
@@ -45,7 +53,7 @@
 	private IGalaxy Galaxy => client.GalaxyView;
 
 	// Selection
-	private IPlanet selectedPlanet;
+	private ISpaceObject selectedObject;
 
 	[Parameter]
 	public int GameId { get; set; }
@@ -72,9 +80,9 @@
 
 	private void Update()
 	{
-		if (selectedPlanet != null)
+		if (selectedObject != null)
 		{
-			selectedPlanet = Galaxy.Planets.Single(p => p.Id == selectedPlanet.Id);
+			selectedObject = Galaxy.GetSpaceObject(selectedObject.ObjectId);
 		}
 
 		StateHasChanged();

@@ -9,6 +9,7 @@
 		public string? Name => planet.Name;
 		public PlanetDetails? Details => planet.Details;
 		public ISettlement? Settlement => planet.Settlement?.GetDefaultView();
+		public string ObjectId => planet.ObjectId;
 
 		public ScannedPlanet(Planet planet)
 		{

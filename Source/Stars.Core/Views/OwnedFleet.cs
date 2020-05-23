@@ -10,6 +10,7 @@
 		public Position Position => fleet.Position;
 		public int ScannerRange => fleet.ScannerRange;
 		public bool IsMine => true;
+		public string ObjectId => fleet.ObjectId;
 
 		public OwnedFleet(Fleet fleet)
 		{

@@ -20,6 +20,11 @@ namespace Stars.Core
 				.Concat(galaxy.Fleets);
 		}
 
+		public static ISpaceObject GetSpaceObject(this IGalaxy galaxy, string objectId)
+		{
+			return galaxy.GetSpaceObjects().Single(obj => obj.ObjectId == objectId);
+		}
+
 		public static IPlanet ClosestPlanet(this IGalaxy galaxy, Position target)
 		{
 			return galaxy.Planets
@@ -39,6 +44,12 @@ namespace Stars.Core
 			return galaxy.GetSpaceObjects()
 				.OrderBy(obj => target.DistanceTo(obj.Position))
 				.FirstOrDefault();
+		}
+
+		public static IEnumerable<ISpaceObject> GetSpaceObjectsAt(this IGalaxy galaxy, Position position)
+		{
+			return galaxy.GetSpaceObjects()
+				.Where(obj => obj.Position == position);
 		}
 	}
 }

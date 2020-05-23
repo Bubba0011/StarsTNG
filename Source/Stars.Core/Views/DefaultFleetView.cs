@@ -10,6 +10,7 @@
 		public Position Position => fleet.Position;
 		public int ScannerRange => fleet.ScannerRange;
 		public bool IsMine => false;
+		public string ObjectId => fleet.ObjectId;
 
 		public DefaultFleetView(Fleet fleet)
 		{

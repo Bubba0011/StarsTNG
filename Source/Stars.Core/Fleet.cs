@@ -7,7 +7,7 @@
 		public Position Position { get; set; }
 		public string? Name { get; set; }
 		public int ScannerRange { get; set; }
-
+		public string ObjectId => $"Fleet#{Id}";
 		public IFleet GetDefaultView() => new DefaultFleetView(this);
 	}
 }

@@ -7,6 +7,7 @@
 		public string? Name { get; set; }
 		public PlanetDetails? Details { get; set; }
 		public Settlement? Settlement { get; set; }
+		public string ObjectId => $"Planet#{Id}";
 
 		public IPlanet GetDefaultView() => new DefaultPlanetView(this);
 	}

@@ -10,6 +10,7 @@
 		public string? Name => planet.Name;
 		public PlanetDetails? Details => planet.Details;
 		public ISettlement? Settlement => settlement;
+		public string ObjectId => planet.ObjectId;
 
 		public OwnedPlanet(Planet planet)
 		{
