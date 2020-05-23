@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 
 namespace Stars.Core
 {
@@ -42,7 +41,7 @@ namespace Stars.Core
 				int cleanDelta = 100 * (int)Math.Round(rawDelta / 100, 0);
 				settlement.Population += cleanDelta;
 
-				settlement.ScannerRange = Math.Min(200, (int)Math.Sqrt(settlement.Population / 5));
+				settlement.ScannerRange = Math.Min(500, (int)Math.Sqrt(5 * settlement.Population));
 			}
 		}
 	}

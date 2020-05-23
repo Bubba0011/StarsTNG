@@ -9,8 +9,12 @@
 		fill: rgb(40,80,80);
 	}
 
+	.planet-occupied {
+		fill: rgb(240,0,0);
+	}
+
 	.planet-owned {
-		fill: rgb(120,240,180);
+		fill: rgb(50,240,50);
 	}
 </style>
 
@@ -28,6 +32,7 @@
 
 	[Parameter]
 	public IGalaxy Galaxy { get; set; }
+
 	[Parameter]
 	public bool IsEnabled { get; set; } = true;
 
@@ -43,10 +48,14 @@
 	private string GetClass(IPlanet planet)
 	{
 		if (planet.Settlement != null)
-			return "planet-owned";
+		{
+			return planet.Settlement.IsMine ? "planet-owned" : "planet-occupied";
+		}
 
 		if (planet.Details != null)
+		{
 			return "planet-scanned";
+		}
 
 		return "planet";
 	}

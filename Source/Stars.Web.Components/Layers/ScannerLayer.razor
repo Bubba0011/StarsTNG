@@ -1,6 +1,11 @@
 ﻿<style>
-	.scanner {
-		fill: rgb(60, 20, 20);
+	.my-scanner {
+		fill: rgba(60, 20, 20, 0.75);
+		clip-path: url(#clippy);
+	}
+
+	.op-scanner {
+		fill: rgba(20, 20, 60, 0.75);
 		clip-path: url(#clippy);
 	}
 </style>
@@ -11,9 +16,14 @@
 		<rect x="@Galaxy.Bounds.Min" y="@Galaxy.Bounds.Min" width="@Galaxy.Bounds.Size" height="@Galaxy.Bounds.Size" />
 	</clipPath>
 
-	@foreach (var site in GetScannerSites())
+	@foreach (var site in GetScannerSites(false))
 	{
-		<circle cx="@site.X" cy="@site.Y" r="@site.R" class="scanner" />
+		<circle cx="@site.X" cy="@site.Y" r="@site.R" class="op-scanner" />
+	}
+
+	@foreach (var site in GetScannerSites(true))
+	{
+		<circle cx="@site.X" cy="@site.Y" r="@site.R" class="my-scanner" />
 	}
 }
 
@@ -25,9 +35,10 @@
 	[Parameter]
 	public bool IsEnabled { get; set; } = true;
 
-	IEnumerable<ScannerSite> GetScannerSites()
+	IEnumerable<ScannerSite> GetScannerSites(bool owned)
 	{
 		return Galaxy.Planets
+			.Where(Planet => Planet.Settlement?.IsMine == owned)
 			.Where(planet => planet.Settlement?.ScannerRange > 0)
 			.Select(planet => new ScannerSite(planet));
 	}

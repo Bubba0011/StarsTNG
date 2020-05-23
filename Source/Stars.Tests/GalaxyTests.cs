@@ -30,7 +30,8 @@ namespace Stars.Tests
 				new Planet { Position = new Position(200, 200)}
 			}.ToList();
 
-			var closest = galaxy.ClosestPlanet(new Position(360, 360));
+			var galaxyView = galaxy.GetDefaultView();
+			var closest = galaxyView.ClosestPlanet(new Position(360, 360));
 
 			Assert.IsType<Planet>(closest);
 			Assert.Equal(galaxy.Planets[0], closest);

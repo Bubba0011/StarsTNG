@@ -5,5 +5,7 @@
 		public int OwnerId { get; set; }
 		public int ScannerRange { get; set; }
 		public int Population { get; set; }
+
+		bool ISettlement.IsMine => false;
 	}
 }

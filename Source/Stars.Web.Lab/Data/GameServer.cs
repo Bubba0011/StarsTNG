@@ -1,4 +1,5 @@
 ﻿using Stars.Core;
+using Stars.Core.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,9 +22,9 @@ namespace Stars.Web.Lab.Data
 			Game = game;
 		}
 
-		public PlayerView GetPlayerView(GameClient client)
+		public PlayerGalaxyView GetPlayerView(GameClient client)
 		{
-			return new PlayerView(Game.Galaxy, client.PlayerId);
+			return new PlayerGalaxyView(Game.Galaxy, client.PlayerId);
 		}
 
 		public IEnumerable<int> GetPlayerIds()
