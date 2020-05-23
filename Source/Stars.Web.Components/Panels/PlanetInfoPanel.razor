@@ -3,7 +3,7 @@
 {
 	<InfoPanel Position="bottom left" OnClicked="() => OnPanelClicked.InvokeAsync(null)">
 		<div class="small-font">
-			<h5>Planet #@Planet.Id</h5>
+			<h5>Planet @(Planet.Name ?? $"#{Planet.Id}")</h5>
 
 			<p><b>Position</b> @Planet.Position.X, @Planet.Position.Y</p>
 
@@ -12,6 +12,12 @@
 				<p><b>Environment</b> <br /> @Planet.Details?.Environment</p>
 
 				<p><b>Minerals</b> <MineralsPanel Minerals="Planet.Details.Minerals" /></p>
+			}
+
+			@if (Planet.Settlement != null)
+			{
+				<p><b>Population</b> @Planet.Settlement.Population</p>
+				<p><b>Scanner Range</b> @Planet.Settlement.ScannerRange</p>
 			}
 		</div>
 	</InfoPanel>
