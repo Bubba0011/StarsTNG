@@ -1,4 +1,6 @@
-﻿namespace Stars.Core
+﻿using System.Collections.Generic;
+
+namespace Stars.Core
 {
 	class OwnedFleet : IFleet
 	{
@@ -11,6 +13,7 @@
 		public int ScannerRange => fleet.ScannerRange;
 		public bool IsMine => true;
 		public string ObjectId => fleet.ObjectId;
+		public IEnumerable<Position> Waypoints => fleet.Waypoints ?? new Position[0];
 
 		public OwnedFleet(Fleet fleet)
 		{

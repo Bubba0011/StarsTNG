@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Stars.Core.Setup
 {
@@ -39,6 +40,7 @@ namespace Stars.Core.Setup
 				{
 					OwnerId = player.Id,
 					Population = 10_000,
+					ScannerRange = 100,
 				};
 
 				var fleet = new Fleet()
@@ -47,7 +49,8 @@ namespace Stars.Core.Setup
 					OwnerId = player.Id,
 					Position = homeworld.Position,
 					Name = $"{player.Name} Fleet #1",
-					ScannerRange = 100,
+					ScannerRange = 50,
+					Waypoints = new List<Position> { Position.Zero, },
 				};
 				galaxy.Fleets.Add(fleet);
 			}

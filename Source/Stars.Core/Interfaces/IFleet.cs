@@ -1,4 +1,6 @@
-﻿namespace Stars.Core
+﻿using System.Collections.Generic;
+
+namespace Stars.Core
 {
 	public interface IFleet : ISpaceObject
 	{
@@ -7,5 +9,6 @@
 		string? Name { get; }
 		int ScannerRange { get; }
 		bool IsMine { get; }
+		IEnumerable<Position> Waypoints { get; }
 	}
 }

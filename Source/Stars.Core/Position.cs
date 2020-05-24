@@ -4,6 +4,8 @@ namespace Stars.Core
 {
 	public struct Position : IEquatable<Position>
 	{
+		public static readonly Position Zero = new Position();
+
 		public int X { get; set; }
 		public int Y { get; set; }
 
@@ -57,6 +59,34 @@ namespace Stars.Core
 		private static bool EqualImpl(Position lhs, Position rhs)
 		{
 			return lhs.X == rhs.X && lhs.Y == rhs.Y;
+		}
+
+		public static Position operator +(Position lhs, Position rhs)
+		{
+			var dx = lhs.X + rhs.X;
+			var dy = lhs.Y + rhs.Y;
+			return new Position(dx, dy);
+		}
+
+		public static Position operator -(Position lhs, Position rhs)
+		{
+			var dx = lhs.X - rhs.X;
+			var dy = lhs.Y - rhs.Y;
+			return new Position(dx, dy);
+		}
+
+		public static Position operator *(double lhs, Position rhs)
+		{
+			return rhs * lhs;
+		}
+
+		public static Position operator *(Position lhs, double rhs)
+		{
+			static int Round(double value) => (int)value;
+
+			var x = Round(lhs.X * rhs);
+			var y = Round(lhs.Y * rhs);
+			return new Position(x, y);
 		}
 	}
 }

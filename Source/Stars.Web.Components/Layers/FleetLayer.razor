@@ -1,16 +1,50 @@
-﻿
+﻿<style>
+	.ship-in-orbit {
+		stroke: purple;
+		stroke-width: 0.5px;
+		fill: none;
+	}
+
+	.ship-in-space {
+		stroke: pink;
+		stroke-width: 0.75px;
+		fill: hotpink;
+	}
+
+	.waypoint-line {
+		fill: none;
+		stroke: blue;
+		stroke-width: 0.5px;
+	}
+
+	.waypoint {
+		fill: blue;
+	}
+</style>
+
 @foreach (var fleet in Galaxy.Fleets)
 {
-	var pos = fleet.Position;
-	var inOrbit = InOrbit(fleet);
-
-	@if (inOrbit)
+	if (fleet.IsMine && fleet.Waypoints.Any())
 	{
-		<circle cx="@pos.X" cy="@pos.Y" r="4" stroke="purple" stroke-width="0.5" fill="none" />
+		var path = string.Join(" ", GetWaypoints(fleet, true));
+
+		<polyline points="@path" class="waypoint-line" />
+
+		@foreach (var p in fleet.Waypoints)
+		{
+			<circle cx="@p.X" cy="@p.Y" r="1" class="waypoint" />
+		}
+	}
+
+	var pos = fleet.Position;
+
+	@if (InOrbit(fleet))
+	{
+		<circle cx="@pos.X" cy="@pos.Y" r="4" class="ship-in-orbit" />
 	}
 	else
 	{
-		<circle cx="@pos.X" cy="@pos.Y" r="2" stroke="pink" stroke-width="0.75" fill="hotpink" />
+		<circle cx="@pos.X" cy="@pos.Y" r="2" class="ship-in-space" />
 	}
 }
 
@@ -22,5 +56,23 @@
 	private bool InOrbit(IFleet fleet)
 	{
 		return Galaxy.Planets.Any(p => p.Position == fleet.Position);
+	}
+
+	private IEnumerable<string> GetWaypoints(IFleet fleet, bool includeCurrentPosition)
+	{
+		static string S(Position p) => $"{p.X},{p.Y}";
+
+		if (fleet.Waypoints.Any())
+		{
+			if (includeCurrentPosition)
+			{
+				yield return S(fleet.Position);
+			}
+
+			foreach (var p in fleet.Waypoints)
+			{
+				yield return S(p);
+			}
+		}
 	}
 }

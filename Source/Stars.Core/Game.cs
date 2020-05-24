@@ -33,6 +33,11 @@ namespace Stars.Core
 				}
 			}
 
+			foreach (var fleet in Galaxy.Fleets)
+			{
+				UpdateFleet(fleet);
+			}
+
 			static void UpdateSettlement(Settlement settlement)
 			{
 				// TODO: Player.Race.GrowthRate...
@@ -40,8 +45,12 @@ namespace Stars.Core
 				double rawDelta = settlement.Population * rate;
 				int cleanDelta = 100 * (int)Math.Round(rawDelta / 100, 0);
 				settlement.Population += cleanDelta;
+			}
 
-				settlement.ScannerRange = Math.Min(500, (int)Math.Sqrt(5 * settlement.Population));
+			static void UpdateFleet(Fleet fleet)
+			{
+				const double Warp7 = 49;
+				fleet.Move(Warp7);
 			}
 		}
 	}
