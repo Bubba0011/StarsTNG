@@ -1,12 +1,13 @@
 ﻿<style>
 	.swig {
 		background-color: rgb(20,20,20);
+		cursor: @(InAutoSelectMode ? "default" : "crosshair");
 	}
 </style>
 
 @if (Galaxy != null)
 {
-	<SvgBox CssClass="swig" OnClick="TargetObject" FocusOn="@focus">
+	<SvgBox CssClass="swig" OnClick="SvgBoxClicked" FocusOn="@focus">
 		<GalaxyBoundingBox Bounds="Galaxy.Bounds" IsFilled="true" />
 		<ScannerLayer Galaxy="Galaxy" />
 		<GalaxyGrid Galaxy="Galaxy" />
@@ -36,6 +37,24 @@
 
 	[Parameter]
 	public EventCallback<ISpaceObject> SelectedObjectChanged { get; set; }
+
+	[Parameter]
+	public bool InAutoSelectMode { get; set; } = true;
+
+	[Parameter]
+	public EventCallback<SvgMouseEventArgs> Clicked { get; set; }
+
+	private async Task SvgBoxClicked(SvgMouseEventArgs e)
+	{
+		if (InAutoSelectMode)
+		{
+			await TargetObject(e);
+		}
+		else
+		{
+			await Clicked.InvokeAsync(e);
+		}
+	}
 
 	private async Task TargetObject(SvgMouseEventArgs e)
 	{

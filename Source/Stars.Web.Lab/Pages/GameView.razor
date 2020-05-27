@@ -25,7 +25,7 @@
 	<div class="main-container" id="mejn">
 		@if (client != null)
 		{
-			<UiGalaxy Galaxy="Galaxy" @bind-SelectedObject="selectedObject" />
+			<UiGalaxy Galaxy="Galaxy" @bind-SelectedObject="selectedObject" InAutoSelectMode="!inClickMode" Clicked="GalaxyClicked" />
 
 			@if (selectedObject is IPlanet planet)
 			{
@@ -60,6 +60,7 @@
 
 	// Selection
 	private ISpaceObject selectedObject;
+	private bool inClickMode;
 
 	[Parameter]
 	public int GameId { get; set; }
@@ -116,14 +117,30 @@
 	{
 		if (selectedObject is IFleetController fleet)
 		{
-			var list = fleet.Waypoints.ToList();
-			var origin = list.Any() ? list.Last() : fleet.Position;
+			inClickMode = true;
+		}
+	}
 
-			var rnd = new Random();
-			var dx = rnd.Next(150) - 75;
-			var dy = rnd.Next(150) - 75;
-			var delta = new Position(dx, dy);
-			list.Add(origin + delta);
+	private void GalaxyClicked(SvgMouseEventArgs e)
+	{
+		inClickMode = false;
+
+		if (selectedObject is IFleetController fleet)
+		{
+			int Round(double d) => (int)Math.Round(d);
+
+			var x = Round(e.SvgCoords.X);
+			var y = Round(e.SvgCoords.Y);
+			var pos = new Position(x, y);
+
+			var closestObject = Galaxy.ClosestSpaceObject(pos);
+			if (pos.DistanceTo(closestObject.Position) < 2.5)
+			{
+				pos = closestObject.Position;
+			}
+
+			var list = fleet.Waypoints.ToList();
+			list.Add(pos);
 
 			fleet.SetWaypoints(list);
 		}

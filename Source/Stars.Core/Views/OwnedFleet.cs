@@ -24,9 +24,7 @@ namespace Stars.Core
 
 		public void SetWaypoints(IEnumerable<Position>? waypoints)
 		{
-			fleet.Waypoints = waypoints != null
-				? waypoints.ToList()
-				: null;
+			fleet.Waypoints = waypoints?.ToList();
 		}
 	}
 
