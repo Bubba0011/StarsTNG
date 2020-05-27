@@ -14,6 +14,7 @@ namespace Stars.Core
 		public int ScannerRange => fleet.ScannerRange;
 		public bool IsMine => false;
 		public string ObjectId => fleet.ObjectId;
+		public int? Heading => fleet.Heading;
 		public IEnumerable<Position> Waypoints => Enumerable.Empty<Position>();
 
 		public DefaultFleetView(Fleet fleet)

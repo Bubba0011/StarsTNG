@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Stars.Core
 {
-	class OwnedFleet : IFleet
+	class OwnedFleet : IFleetController
 	{
 		private readonly Fleet fleet;
 
@@ -13,11 +14,24 @@ namespace Stars.Core
 		public int ScannerRange => fleet.ScannerRange;
 		public bool IsMine => true;
 		public string ObjectId => fleet.ObjectId;
+		public int? Heading => fleet.Heading;
 		public IEnumerable<Position> Waypoints => fleet.Waypoints ?? new Position[0];
 
 		public OwnedFleet(Fleet fleet)
 		{
 			this.fleet = fleet;
 		}
+
+		public void SetWaypoints(IEnumerable<Position>? waypoints)
+		{
+			fleet.Waypoints = waypoints != null
+				? waypoints.ToList()
+				: null;
+		}
+	}
+
+	public interface IFleetController : IFleet
+	{
+		public void SetWaypoints(IEnumerable<Position>? waypoints);
 	}
 }

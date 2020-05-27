@@ -1,14 +1,26 @@
 ﻿<style>
-	.ship-in-orbit {
-		stroke: purple;
+	.own-fleet-in-orbit {
+		stroke: blue;
 		stroke-width: 0.5px;
 		fill: none;
 	}
 
-	.ship-in-space {
-		stroke: pink;
-		stroke-width: 0.75px;
-		fill: hotpink;
+	.op-fleet-in-orbit {
+		stroke: red;
+		stroke-width: 0.5px;
+		fill: none;
+	}
+
+	.own-fleet-in-space {
+		stroke: darkblue;
+		stroke-width: 0.2px;
+		fill: blue;
+	}
+
+	.op-fleet-in-space {
+		stroke: darkred;
+		stroke-width: 0.2px;
+		fill: red;
 	}
 
 	.waypoint-line {
@@ -22,6 +34,12 @@
 	}
 </style>
 
+<defs>
+	<g id="fleet-in-space">
+		<polygon points="2,0 -1,2 0,0 -1,-2" />
+	</g>
+</defs>
+
 @foreach (var fleet in Galaxy.Fleets)
 {
 	if (fleet.IsMine && fleet.Waypoints.Any())
@@ -30,9 +48,9 @@
 
 		<polyline points="@path" class="waypoint-line" />
 
-		@foreach (var p in fleet.Waypoints)
+		@foreach (var wp in fleet.Waypoints)
 		{
-			<circle cx="@p.X" cy="@p.Y" r="1" class="waypoint" />
+			<circle cx="@wp.X" cy="@wp.Y" r="1" class="waypoint" />
 		}
 	}
 
@@ -40,11 +58,15 @@
 
 	@if (InOrbit(fleet))
 	{
-		<circle cx="@pos.X" cy="@pos.Y" r="4" class="ship-in-orbit" />
+		<circle cx="@pos.X" cy="@pos.Y" r="4" class="@(fleet.IsMine ? "own-fleet-in-orbit": "op-fleet-in-orbit")" />
 	}
 	else
 	{
-		<circle cx="@pos.X" cy="@pos.Y" r="2" class="ship-in-space" />
+		<use href="#fleet-in-space" 
+			  x="@pos.X" 
+			  y="@pos.Y" 
+			  transform="@GetFleetTransform(fleet)" 
+			  class="@(fleet.IsMine ? "own-fleet-in-space" : "op-fleet-in-space")" />
 	}
 }
 
@@ -74,5 +96,10 @@
 				yield return S(p);
 			}
 		}
+	}
+
+	private string GetFleetTransform(IFleet fleet)
+	{
+		return $"rotate({fleet.Heading ?? 0}, {fleet.Position.X}, {fleet.Position.Y})";
 	}
 }

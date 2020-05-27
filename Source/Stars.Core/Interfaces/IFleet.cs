@@ -9,6 +9,7 @@ namespace Stars.Core
 		string? Name { get; }
 		int ScannerRange { get; }
 		bool IsMine { get; }
+		int? Heading { get; }
 		IEnumerable<Position> Waypoints { get; }
 	}
 }

@@ -35,6 +35,12 @@
 			{
 				<InfoPanel Position="bottom left">
 					@fleet.Name
+
+					@if (fleet is IFleetController ctrl)
+					{
+						<Button Clicked="ClearFleetWaypoints">Clear WPs</Button>
+						<Button Clicked="AddFleetWaypoint">Add WP</Button>
+					}
 				</InfoPanel>
 			}
 
@@ -96,5 +102,30 @@
 	private void TriggerUpdated(object sender, EventArgs e)
 	{
 		InvokeAsync(Update);
+	}
+
+	private void ClearFleetWaypoints()
+	{
+		if (selectedObject is IFleetController ctrl)
+		{
+			ctrl.SetWaypoints(null);
+		}
+	}
+
+	private void AddFleetWaypoint()
+	{
+		if (selectedObject is IFleetController fleet)
+		{
+			var list = fleet.Waypoints.ToList();
+			var origin = list.Any() ? list.Last() : fleet.Position;
+
+			var rnd = new Random();
+			var dx = rnd.Next(150) - 75;
+			var dy = rnd.Next(150) - 75;
+			var delta = new Position(dx, dy);
+			list.Add(origin + delta);
+
+			fleet.SetWaypoints(list);
+		}
 	}
 }
