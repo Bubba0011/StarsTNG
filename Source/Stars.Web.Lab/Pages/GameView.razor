@@ -39,7 +39,7 @@
 					@if (fleet is IFleetController ctrl)
 					{
 						<Button Clicked="ClearFleetWaypoints">Clear WPs</Button>
-						<Button Clicked="AddFleetWaypoint">Add WP</Button>
+						<Button Clicked="AddFleetWaypoint">@(inClickMode ? "Done" : "Add WP")</Button>
 					}
 				</InfoPanel>
 			}
@@ -117,14 +117,12 @@
 	{
 		if (selectedObject is IFleetController fleet)
 		{
-			inClickMode = true;
+			inClickMode = !inClickMode;
 		}
 	}
 
 	private void GalaxyClicked(SvgMouseEventArgs e)
 	{
-		inClickMode = false;
-
 		if (selectedObject is IFleetController fleet)
 		{
 			int Round(double d) => (int)Math.Round(d);
