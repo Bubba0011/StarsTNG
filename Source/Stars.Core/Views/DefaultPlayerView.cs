@@ -11,5 +11,7 @@
 		{
 			this.player = player;
 		}
+
+		public double? GetPlanetValue(IPlanet planet) => null;
 	}
 }

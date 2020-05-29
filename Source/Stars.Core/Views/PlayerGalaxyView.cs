@@ -5,18 +5,20 @@ namespace Stars.Core.Views
 {
 	public class PlayerGalaxyView : IGalaxy
 	{
-		private readonly Galaxy galaxy;
+		private readonly Game game;
 		private readonly int playerId;
 		private readonly List<ScannerSite> scanners;
+
+		private Galaxy galaxy => game.Galaxy;
 
 		public GalaxyBounds Bounds => galaxy.Bounds;
 		public IEnumerable<IPlanet> Planets => galaxy.Planets.Select(Project);
 		public IEnumerable<IPlayer> Players => galaxy.Players.Select(Project);
 		public IEnumerable<IFleet> Fleets => GetFleets();
 
-		public PlayerGalaxyView(Galaxy galaxy, int playerId)
+		public PlayerGalaxyView(Game game, int playerId)
 		{
-			this.galaxy = galaxy;
+			this.game = game;
 			this.playerId = playerId;
 
 			scanners = GetScanners().ToList();
@@ -40,7 +42,9 @@ namespace Stars.Core.Views
 
 		private IPlayer Project(Player player)
 		{
-			return player.GetDefaultView();
+			return player.Id == playerId
+				? new PlayerPlayerView(player, game)
+				: player.GetDefaultView();
 		}
 
 		private IEnumerable<IFleet> GetFleets()
@@ -79,6 +83,33 @@ namespace Stars.Core.Views
 				{
 					yield return new ScannerSite(fleet.Position, fleet.ScannerRange);
 				}
+			}
+		}
+	}
+
+	public class PlayerPlayerView : IPlayer
+	{
+		private Game game;
+		private readonly Player player;
+
+		public int Id => player.Id;
+		public string? Name => player.Name;
+
+		public PlayerPlayerView(Player player, Game game)
+		{
+			this.game = game;
+			this.player = player;
+		}
+
+		public double? GetPlanetValue(IPlanet planet)
+		{
+			if (planet.Details != null)
+			{
+				return game.Rules.CalculatePlanetValue(planet.Details, player.Race);
+			}
+			else
+			{
+				return null;
 			}
 		}
 	}

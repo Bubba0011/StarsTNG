@@ -1,21 +1,32 @@
 ﻿<style>
-	.pan {
+	.mineral-panel {
+		width: 100%;
 	}
+
+	.bar {
+		height: 5px;
+		margin-top: 2px;
+		margin-bottom: 2px;
+	}
+
 	.br {
-		color: lime;
+		background-color: lime;
 	}
+
 	.gr {
-		color: yellow;
+		background-color: yellow;
 	}
+
 	.ir {
-		color: blue;
+		background-color: blue;
 	}
 </style>
 
-<div class="pan">
-	<span class="br">Br: @Minerals.Boranium</span>
-	<span class="gr">Gr: @Minerals.Germanium</span>
-	<span class="ir">Ir: @Minerals.Ironium</span>
+
+<div class="mineral-panel">
+	<div class="bar br" style=@($"width: {Minerals.Boranium}%;")></div>
+	<div class="bar gr" style=@($"width: {Minerals.Germanium}%;")></div>
+	<div class="bar ir" style=@($"width: {Minerals.Ironium}%;")></div>
 </div>
 
 @code

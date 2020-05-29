@@ -1,7 +1,7 @@
 ﻿
 @if (Planet != null && IsEnabled)
 {
-	<InfoPanel Position="bottom left" OnClicked="() => OnPanelClicked.InvokeAsync(null)">
+	<InfoPanel Position="bottom left">
 		<div class="small-font">
 			<h5>Planet @(Planet.Name ?? $"#{Planet.Id}")</h5>
 
@@ -10,12 +10,17 @@
 			@if (Planet.Details != null)
 			{
 				<p><b>Environment</b> <br /> @Planet.Details?.Environment</p>
+				<p><b>Minerals</b><MineralsPanel Minerals="Planet.Details.Minerals" /></p>
 
-				<p><b>Minerals</b> <MineralsPanel Minerals="Planet.Details.Minerals" /></p>
+				@if (Player != null)
+				{
+					<p><b>Value</b> @GetPlanetValue()%</p>
+				}
 			}
 
 			@if (Planet.Settlement != null)
 			{
+				<p><b>Owner</b> Player #@Planet.Settlement.OwnerId</p>
 				<p><b>Population</b> @Planet.Settlement.Population</p>
 				<p><b>Scanner Range</b> @Planet.Settlement.ScannerRange</p>
 			}
@@ -29,8 +34,15 @@
 	public IPlanet Planet { get; set; }
 
 	[Parameter]
-	public EventCallback<IPlanet> OnPanelClicked { get; set; }
+	public IPlayer Player { get; set; }
 
 	[Parameter]
 	public bool IsEnabled { get; set; }
+
+	private int GetPlanetValue()
+	{
+		var value = Player.GetPlanetValue(Planet) ?? 0;
+
+		return (int)(100 * value);
+	}
 }

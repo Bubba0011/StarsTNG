@@ -6,20 +6,20 @@ namespace Stars.Core
 	{
 		public int TimeStep => 1;
 
-		public double CalculatePlanetValue(Planet planet, Race race)
+		public double CalculatePlanetValue(PlanetDetails planetDetails, Race race)
 		{
 			static double F(int actual, int preferred)
 			{
-				const int zone = 25;
+				const int zone = 20;
 
 				int delta = Math.Abs(actual - preferred);
 
 				return delta < zone
-					? Math.Pow((zone - delta) / zone, 2)
+					? Math.Pow((double)(zone - delta) / zone, 2)
 					: -10;
 			}
 
-			var actual = planet.Details.Environment;
+			var actual = planetDetails.Environment;
 			var preferred = race.EnvironmentPreferences;
 
 			var g = F(actual.Gravity, preferred.Gravity);
@@ -43,7 +43,7 @@ namespace Stars.Core
 
 			int basePopulationCapacity = owner.Race.PlanetPopulationCapacity;
 			double baseGrowthRate = owner.Race.PopulationGrowthRate;
-			double planetHabFactor = CalculatePlanetValue(planet, owner.Race);
+			double planetHabFactor = CalculatePlanetValue(planet.Details, owner.Race);
 
 			double effectivePopulationCapacity = basePopulationCapacity * planetHabFactor;
 			double capacityPct = settlement.Population / effectivePopulationCapacity;

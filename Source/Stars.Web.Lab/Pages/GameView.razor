@@ -29,7 +29,7 @@
 
 			@if (selectedObject is IPlanet planet)
 			{
-				<PlanetInfoPanel Planet="planet" IsEnabled="true" />
+				<PlanetInfoPanel Planet="planet" IsEnabled="true" Player="@Player" />
 			}
 			else if (selectedObject is IFleet fleet)
 			{
@@ -57,6 +57,7 @@
 	// Model
 	private GameClient client;
 	private IGalaxy Galaxy => client.GalaxyView;
+	private IPlayer Player => Galaxy.Players.SingleOrDefault(p => p.Id == PlayerId);
 
 	// Selection
 	private ISpaceObject selectedObject;

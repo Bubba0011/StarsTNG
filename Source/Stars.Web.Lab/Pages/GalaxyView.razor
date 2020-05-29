@@ -116,7 +116,7 @@
 		}
 
 		this.playerId = game.Galaxy.Players.First().Id;
-		this.galaxy = new PlayerGalaxyView(game.Galaxy, playerId);
+		this.galaxy = new PlayerGalaxyView(game, playerId);
 	}
 
 	private void NextTurn()
@@ -133,7 +133,7 @@
 			playerId = game.Galaxy.Players.First().Id;
 		}
 
-		galaxy = new PlayerGalaxyView(game.Galaxy, playerId);
+		galaxy = new PlayerGalaxyView(game, playerId);
 		selectedObject = null;
 	}
 }

@@ -24,7 +24,7 @@ namespace Stars.Web.Lab.Data
 
 		public PlayerGalaxyView GetPlayerView(GameClient client)
 		{
-			return new PlayerGalaxyView(Game.Galaxy, client.PlayerId);
+			return new PlayerGalaxyView(Game, client.PlayerId);
 		}
 
 		public IEnumerable<int> GetPlayerIds()
