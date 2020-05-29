@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace Stars.Web.Lab.Data
+namespace Stars.Infrastructure.Data
 {
 	public class TriggerEventArgs : EventArgs
 	{

@@ -1,4 +1,6 @@
-﻿<style>
+﻿@inject IJSRuntime JSRuntime
+
+<style>
 	.swig {
 		background-color: rgb(20,20,20);
 		cursor: @(InAutoSelectMode ? "default" : "crosshair");
@@ -7,30 +9,36 @@
 
 @if (Galaxy != null)
 {
-	<SvgBox CssClass="swig" OnClick="SvgBoxClicked" FocusOn="@focus">
-		<GalaxyBoundingBox Bounds="Galaxy.Bounds" IsFilled="true" />
-		<ScannerLayer Galaxy="Galaxy" />
-		<GalaxyGrid Galaxy="Galaxy" />
-		<GalaxyBoundingBox Bounds="Galaxy.Bounds" IsOutlined="true" />
+	<CascadingValue Name="GameWrapper" Value="@GameWrapper">
+		<CascadingValue Name="UIWrapper" Value="@uiWrapper">
+			<SvgBox CssClass="swig" OnClick="SvgBoxClicked" FocusOn="@focus">
+				<GalaxyBoundingBox IsFilled="true" />
+				<ScannerLayer />
+				<GalaxyGrid />
+				<GalaxyBoundingBox IsOutlined="true" />
 
-		<FleetLayer Galaxy="Galaxy" />
-		<PlanetLayer Galaxy="Galaxy" />
+				<FleetLayer />
+				<PlanetLayer />
 
-		<SelectionLayer SelectedObject="SelectedObject"/>
+				<SelectionLayer SelectedObject="SelectedObject" />
 
-		@ChildContent
-	</SvgBox>
+				@ChildContent
+			</SvgBox>
+		</CascadingValue>
+	</CascadingValue>
 }
 
 @code
 {
 	Focus focus = new Focus() { View = Vector.Zero };
+	UIWrapper uiWrapper;
+	IGalaxy Galaxy => GameWrapper.Client.GalaxyView;
 
 	[Parameter]
 	public ISpaceObject SelectedObject { get; set; }
 
 	[Parameter]
-	public IGalaxy Galaxy { get; set; }
+	public GameWrapper GameWrapper { get; set; }
 
 	[Parameter]
 	public RenderFragment ChildContent { get; set; }
@@ -43,6 +51,16 @@
 
 	[Parameter]
 	public EventCallback<SvgMouseEventArgs> Clicked { get; set; }
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			uiWrapper = new UIWrapper() { Zoom = 1.0 };
+			var reference = DotNetObjectReference.Create(this);
+			await JSRuntime.BindCallbackMethod(reference, "UiGalaxy", "zoomEvent");
+		}
+	}
 
 	private async Task SvgBoxClicked(SvgMouseEventArgs e)
 	{
@@ -79,5 +97,16 @@
 		}
 
 		await SelectedObjectChanged.InvokeAsync(SelectedObject);
+	}
+
+	[JSInvokable("ZoomCallback")]
+	public void ZoomChanged(string zoomFactor)
+	{
+		double zoomDouble = 1.0;
+		Double.TryParse(zoomFactor, NumberStyles.Any, CultureInfo.InvariantCulture, out zoomDouble);
+
+		uiWrapper.Zoom = 1 / zoomDouble;
+
+		StateHasChanged();
 	}
 }

@@ -25,7 +25,7 @@
 	<div class="main-container" id="mejn">
 		@if (client != null)
 		{
-			<UiGalaxy Galaxy="Galaxy" @bind-SelectedObject="selectedObject" InAutoSelectMode="!inClickMode" Clicked="GalaxyClicked" />
+			<UiGalaxy GameWrapper="wrapper" @bind-SelectedObject="selectedObject" InAutoSelectMode="!inClickMode" Clicked="GalaxyClicked" />
 
 			@if (selectedObject is IPlanet planet)
 			{
@@ -55,7 +55,8 @@
 @code
 {
 	// Model
-	private GameClient client;
+	private GameWrapper wrapper;
+	private GameClient client => wrapper.Client;
 	private IGalaxy Galaxy => client.GalaxyView;
 	private IPlayer Player => Galaxy.Players.SingleOrDefault(p => p.Id == PlayerId);
 
@@ -71,9 +72,10 @@
 
 	protected override void OnInitialized()
 	{
-		client = GameServers.GetGameClient(GameId, PlayerId);
-		client.GameUpdated += GameUpdated;
-		client.TriggerUpdated += TriggerUpdated;
+		wrapper = new GameWrapper();
+		wrapper.Client = GameServers.GetGameClient(GameId, PlayerId);
+		wrapper.Client.GameUpdated += GameUpdated;
+		wrapper.Client.TriggerUpdated += TriggerUpdated;
 	}
 
 	public void Dispose()

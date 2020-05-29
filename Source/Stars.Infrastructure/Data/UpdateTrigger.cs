@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Stars.Web.Lab.Data
+namespace Stars.Infrastructure.Data
 {
 	class UpdateTrigger
 	{

@@ -29,8 +29,11 @@
 
 @code
 {
-	[Parameter]
-	public IGalaxy Galaxy { get; set; }
+
+	IGalaxy Galaxy => GameWrapper.Client.GalaxyView;
+
+	[CascadingParameter(Name = "GameWrapper")]
+	public GameWrapper GameWrapper { get; set; }
 
 	[Parameter]
 	public bool IsEnabled { get; set; } = true;

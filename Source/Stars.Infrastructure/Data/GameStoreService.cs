@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Stars.Web.Lab.Data
+namespace Stars.Infrastructure.Data
 {
 	public struct GameInfo
 	{

@@ -1,0 +1,39 @@
+﻿@inject IJSRuntime JSRuntime
+
+<CascadingValue Value="@Galaxy">
+	<CascadingValue Value="@Zoom">
+		@ChildContent
+	</CascadingValue>
+</CascadingValue>
+
+@code {
+	[Parameter]
+	public IGalaxy Galaxy { get; set; }
+
+	[Parameter]
+	public RenderFragment ChildContent { get; set; }
+
+
+	public double Zoom = 1.0;
+
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			var reference = DotNetObjectReference.Create(this);
+			await JSRuntime.BindCallbackMethod(reference, "wrapper", "zoomEvent");
+		}
+	}
+
+	[JSInvokable("ZoomCallback")]
+	public void ZoomChanged(string zoomFactor)
+	{
+		double zoomDouble = 1.0;
+		Double.TryParse(zoomFactor, NumberStyles.Any, CultureInfo.InvariantCulture, out zoomDouble);
+
+		Zoom = 1 / zoomDouble;
+
+		StateHasChanged();
+	}
+}

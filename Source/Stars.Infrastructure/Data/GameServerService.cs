@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Stars.Web.Lab.Data
+namespace Stars.Infrastructure.Data
 {
 	public class GameServerService
 	{

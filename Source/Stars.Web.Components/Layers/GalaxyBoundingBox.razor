@@ -18,8 +18,10 @@
 
 @code 
 {
-	[Parameter]
-	public GalaxyBounds Bounds { get; set; }
+	public GalaxyBounds Bounds => GameWrapper.Client.GalaxyView.Bounds;
+
+	[CascadingParameter(Name = "GameWrapper")]
+	public GameWrapper GameWrapper { get; set; }
 
 	[Parameter]
 	public bool IsFilled { get; set; }

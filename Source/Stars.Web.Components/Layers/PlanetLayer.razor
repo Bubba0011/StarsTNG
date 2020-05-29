@@ -28,22 +28,18 @@
 
 @code
 {
-	private double zoom { get; set; } = 1.0;
+	double zoom => UIWrapper.Zoom;
 
-	[Parameter]
-	public IGalaxy Galaxy { get; set; }
+	IGalaxy Galaxy => GameWrapper.Client.GalaxyView;
+
+	[CascadingParameter(Name = "GameWrapper")]
+	public GameWrapper GameWrapper { get; set; }
+
+	[CascadingParameter(Name = "UIWrapper")]
+	public UIWrapper UIWrapper { get; set; }
 
 	[Parameter]
 	public bool IsEnabled { get; set; } = true;
-
-	protected override async Task OnAfterRenderAsync(bool firstRender)
-	{
-		if (firstRender)
-		{
-			var reference = DotNetObjectReference.Create(this);
-			await JSRuntime.BindCallbackMethod(reference, "planetLayer", "zoomEvent");
-		}
-	}
 
 	private string GetClass(IPlanet planet)
 	{
@@ -64,16 +60,5 @@
 	{
 		var radius = (startValue / Math.Pow(zoom, 0.5)).ToString(CultureInfo.InvariantCulture);
 		return radius;
-	}
-
-	[JSInvokable("ZoomCallback")]
-	public void ZoomChanged(string zoomFactor)
-	{
-		double zoomDouble = 1.0;
-		Double.TryParse(zoomFactor, NumberStyles.Any, CultureInfo.InvariantCulture, out zoomDouble);
-
-		zoom = 1 / zoomDouble;
-
-		StateHasChanged();
 	}
 }

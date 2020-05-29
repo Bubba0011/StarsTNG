@@ -74,8 +74,10 @@
 
 @code
 {
-	[Parameter]
-	public IGalaxy Galaxy { get; set; }
+	IGalaxy Galaxy => GameWrapper.Client.GalaxyView;
+
+	[CascadingParameter(Name = "GameWrapper")]
+	public GameWrapper GameWrapper { get; set; }
 
 	private bool InOrbit(IFleet fleet)
 	{
