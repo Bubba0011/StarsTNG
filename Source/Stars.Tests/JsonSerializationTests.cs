@@ -162,7 +162,7 @@ namespace Stars.Tests
 		{
 			var game = new Game()
 			{
-				Settings = new GameSettings(),
+				Rules = new GameRules(),
 
 				Galaxy = new Galaxy()
 				{

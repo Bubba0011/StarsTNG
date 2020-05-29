@@ -36,6 +36,8 @@ namespace Stars.Core.Setup
 
 				var homeworld = rnd.PickOne(uninhabitedPlanets);
 
+				homeworld.Details.Environment = player.Race.EnvironmentPreferences;
+
 				homeworld.Settlement = new Settlement()
 				{
 					OwnerId = player.Id,
@@ -55,7 +57,7 @@ namespace Stars.Core.Setup
 				galaxy.Fleets.Add(fleet);
 			}
 
-			var gameSettings = new GameSettings();
+			var gameSettings = new GameRules();
 
 			return new Game(gameSettings, galaxy)
 			{
