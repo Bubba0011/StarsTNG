@@ -1,5 +1,7 @@
 ﻿using Stars.Core;
+using Stars.Core.Views;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Stars.Infrastructure.Data
@@ -7,11 +9,13 @@ namespace Stars.Infrastructure.Data
 	public class GameClient : IDisposable
 	{
 		private readonly GameServer server;
+		private PlayerGameView gameView;
 
 		public int PlayerId { get; }
-		public IGalaxy GalaxyView { get; private set; }
+		public IGalaxy GalaxyView => gameView.Galaxy;
 		public string TriggerStatus { get; private set; }
-		public int CurrentTurn => server.Game.Turn;
+		public int CurrentTurn => gameView.Turn;
+		public IEnumerable<PlayerScore> Scoreboard => gameView.Scoreboard;
 
 		public EventHandler GameUpdated;
 		public EventHandler TriggerUpdated;
@@ -23,7 +27,7 @@ namespace Stars.Infrastructure.Data
 			server.TriggerChanged += OnTriggerUpdated;
 
 			PlayerId = playerId;
-			GalaxyView = server.GetPlayerView(this);
+			gameView = server.GetPlayerView(this);
 		}
 
 		public void SetReadyFlag()
@@ -39,7 +43,7 @@ namespace Stars.Infrastructure.Data
 
 		private void OnGameUpdated(object sender, EventArgs e)
 		{
-			GalaxyView = server.GetPlayerView(this);
+			gameView = server.GetPlayerView(this);
 			GameUpdated?.Invoke(this, e);
 		}
 

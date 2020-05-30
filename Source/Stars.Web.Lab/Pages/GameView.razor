@@ -48,6 +48,14 @@
 				<div>Turn: @client.CurrentTurn</div>
 				<div>ETA: @client.TriggerStatus</div>
 			</InfoPanel>
+			
+			<InfoPanel Position="top right">
+				<b>Scoreboard</b>
+				@foreach (var item in client.Scoreboard)
+				{
+					<div>@($"{item.PlayerName}: {item.Score}")</div>
+				}
+			</InfoPanel>
 		}
 	</div>
 </div>

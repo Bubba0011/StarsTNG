@@ -22,9 +22,9 @@ namespace Stars.Infrastructure.Data
 			Game = game;
 		}
 
-		public PlayerGalaxyView GetPlayerView(GameClient client)
+		public PlayerGameView GetPlayerView(GameClient client)
 		{
-			return new PlayerGalaxyView(Game, client.PlayerId);
+			return new PlayerGameView(Game, client.PlayerId);
 		}
 
 		public IEnumerable<int> GetPlayerIds()

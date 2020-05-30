@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,6 +11,7 @@ namespace Stars.Core
 		public GameRules Rules { get; set; }
 		public Galaxy Galaxy { get; set; }
 		public int Turn { get; set; } = 1;
+		public IList<PlayerScore> Scoreboard { get; set; } = new PlayerScore[0];
 
 		public Game()
 		{
@@ -27,6 +29,7 @@ namespace Stars.Core
 		{
 			Turn += Rules.TimeStep;
 
+			// Planets build stuff and population grows
 			foreach (var planet in Galaxy.Planets)
 			{
 				if (planet.Settlement != null)
@@ -36,11 +39,13 @@ namespace Stars.Core
 				}
 			}
 
+			// Fleets move
 			foreach (var fleet in Galaxy.Fleets)
 			{
 				UpdateFleet(fleet);
 			}
 
+			// Colony ships colonize
 			var colonizers = Galaxy.Fleets
 				.Where(f => f.ColonistCount > 0)
 				.Where(f => f.Waypoints?.Any() != true)
@@ -50,6 +55,13 @@ namespace Stars.Core
 			{
 				Colonize(fleet);
 			}
+
+			// Update scoreboard...
+			Scoreboard = Galaxy.Players
+				.Select(CalculateScore)
+				.OrderByDescending(item => item.Score)
+				.ThenBy(item => item.PlayerId)
+				.ToArray();
 
 			void UpdatePopulation(Planet populatedPlanet)
 			{
@@ -132,9 +144,33 @@ namespace Stars.Core
 			}
 		}
 
+		private PlayerScore CalculateScore(Player player)
+		{
+			var score = Galaxy.Planets
+				.Where(p => p.Settlement?.OwnerId == player.Id)
+				.Select(p => p.Settlement!)
+				.Sum(s => s.Population);
+
+			return new PlayerScore(player.Id, player.Name ?? $"Player #{player.Id}", score);
+		}
+
 		private Player? GetPlayer(int playerId)
 		{
 			return Galaxy.Players.SingleOrDefault(p => p.Id == playerId);
+		}
+	}
+
+	public struct PlayerScore
+	{
+		public int PlayerId { get; }
+		public string PlayerName { get; }
+		public long Score { get; }
+
+		public PlayerScore(int playerId, string playerName, long score)
+		{
+			PlayerId = playerId;
+			PlayerName = playerName;
+			Score = score;
 		}
 	}
 }
