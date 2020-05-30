@@ -47,14 +47,16 @@ namespace Stars.Core.Setup
 
 				var fleet = new Fleet()
 				{
-					Id = galaxy.Fleets.Count + 1,
 					OwnerId = player.Id,
 					Position = homeworld.Position,
 					Name = $"{player.Name} Fleet #1",
 					ScannerRange = 50,
 					Waypoints = new List<Position> { Position.Zero, },
 				};
-				galaxy.Fleets.Add(fleet);
+				galaxy.AddFleet(fleet);
+
+				homeworld.Settlement.BuildQueue.Items.Add(
+					new BuildQueueItem { Cost = 50, ItemToBuild = BuildQueueItem.ScoutShip });
 			}
 
 			var gameSettings = new GameRules();

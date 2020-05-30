@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Stars.Core
 {
@@ -10,5 +11,13 @@ namespace Stars.Core
 		public GalaxyBounds Bounds { get; set; }
 
 		public IGalaxy GetDefaultView() => new DefaultGalaxyView(this);
+
+		public Fleet AddFleet(Fleet fleet)
+		{
+			fleet.Id = 0;
+			Fleets.Add(fleet);
+			fleet.Id = Fleets.Max(f => f.Id + 1);
+			return fleet;
+		}
 	}
 }

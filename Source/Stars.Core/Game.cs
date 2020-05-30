@@ -29,6 +29,7 @@ namespace Stars.Core
 			{
 				if (planet.Settlement != null)
 				{
+					BuildStuff(planet);
 					UpdatePopulation(planet);
 				}
 			}
@@ -53,6 +54,34 @@ namespace Stars.Core
 			{
 				const double Warp7 = 49;
 				fleet.Move(Warp7);
+			}
+
+			void BuildStuff(Planet populatedPlanet)
+			{
+				Settlement settlement = populatedPlanet.Settlement!;
+
+				int resources = settlement.Population / 1000;
+				var output = settlement.BuildQueue.Build(resources);
+
+				foreach (var item in output)
+				{
+					if (item.ItemToBuild == BuildQueueItem.ScoutShip)
+					{
+						var scout = new Fleet
+						{
+							OwnerId = settlement.OwnerId,
+							Position = populatedPlanet.Position,
+							ScannerRange = 50,
+						};
+
+						Galaxy.AddFleet(scout);
+						scout.Name = $"Scout #{scout.Id}";
+					}
+					else if (item.ItemToBuild == BuildQueueItem.ColonyShip)
+					{
+
+					}
+				}
 			}
 		}
 
