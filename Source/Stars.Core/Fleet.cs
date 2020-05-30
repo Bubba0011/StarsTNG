@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Stars.Core
 {
-	public class Fleet : ISpaceObject
+	public class Fleet : IEntity, ISpaceObject
 	{
 		public int Id { get; set; }
 		public int OwnerId { get; set; }

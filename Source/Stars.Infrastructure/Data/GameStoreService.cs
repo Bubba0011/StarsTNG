@@ -28,7 +28,7 @@ namespace Stars.Infrastructure.Data
 					.ToArray();
 			}
 
-			GameInfo MakeInfo(int gameId, Game game)
+			static GameInfo MakeInfo(int gameId, Game game)
 			{
 				return new GameInfo()
 				{

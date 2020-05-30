@@ -52,7 +52,7 @@ namespace Stars.Core.Setup
 					ScannerRange = 50,
 					Waypoints = new List<Position> { Position.Zero, },
 				};
-				galaxy.AddFleet(fleet);
+				galaxy.Fleets.Add(fleet);
 
 				homeworld.Settlement.BuildQueue.Items.Add(
 					new BuildQueueItem { Cost = 50, ItemToBuild = BuildQueueItem.ScoutShip });
@@ -63,7 +63,7 @@ namespace Stars.Core.Setup
 			var game = new Game(gameSettings, galaxy)
 			{
 				Name = settings.GameName,
-				Players = players,
+				Players = new EntityStore<Player>(players),
 			};
 
 			return game;

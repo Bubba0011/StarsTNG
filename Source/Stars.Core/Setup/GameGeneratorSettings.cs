@@ -4,7 +4,7 @@ namespace Stars.Core.Setup
 {
 	public class GameGeneratorSettings
 	{
-		public string GameName { get; set; }
+		public string? GameName { get; set; }
 
 		public GalaxyGeneratorSettings GalaxySettings { get; set; } = new GalaxyGeneratorSettings();
 

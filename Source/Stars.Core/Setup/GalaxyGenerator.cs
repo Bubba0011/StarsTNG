@@ -28,19 +28,19 @@ namespace Stars.Core.Setup
 				Bounds = new GalaxyBounds(settings.GalaxySize)
 			};
 
-			galaxy.Planets = RandomPositions(settings)
+			var planets = RandomPositions(settings)
 				.Take(settings.PlanetCount)
-				.Select((p, n) => CreatePlanet(p, n + 1))
-				.ToList();
+				.Select(CreatePlanet);
+
+			galaxy.Planets.AddRange(planets);
 
 			return galaxy;
 		}
 
-		private Planet CreatePlanet(Position position, int id)
+		private Planet CreatePlanet(Position position)
 		{
 			var planet = new Planet()
 			{
-				Id = id,
 				Position = position,
 				Details = CreateDetails(),
 			};

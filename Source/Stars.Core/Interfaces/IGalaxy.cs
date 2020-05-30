@@ -19,9 +19,9 @@ namespace Stars.Core
 				.Concat(galaxy.Fleets);
 		}
 
-		public static ISpaceObject GetSpaceObject(this IGalaxy galaxy, string objectId)
+		public static ISpaceObject? GetSpaceObject(this IGalaxy galaxy, string objectId)
 		{
-			return galaxy.GetSpaceObjects().Single(obj => obj.ObjectId == objectId);
+			return galaxy.GetSpaceObjects().SingleOrDefault(obj => obj.ObjectId == objectId);
 		}
 
 		public static IPlanet ClosestPlanet(this IGalaxy galaxy, Position target)

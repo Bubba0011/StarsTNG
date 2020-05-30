@@ -19,15 +19,15 @@ namespace Stars.Tests
 		{
 			var galaxy = new Galaxy
 			{
-				Bounds = new GalaxyBounds(800)
-			};
+				Bounds = new GalaxyBounds(800),
 
-			galaxy.Planets = new Planet[]
-			{
-				new Planet { Position = new Position(400, 400)},
-				new Planet { Position = new Position(300, 300)},
-				new Planet { Position = new Position(200, 200)}
-			}.ToList();
+				Planets = new EntityStore<Planet>
+				{
+					new Planet { Position = new Position(400, 400)},
+					new Planet { Position = new Position(300, 300)},
+					new Planet { Position = new Position(200, 200)}
+				},
+			};
 
 			var galaxyView = galaxy.GetDefaultView();
 			var closest = galaxyView.ClosestPlanet(new Position(360, 360));

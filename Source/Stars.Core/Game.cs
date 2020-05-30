@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,7 +11,7 @@ namespace Stars.Core
 		public Galaxy Galaxy { get; set; }
 		public int Turn { get; set; } = 1;
 		public IList<PlayerScore> Scoreboard { get; set; } = new PlayerScore[0];
-		public IList<Player> Players { get; set; } = new List<Player>();
+		public EntityStore<Player> Players { get; set; } = new EntityStore<Player>();
 
 		public Game()
 		{
@@ -99,7 +98,7 @@ namespace Stars.Core
 							ScannerRange = 50,
 						};
 
-						Galaxy.AddFleet(scout);
+						Galaxy.Fleets.Add(scout);
 						scout.Name = $"Scout #{scout.Id}";
 					}
 					else if (item.ItemToBuild == BuildQueueItem.ColonyShip)
@@ -115,7 +114,7 @@ namespace Stars.Core
 							ColonistCount = settlers,
 						};
 
-						Galaxy.AddFleet(colonyShip);
+						Galaxy.Fleets.Add(colonyShip);
 						colonyShip.Name = $"Mayflower #{colonyShip.Id}";
 					}
 				}

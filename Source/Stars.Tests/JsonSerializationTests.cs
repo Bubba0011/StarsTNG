@@ -164,7 +164,7 @@ namespace Stars.Tests
 			{
 				Rules = new GameRules(),
 
-				Players = new List<Player>()
+				Players = new EntityStore<Player>
 				{
 					new Player()
 					{
@@ -177,7 +177,7 @@ namespace Stars.Tests
 				{
 					Bounds = new GalaxyBounds(800),
 					
-					Planets = new List<Planet>()
+					Planets = new EntityStore<Planet>
 					{
 						new Planet()
 						{

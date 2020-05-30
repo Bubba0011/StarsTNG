@@ -9,10 +9,10 @@ namespace Stars.Core.Views
 		private readonly int playerId;
 		private readonly List<ScannerSite> scanners;
 
-		private Galaxy galaxy => game.Galaxy;
+		private Galaxy Galaxy => game.Galaxy;
 
-		public GalaxyBounds Bounds => galaxy.Bounds;
-		public IEnumerable<IPlanet> Planets => galaxy.Planets.Select(Project);
+		public GalaxyBounds Bounds => Galaxy.Bounds;
+		public IEnumerable<IPlanet> Planets => Galaxy.Planets.Select(Project);
 		public IEnumerable<IFleet> Fleets => GetFleets();
 
 		public PlayerGalaxyView(Game game, int playerId)
@@ -41,7 +41,7 @@ namespace Stars.Core.Views
 
 		private IEnumerable<IFleet> GetFleets()
 		{
-			foreach (var fleet in galaxy.Fleets)
+			foreach (var fleet in Galaxy.Fleets)
 			{
 				if (fleet.OwnerId == playerId)
 				{
@@ -61,7 +61,7 @@ namespace Stars.Core.Views
 
 		private IEnumerable<ScannerSite> GetScanners()
 		{
-			foreach (var planet in galaxy.Planets)
+			foreach (var planet in Galaxy.Planets)
 			{
 				if (planet.Settlement?.OwnerId == playerId)
 				{
@@ -69,7 +69,7 @@ namespace Stars.Core.Views
 				}
 			}
 
-			foreach (var fleet in galaxy.Fleets)
+			foreach (var fleet in Galaxy.Fleets)
 			{
 				if (fleet.OwnerId == playerId)
 				{
@@ -81,7 +81,7 @@ namespace Stars.Core.Views
 
 	public class PlayerPlayerView : IPlayer
 	{
-		private Game game;
+		private readonly Game game;
 		private readonly Player player;
 
 		public int Id => player.Id;
