@@ -61,7 +61,7 @@ namespace Stars.Core
 				Settlement settlement = populatedPlanet.Settlement!;
 
 				int resources = settlement.Population / 1000;
-				var output = settlement.BuildQueue.Build(resources);
+				var output = settlement.BuildQueue.Build(resources).ToArray();
 
 				foreach (var item in output)
 				{

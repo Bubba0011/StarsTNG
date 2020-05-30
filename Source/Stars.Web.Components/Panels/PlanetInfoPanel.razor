@@ -23,6 +23,19 @@
 				<p><b>Owner</b> Player #@Planet.Settlement.OwnerId</p>
 				<p><b>Population</b> @Planet.Settlement.Population</p>
 				<p><b>Scanner Range</b> @Planet.Settlement.ScannerRange</p>
+
+				@if (Planet.Settlement is ISettlementController controller)
+				{
+					<p>
+						<b>Build Queue</b>
+						@foreach (var item in controller.BuildQueue.Items)
+						{
+							<div>@($"{item.ItemToBuild} - {item.Invested} of {item.Cost} ({100 * item.Progress:0.}%)")</div>
+						}
+						<Button Clicked="AddScoutToBuildQueue">Add Scout</Button>
+						<Button Clicked="RemoveLastBuildQueueItem" Disabled="@(!controller.BuildQueue.Items.Any())">Remove Last</Button>
+					</p>
+				}
 			}
 		</div>
 	</InfoPanel>
@@ -44,5 +57,26 @@
 		var value = Player.GetPlanetValue(Planet) ?? 0;
 
 		return (int)(100 * value);
+	}
+
+	private void AddScoutToBuildQueue()
+	{
+		if (Planet.Settlement is ISettlementController ctrl)
+		{
+			var scout = new BuildQueueItem(BuildQueueItem.ScoutShip, 50);
+			ctrl.BuildQueue.Items.Add(scout);
+		}
+	}
+
+	private void RemoveLastBuildQueueItem()
+	{
+		if (Planet.Settlement is ISettlementController ctrl)
+		{
+			var lastItem = ctrl.BuildQueue.Items.Last();
+			if (lastItem != null)
+			{
+				ctrl.BuildQueue.Items.Remove(lastItem);
+			}
+		}
 	}
 }

@@ -27,9 +27,4 @@ namespace Stars.Core
 			fleet.Waypoints = waypoints?.ToList();
 		}
 	}
-
-	public interface IFleetController : IFleet
-	{
-		public void SetWaypoints(IEnumerable<Position>? waypoints);
-	}
 }
