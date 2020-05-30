@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace Stars.Core
@@ -15,6 +14,8 @@ namespace Stars.Core
 		public string ObjectId => $"Fleet#{Id}";
 		public IList<Position>? Waypoints { get; set; }
 		public int? Heading { get; set; }
+		public int ColonistCount { get; set; }
+
 		public IFleet GetDefaultView() => new DefaultFleetView(this);
 
 		public void Move(double speed)

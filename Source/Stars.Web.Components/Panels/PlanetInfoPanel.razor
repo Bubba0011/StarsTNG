@@ -33,6 +33,7 @@
 							<div>@($"{item.ItemToBuild} - {item.Invested} of {item.Cost} ({100 * item.Progress:0.}%)")</div>
 						}
 						<Button Clicked="AddScoutToBuildQueue">Add Scout</Button>
+						<Button Clicked="AddColonyShipToBuildQueue">Add Colonizer</Button>
 						<Button Clicked="RemoveLastBuildQueueItem" Disabled="@(!controller.BuildQueue.Items.Any())">Remove Last</Button>
 					</p>
 				}
@@ -63,8 +64,17 @@
 	{
 		if (Planet.Settlement is ISettlementController ctrl)
 		{
-			var scout = new BuildQueueItem(BuildQueueItem.ScoutShip, 50);
+			var scout = new BuildQueueItem(BuildQueueItem.ScoutShip, 25);
 			ctrl.BuildQueue.Items.Add(scout);
+		}
+	}
+
+	private void AddColonyShipToBuildQueue()
+	{
+		if (Planet.Settlement is ISettlementController ctrl)
+		{
+			var ship = new BuildQueueItem(BuildQueueItem.ColonyShip, 20);
+			ctrl.BuildQueue.Items.Add(ship);
 		}
 	}
 

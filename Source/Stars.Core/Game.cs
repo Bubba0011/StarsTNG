@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Stars.Core
 {
@@ -37,6 +39,16 @@ namespace Stars.Core
 			foreach (var fleet in Galaxy.Fleets)
 			{
 				UpdateFleet(fleet);
+			}
+
+			var colonizers = Galaxy.Fleets
+				.Where(f => f.ColonistCount > 0)
+				.Where(f => f.Waypoints?.Any() != true)
+				.ToArray();
+
+			foreach (var fleet in colonizers)
+			{
+				Colonize(fleet);
 			}
 
 			void UpdatePopulation(Planet populatedPlanet)
@@ -79,7 +91,42 @@ namespace Stars.Core
 					}
 					else if (item.ItemToBuild == BuildQueueItem.ColonyShip)
 					{
+						int settlers = Math.Min(5000, settlement.Population / 2);
+						settlement.Population -= settlers;
 
+						var colonyShip = new Fleet
+						{
+							OwnerId = settlement.OwnerId,
+							Position = populatedPlanet.Position,
+							ScannerRange = 20,
+							ColonistCount = settlers,
+						};
+
+						Galaxy.AddFleet(colonyShip);
+						colonyShip.Name = $"Mayflower #{colonyShip.Id}";
+					}
+				}
+			}
+
+			void Colonize(Fleet colonyFleet)
+			{
+				var planet = Galaxy.Planets.SingleOrDefault(p => p.Position == colonyFleet.Position);
+
+				if (planet != null && planet.Settlement == null)
+				{
+					var race = GetPlayer(colonyFleet.OwnerId)!.Race;
+					var value = Rules.CalculatePlanetValue(planet.Details, race);
+
+					if (value > 0)
+					{
+						Galaxy.Fleets.Remove(colonyFleet);
+
+						planet.Settlement = new Settlement
+						{
+							OwnerId = colonyFleet.OwnerId,
+							Population = colonyFleet.ColonistCount,
+							ScannerRange = 100,
+						};
 					}
 				}
 			}
