@@ -38,7 +38,7 @@ namespace Stars.Core
 		public int Invested { get; set; }
 
 		public int RemainingCost => Cost - Invested;
-		public bool IsCompleted => RemainingCost >= 0;
+		public bool IsCompleted => RemainingCost <= 0;
 		public double Progress => (double)Invested / Cost;
 
 		public BuildQueueItem()
