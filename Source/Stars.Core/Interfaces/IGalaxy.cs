@@ -6,7 +6,6 @@ namespace Stars.Core
 	public interface IGalaxy
 	{
 		IEnumerable<IPlanet> Planets { get; }
-		IEnumerable<IPlayer> Players { get; }
 		IEnumerable<IFleet> Fleets { get; }
 		GalaxyBounds Bounds { get; }
 	}

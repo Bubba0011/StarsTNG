@@ -66,7 +66,7 @@
 	private GameWrapper wrapper;
 	private GameClient client => wrapper.Client;
 	private IGalaxy Galaxy => client.GalaxyView;
-	private IPlayer Player => Galaxy.Players.SingleOrDefault(p => p.Id == PlayerId);
+	private IPlayer Player => client.Players.SingleOrDefault(p => p.Id == PlayerId);
 
 	// Selection
 	private ISpaceObject selectedObject;

@@ -164,6 +164,15 @@ namespace Stars.Tests
 			{
 				Rules = new GameRules(),
 
+				Players = new List<Player>()
+				{
+					new Player()
+					{
+						Id = 1,
+						Name = "Player One",
+					},
+				},
+
 				Galaxy = new Galaxy()
 				{
 					Bounds = new GalaxyBounds(800),
@@ -180,15 +189,6 @@ namespace Stars.Tests
 								Environment = new Core.Environment(10, 50, 20),
 								Minerals = new Minerals(20, 30, 50),
 							},
-						},
-					},
-
-					Players = new List<Player>()
-					{
-						new Player()
-						{
-							Id = 1,
-							Name = "Player One",
 						},
 					},
 				},

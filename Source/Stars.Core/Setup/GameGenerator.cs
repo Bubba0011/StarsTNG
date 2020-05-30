@@ -20,16 +20,15 @@ namespace Stars.Core.Setup
 
 			// Populate galaxy
 			var players = settings.PlayerNames
-				.Select((name, index) => new Player()
+				.Select((name, index) => new Player
 				{
 					Id = index + 1,
 					Name = name,
-				});
+				})
+				.ToList();
 
 			foreach (var player in players)
 			{
-				galaxy.Players.Add(player);
-
 				var uninhabitedPlanets = galaxy.Planets
 					.Where(p => p.Settlement == null)
 					.ToArray();
@@ -61,10 +60,13 @@ namespace Stars.Core.Setup
 
 			var gameSettings = new GameRules();
 
-			return new Game(gameSettings, galaxy)
+			var game = new Game(gameSettings, galaxy)
 			{
 				Name = settings.GameName,
+				Players = players,
 			};
+
+			return game;
 		}
 	}
 }

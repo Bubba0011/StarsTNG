@@ -115,7 +115,7 @@
 			game = gen.Generate(gameSettings);
 		}
 
-		this.playerId = game.Galaxy.Players.First().Id;
+		this.playerId = game.Players.First().Id;
 		this.galaxy = new PlayerGalaxyView(game, playerId);
 	}
 
@@ -128,9 +128,9 @@
 	{
 		playerId += 1;
 
-		if (playerId > game.Galaxy.Players.Last().Id)
+		if (playerId > game.Players.Last().Id)
 		{
-			playerId = game.Galaxy.Players.First().Id;
+			playerId = game.Players.First().Id;
 		}
 
 		galaxy = new PlayerGalaxyView(game, playerId);

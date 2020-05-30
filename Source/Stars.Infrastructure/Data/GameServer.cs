@@ -29,7 +29,7 @@ namespace Stars.Infrastructure.Data
 
 		public IEnumerable<int> GetPlayerIds()
 		{
-			return Game.Galaxy.Players.Select(player => player.Id);
+			return Game.Players.Select(player => player.Id);
 		}
 
 		public void SetPlayerReadyFlag(int playerId)
@@ -47,7 +47,7 @@ namespace Stars.Infrastructure.Data
 			if (sim == null)
 			{
 				cancelSource = new CancellationTokenSource();
-				var trigger = new UpdateTrigger(Game.Galaxy.Players.Count, 2, updateInterval, 6 * updateInterval);
+				var trigger = new UpdateTrigger(Game.Players.Count, 2, updateInterval, 6 * updateInterval);
 				sim = Task.Run(() => Run(trigger, cancelSource.Token));
 			}
 

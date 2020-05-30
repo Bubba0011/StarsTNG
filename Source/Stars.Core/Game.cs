@@ -12,6 +12,7 @@ namespace Stars.Core
 		public Galaxy Galaxy { get; set; }
 		public int Turn { get; set; } = 1;
 		public IList<PlayerScore> Scoreboard { get; set; } = new PlayerScore[0];
+		public IList<Player> Players { get; set; } = new List<Player>();
 
 		public Game()
 		{
@@ -57,7 +58,7 @@ namespace Stars.Core
 			}
 
 			// Update scoreboard...
-			Scoreboard = Galaxy.Players
+			Scoreboard = Players
 				.Select(CalculateScore)
 				.OrderByDescending(item => item.Score)
 				.ThenBy(item => item.PlayerId)
@@ -156,7 +157,7 @@ namespace Stars.Core
 
 		private Player? GetPlayer(int playerId)
 		{
-			return Galaxy.Players.SingleOrDefault(p => p.Id == playerId);
+			return Players.SingleOrDefault(p => p.Id == playerId);
 		}
 	}
 

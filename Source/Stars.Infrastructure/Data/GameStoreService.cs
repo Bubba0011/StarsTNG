@@ -36,7 +36,7 @@ namespace Stars.Infrastructure.Data
 					Name = game.Name,
 					GalaxySize = game.Galaxy.Bounds.Size,
 					PlanetCount = game.Galaxy.Planets.Count,
-					PlayerCount = game.Galaxy.Players.Count,
+					PlayerCount = game.Players.Count,
 				};
 			}
 		}

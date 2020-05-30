@@ -13,7 +13,6 @@ namespace Stars.Core.Views
 
 		public GalaxyBounds Bounds => galaxy.Bounds;
 		public IEnumerable<IPlanet> Planets => galaxy.Planets.Select(Project);
-		public IEnumerable<IPlayer> Players => galaxy.Players.Select(Project);
 		public IEnumerable<IFleet> Fleets => GetFleets();
 
 		public PlayerGalaxyView(Game game, int playerId)
@@ -38,13 +37,6 @@ namespace Stars.Core.Views
 			{
 				return new UnknowPlanet(planet);
 			}
-		}
-
-		private IPlayer Project(Player player)
-		{
-			return player.Id == playerId
-				? new PlayerPlayerView(player, game)
-				: player.GetDefaultView();
 		}
 
 		private IEnumerable<IFleet> GetFleets()

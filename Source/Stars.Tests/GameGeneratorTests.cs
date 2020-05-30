@@ -18,7 +18,7 @@ namespace Stars.Tests
 					.Count(p => p.Settlement?.OwnerId == owner.Id);
 			}
 
-			Assert.All(baselineGame.Galaxy.Players, player => Assert.Equal(1, GetSettlementCount(player)));
+			Assert.All(baselineGame.Players, player => Assert.Equal(1, GetSettlementCount(player)));
 		}
 
 		[Fact]
@@ -30,7 +30,7 @@ namespace Stars.Tests
 					.Single(p => p.Settlement?.OwnerId == owner.Id);
 			}
 
-			Assert.All(baselineGame.Galaxy.Players, player => Assert.Equal(player.Race.EnvironmentPreferences, GetHomeworld(player).Details.Environment));
+			Assert.All(baselineGame.Players, player => Assert.Equal(player.Race.EnvironmentPreferences, GetHomeworld(player).Details.Environment));
 		}
 
 		private static Game CreateBaselineGame()

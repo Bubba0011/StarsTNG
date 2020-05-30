@@ -16,6 +16,7 @@ namespace Stars.Infrastructure.Data
 		public string TriggerStatus { get; private set; }
 		public int CurrentTurn => gameView.Turn;
 		public IEnumerable<PlayerScore> Scoreboard => gameView.Scoreboard;
+		public IEnumerable<IPlayer> Players => gameView.Players;
 
 		public EventHandler GameUpdated;
 		public EventHandler TriggerUpdated;
