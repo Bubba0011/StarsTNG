@@ -53,9 +53,6 @@ namespace Stars.Core.Setup
 					Waypoints = new List<Position> { Position.Zero, },
 				};
 				galaxy.Fleets.Add(fleet);
-
-				homeworld.Settlement.BuildQueue.Items.Add(
-					new BuildQueueItem { Cost = 50, ItemToBuild = BuildQueueItem.ScoutShip });
 			}
 
 			var gameSettings = new GameRules();

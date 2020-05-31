@@ -85,38 +85,38 @@ namespace Stars.Core
 				Settlement settlement = populatedPlanet.Settlement!;
 
 				int resources = settlement.Population / 1000;
-				var output = settlement.BuildQueue.Build(resources).ToArray();
+				var output = settlement.BuildQueue.Build(resources);
+				resources -= output.ConsumedResources;
 
-				foreach (var item in output)
+				foreach (var item in output.CompletedItems)
 				{
-					if (item.ItemToBuild == BuildQueueItem.ScoutShip)
+					if (item.ItemToBuild.Equals(BuildMenuItem.ScoutShip))
 					{
-						var scout = new Fleet
-						{
-							OwnerId = settlement.OwnerId,
-							Position = populatedPlanet.Position,
-							ScannerRange = 50,
-						};
-
-						Galaxy.Fleets.Add(scout);
-						scout.Name = $"Scout #{scout.Id}";
+						LaunchShip(50, "Scout");
 					}
-					else if (item.ItemToBuild == BuildQueueItem.ColonyShip)
+					else if (item.ItemToBuild.Equals(BuildMenuItem.ColonyShip))
 					{
 						int settlers = Math.Min(5000, settlement.Population / 2);
+
+						var ship = LaunchShip(20, "Mayflower");
 						settlement.Population -= settlers;
-
-						var colonyShip = new Fleet
-						{
-							OwnerId = settlement.OwnerId,
-							Position = populatedPlanet.Position,
-							ScannerRange = 20,
-							ColonistCount = settlers,
-						};
-
-						Galaxy.Fleets.Add(colonyShip);
-						colonyShip.Name = $"Mayflower #{colonyShip.Id}";
+						ship.ColonistCount = settlers;
 					}
+				}
+
+				Fleet LaunchShip(int scanner, string name)
+				{
+					var ship = new Fleet
+					{
+						OwnerId = settlement.OwnerId,
+						Position = populatedPlanet.Position,
+						ScannerRange = scanner,
+					};
+
+					Galaxy.Fleets.Add(ship);
+					ship.Name = $"{name} #{ship.Id}";
+
+					return ship;
 				}
 			}
 
