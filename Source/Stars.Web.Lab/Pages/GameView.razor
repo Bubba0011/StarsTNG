@@ -25,7 +25,7 @@
 	<div class="main-container" id="mejn">
 		@if (client != null)
 		{
-			<UiGalaxy GameWrapper="wrapper" @bind-SelectedObject="selectedObject" InAutoSelectMode="!inClickMode" Clicked="GalaxyClicked" />
+			<UiGalaxy GameWrapper="wrapper" @bind-SelectedObject="selectedObject" InAutoSelectMode="!inClickMode" Clicked="GalaxyClicked" DisplayMode="displayMode" />
 
 			@if (selectedObject is IPlanet planet)
 			{
@@ -44,11 +44,13 @@
 				</InfoPanel>
 			}
 
-			<InfoPanel Position="top left" OnClicked="client.SetReadyFlag">
+			<InfoPanel Position="top left">
 				<div>Turn: @client.CurrentTurn</div>
 				<div>ETA: @client.TriggerStatus</div>
+				<div @onclick="ToggleDisplayMode">Display Mode: @displayMode</div>
+				<Button Size="ButtonSize.Small" Color="Color.Primary" Clicked="client.SetReadyFlag">Ready</Button>
 			</InfoPanel>
-			
+
 			<InfoPanel Position="top right">
 				<b>Scoreboard</b>
 				@foreach (var item in client.Scoreboard)
@@ -62,6 +64,9 @@
 
 @code
 {
+	// UI
+	private UiDisplayMode displayMode = UiDisplayMode.Default;
+
 	// Model
 	private GameWrapper wrapper;
 	private GameClient client => wrapper.Client;
@@ -153,5 +158,12 @@
 
 			fleet.SetWaypoints(list);
 		}
+	}
+
+	private void ToggleDisplayMode()
+	{
+		displayMode = displayMode == UiDisplayMode.Default
+			? UiDisplayMode.PlanetValue
+			: UiDisplayMode.Default;
 	}
 }

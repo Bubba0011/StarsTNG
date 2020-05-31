@@ -18,7 +18,7 @@
 				<GalaxyBoundingBox IsOutlined="true" />
 
 				<FleetLayer />
-				<PlanetLayer />
+				<PlanetLayer InStdMode="@(DisplayMode == UiDisplayMode.Default)" />
 
 				<SelectionLayer SelectedObject="SelectedObject" />
 
@@ -48,6 +48,9 @@
 
 	[Parameter]
 	public bool InAutoSelectMode { get; set; } = true;
+
+	[Parameter]
+	public UiDisplayMode DisplayMode { get; set; } = UiDisplayMode.Default;
 
 	[Parameter]
 	public EventCallback<SvgMouseEventArgs> Clicked { get; set; }

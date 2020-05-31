@@ -16,6 +16,19 @@
 	.planet-owned {
 		fill: rgb(50,240,50);
 	}
+
+	.hab-bad {
+		fill: red;
+	}
+	.hab-ok {
+		fill: orange;
+	}
+	.hab-good {
+		fill: yellow;
+	}
+	.hab-great {
+		fill: green;
+	}
 </style>
 
 @if (Galaxy != null && IsEnabled)
@@ -41,19 +54,55 @@
 	[Parameter]
 	public bool IsEnabled { get; set; } = true;
 
+	[Parameter]
+	public bool InStdMode { get; set; } = !true;
+
 	private string GetClass(IPlanet planet)
 	{
-		if (planet.Settlement != null)
+		return InStdMode
+			? GetStdClass()
+			: GetValueClass();
+
+		string GetStdClass()
 		{
-			return planet.Settlement.IsMine ? "planet-owned" : "planet-occupied";
+			if (planet.Settlement != null)
+			{
+				return planet.Settlement.IsMine ? "planet-owned" : "planet-occupied";
+			}
+
+			if (planet.Details != null)
+			{
+				return "planet-scanned";
+			}
+
+			return "planet";
 		}
 
-		if (planet.Details != null)
+		string GetValueClass()
 		{
-			return "planet-scanned";
-		}
+			var planetValue = GameWrapper.Client.Player.GetPlanetValue(planet);
 
-		return "planet";
+			if (planetValue == null)
+			{
+				return "planet";
+			}
+			else if (planetValue <= 0)
+			{
+				return "hab-bad";
+			}
+			else if (planetValue <= 0.35)
+			{
+				return "hab-ok";
+			}
+			else if (planetValue <= 0.70)
+			{
+				return "hab-good";
+			}
+			else
+			{
+				return "hab-great";
+			}
+		}
 	}
 
 	private string GetRadius(double startValue)
