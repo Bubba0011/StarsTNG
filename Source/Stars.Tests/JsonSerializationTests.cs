@@ -1,7 +1,5 @@
 ﻿using FluentAssertions;
 using Stars.Core;
-using System;
-using System.Collections.Generic;
 using System.Text.Json;
 using Xunit;
 
@@ -150,6 +148,38 @@ namespace Stars.Tests
 			Assert.Equal(original, restored);
 		}
 
+		[Fact]
+		public void EmptyBuildQueueShouldDeserialize()
+		{
+			var original = new BuildQueue();
+
+			var restored = SerializeAndDeserialize(original);
+
+			restored.Should().BeEquivalentTo(original);
+		}
+
+		[Fact]
+		public void PopulatedBuildQueueShouldDeserialize()
+		{
+			var original = new BuildQueue();
+			original.Items.Add(new BuildQueueItem(BuildMenuItem.ColonyShip) { Invested = 10 });
+			original.Items.Add(new BuildQueueItem(BuildMenuItem.ScoutShip));
+
+			var restored = SerializeAndDeserialize(original);
+
+			restored.Should().BeEquivalentTo(original);
+		}
+
+		[Fact]
+		public void BuildQueueItemShouldDeserialize()
+		{
+			var original = new BuildQueueItem(BuildMenuItem.ScoutShip);
+
+			var restored = SerializeAndDeserialize(original);
+
+			restored.Should().BeEquivalentTo(original);
+		}
+
 		private static T SerializeAndDeserialize<T>(T original)
 		{
 			string json = JsonSerializer.Serialize(original);
@@ -188,6 +218,12 @@ namespace Stars.Tests
 							{ 
 								Environment = new Core.Environment(10, 50, 20),
 								Minerals = new Minerals(20, 30, 50),
+							},
+							Settlement = new Settlement()
+							{
+								OwnerId = 1,
+								Population = 10_000,
+								ScannerRange = 100,
 							},
 						},
 					},
