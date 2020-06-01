@@ -1,4 +1,4 @@
-﻿@inject IJSRuntime JSRuntime
+﻿@inherits LayerBase
 
 <style>
 	.planet {
@@ -41,19 +41,6 @@
 
 @code
 {
-	double zoom => UIWrapper.Zoom;
-
-	IGalaxy Galaxy => GameWrapper.Client.GalaxyView;
-
-	[CascadingParameter(Name = "GameWrapper")]
-	public GameWrapper GameWrapper { get; set; }
-
-	[CascadingParameter(Name = "UIWrapper")]
-	public UIWrapper UIWrapper { get; set; }
-
-	[Parameter]
-	public bool IsEnabled { get; set; } = true;
-
 	[Parameter]
 	public bool InStdMode { get; set; } = !true;
 
@@ -107,7 +94,7 @@
 
 	private string GetRadius(double startValue)
 	{
-		var radius = (startValue / Math.Pow(zoom, 0.5)).ToString(CultureInfo.InvariantCulture);
+		var radius = (startValue / Math.Pow(Zoom, 0.5)).ToString(CultureInfo.InvariantCulture);
 		return radius;
 	}
 }

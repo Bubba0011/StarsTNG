@@ -1,4 +1,6 @@
-﻿<style>
+﻿@inherits LayerBase
+
+<style>
 	.grid-line {
 		stroke: rgb(20,40,60);
 	}
@@ -24,14 +26,6 @@
 
 @code
 {
-	IGalaxy Galaxy => GameWrapper.Client.GalaxyView;
-
-	[CascadingParameter(Name = "GameWrapper")]
-	public GameWrapper GameWrapper { get; set; }
-
-	[Parameter]
-	public bool IsEnabled { get; set; } = true;
-
 	private IEnumerable<(int, int)> GetGridLines()
 	{
 		if (Galaxy == null) yield break;

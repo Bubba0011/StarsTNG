@@ -1,4 +1,6 @@
-﻿<style>
+﻿@inherits LayerBase
+
+<style>
 	.galaxy-bounding-box {
 		stroke: none;
 		stroke-width: 2px;
@@ -16,12 +18,9 @@
 
 <rect x="@Bounds.Min" y="@Bounds.Min" width="@Bounds.Size" height="@Bounds.Size" class="@GetClass()" />
 
-@code 
+@code
 {
-	public GalaxyBounds Bounds => GameWrapper.Client.GalaxyView.Bounds;
-
-	[CascadingParameter(Name = "GameWrapper")]
-	public GameWrapper GameWrapper { get; set; }
+	public GalaxyBounds Bounds => Galaxy.Bounds;
 
 	[Parameter]
 	public bool IsFilled { get; set; }
