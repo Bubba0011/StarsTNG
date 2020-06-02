@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Stars.Core.Views;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,6 +13,7 @@ namespace Stars.Core
 		public int Turn { get; set; } = 1;
 		public IList<PlayerScore> Scoreboard { get; set; } = new PlayerScore[0];
 		public EntityStore<Player> Players { get; set; } = new EntityStore<Player>();
+		public HistoryStore History { get; set; } = new HistoryStore();
 
 		public Game()
 		{
@@ -27,6 +29,10 @@ namespace Stars.Core
 
 		public void Update()
 		{
+			// Save history
+			History.Store(this);
+
+			// Advance time
 			Turn += Rules.TimeStep;
 
 			// Planets build stuff and population grows
@@ -157,20 +163,6 @@ namespace Stars.Core
 		private Player? GetPlayer(int playerId)
 		{
 			return Players.SingleOrDefault(p => p.Id == playerId);
-		}
-	}
-
-	public struct PlayerScore
-	{
-		public int PlayerId { get; }
-		public string PlayerName { get; }
-		public long Score { get; }
-
-		public PlayerScore(int playerId, string playerName, long score)
-		{
-			PlayerId = playerId;
-			PlayerName = playerName;
-			Score = score;
 		}
 	}
 }

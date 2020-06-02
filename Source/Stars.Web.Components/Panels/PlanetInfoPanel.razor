@@ -9,6 +9,11 @@
 
 			@if (Planet.Details != null)
 			{
+				@if (Planet.Timestamp.HasValue)
+				{
+					<p><i>(As of turn @Planet.Timestamp)</i></p>
+				}
+
 				<p><b>Environment</b> <br /> @Planet.Details?.Environment</p>
 				<p><b>Minerals</b><MineralsPanel Minerals="Planet.Details.Minerals" /></p>
 

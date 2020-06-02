@@ -33,6 +33,13 @@ namespace Stars.Core.Views
 			{
 				return new ScannedPlanet(planet);
 			}
+
+			var turn = game.History.GetPlayerView(playerId, planet.Id);
+			if (turn.HasValue)
+			{
+				var history = game.History.GetPlanet(turn.Value, planet.Id);
+				return new OldScannedPlanet(planet, history!);
+			}
 			else
 			{
 				return new UnknowPlanet(planet);
@@ -77,32 +84,15 @@ namespace Stars.Core.Views
 				}
 			}
 		}
-	}
 
-	public class PlayerPlayerView : IPlayer
-	{
-		private readonly Game game;
-		private readonly Player player;
-
-		public int Id => player.Id;
-		public string? Name => player.Name;
-
-		public PlayerPlayerView(Player player, Game game)
+		internal IEnumerable<Planet> GetScannedPlanets()
 		{
-			this.game = game;
-			this.player = player;
-		}
+			bool CanScan(Planet planet)
+			{
+				return planet.Settlement?.OwnerId == playerId || InScannerRange(planet.Position);
+			}
 
-		public double? GetPlanetValue(IPlanet planet)
-		{
-			if (planet.Details != null)
-			{
-				return game.Rules.CalculatePlanetValue(planet.Details, player.Race);
-			}
-			else
-			{
-				return null;
-			}
+			return Galaxy.Planets.Where(CanScan);
 		}
 	}
 }
