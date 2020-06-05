@@ -52,11 +52,11 @@ namespace Stars.Core.Views
 			{
 				if (fleet.OwnerId == playerId)
 				{
-					yield return new OwnedFleet(fleet);
+					yield return new OwnedFleet(fleet, game.History);
 				}
 				else if (InScannerRange(fleet.Position))
 				{
-					yield return fleet.GetDefaultView(); // TODO
+					yield return new ScannedFleet(fleet, game.History, playerId);
 				}
 			}
 		}
@@ -93,6 +93,16 @@ namespace Stars.Core.Views
 			}
 
 			return Galaxy.Planets.Where(CanScan);
+		}
+
+		internal IEnumerable<Fleet> GetScannedFleets()
+		{
+			bool CanScan(Fleet fleet)
+			{
+				return fleet.OwnerId == playerId || InScannerRange(fleet.Position);
+			}
+
+			return Galaxy.Fleets.Where(CanScan);
 		}
 	}
 }
