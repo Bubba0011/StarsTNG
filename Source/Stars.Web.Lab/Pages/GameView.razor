@@ -38,7 +38,7 @@
 				<b>Scoreboard</b>
 				@foreach (var item in client.Scoreboard)
 				{
-					<div>@($"{item.PlayerName}: {item.Score}")</div>
+					<div>@($"{item.PlayerName}: {item.Score:### ##0} pts")</div>
 				}
 			</InfoPanel>
 	

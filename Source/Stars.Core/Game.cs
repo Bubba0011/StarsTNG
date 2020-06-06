@@ -152,10 +152,14 @@ namespace Stars.Core
 
 		private PlayerScore CalculateScore(Player player)
 		{
-			var score = Galaxy.Planets
+			var settlements = Galaxy.Planets
 				.Where(p => p.Settlement?.OwnerId == player.Id)
-				.Select(p => p.Settlement!)
-				.Sum(s => s.Population);
+				.Select(p => p.Settlement!);
+
+			var population = settlements.Sum(s => s.Population);
+			var planets = settlements.Count();
+
+			var score = population / 1000 + planets * 10;
 
 			return new PlayerScore(player.Id, player.Name ?? $"Player #{player.Id}", score);
 		}
