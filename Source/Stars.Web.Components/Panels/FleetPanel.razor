@@ -1,0 +1,114 @@
+﻿<style>
+	.waypoint-item {
+		display: flex;
+	}
+
+	.wp-cell {
+		margin: 0px 3px;
+		width: 80px;
+	}
+</style>
+
+@if (Fleet != null)
+{
+	<InfoPanel Position="bottom left">
+		@Fleet.Name
+
+		@if (Fleet is IFleetController ctrl)
+		{
+			<div>
+				@foreach (var wp in GetWaypoints())
+				{
+					<div class="waypoint-item">
+						<div class="wp-cell" style="width:20px;">#@wp.Id</div>
+						<div class="wp-cell">XY: @wp.Target</div>
+						<div class="wp-cell">Dist: @Math.Round(wp.Distance, 0) ly</div>
+						<div class="wp-cell">Eta: @wp.ETA</div>
+						<Badge Color="Color.Danger" @onclick="@(() => DeleteWaypoint(wp.Id))">x</Badge>
+					</div>
+				}
+			</div>
+
+			<Button Size="ButtonSize.Small" Color="Color.Danger" Clicked="ClearFleetWaypoints" Disabled="!Fleet.Waypoints.Any()">Clear WPs</Button>
+			<Button Size="ButtonSize.Small" Color="Color.Primary" Clicked="AddFleetWaypoint">@(InClickMode ? "Done" : "Add WPs")</Button>
+		}
+	</InfoPanel>
+}
+
+@code 
+{
+	[Parameter]
+	public IFleet Fleet { get; set; }
+
+	[Parameter]
+	public bool InClickMode { get; set; }
+
+	[Parameter]
+	public EventCallback<bool> InClickModeChanged { get; set; }
+
+	private void ClearFleetWaypoints()
+	{
+		if (Fleet is IFleetController ctrl)
+		{
+			ctrl.SetWaypoints(null);
+		}
+	}
+
+	private async Task AddFleetWaypoint()
+	{
+		if (Fleet is IFleetController fleet)
+		{
+			InClickMode = !InClickMode;
+			await InClickModeChanged.InvokeAsync(InClickMode);
+		}
+	}
+
+	private void DeleteWaypoint(int itemId)
+	{
+		if (Fleet is IFleetController ctrl)
+		{
+			var newList = Fleet.Waypoints.ToList();
+			newList.RemoveAt(itemId - 1);
+			ctrl.SetWaypoints(newList);
+		}
+	}
+
+	private IEnumerable<WaypointItem> GetWaypoints()
+	{
+		const double speed = 49;
+
+		int id = 0;
+		Position lastPos = Fleet.Position;
+		int totTime = 0;
+
+		foreach (var wp in Fleet.Waypoints)
+		{
+			var distance = lastPos.DistanceTo(wp);
+			var eta = (int)Math.Ceiling(distance / speed);
+			totTime += eta;
+			lastPos = wp;
+			id++;
+
+			yield return new WaypointItem
+			{
+				Id = id,
+				Target = wp,
+				Distance = distance,
+				ETA = totTime,
+			};
+		}
+	}
+
+	struct WaypointItem
+	{
+		public int Id { get; set; }
+		public Position Target { get; set; }
+		public double Distance { get;set; }
+		public int ETA { get; set; }
+
+		public override string ToString()
+		{
+			return $"#{Id} (X: {Target.X}, Y: {Target.Y}), Dist: {Distance:0.}ly, ETA: {ETA}";
+		}
+	}
+}

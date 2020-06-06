@@ -27,23 +27,6 @@
 		{
 			<UiGalaxy GameWrapper="wrapper" @bind-SelectedObject="selectedObject" InAutoSelectMode="!inClickMode" Clicked="GalaxyClicked" DisplayMode="displayMode" />
 
-			@if (selectedObject is IPlanet planet)
-			{
-				<PlanetInfoPanel Planet="planet" IsEnabled="true" Player="@Player" />
-			}
-			else if (selectedObject is IFleet fleet)
-			{
-				<InfoPanel Position="bottom left">
-					@fleet.Name
-
-					@if (fleet is IFleetController ctrl)
-					{
-						<Button Clicked="ClearFleetWaypoints">Clear WPs</Button>
-						<Button Clicked="AddFleetWaypoint">@(inClickMode ? "Done" : "Add WP")</Button>
-					}
-				</InfoPanel>
-			}
-
 			<InfoPanel Position="top left">
 				<div>Turn: @client.CurrentTurn</div>
 				<div>ETA: @client.TriggerStatus</div>
@@ -58,6 +41,15 @@
 					<div>@($"{item.PlayerName}: {item.Score}")</div>
 				}
 			</InfoPanel>
+
+			@if (selectedObject is IPlanet planet)
+			{
+				<PlanetInfoPanel Planet="planet" IsEnabled="true" Player="@Player" />
+			}
+			else if (selectedObject is IFleet fleet)
+			{
+				<FleetPanel Fleet="fleet" @bind-InClickMode="inClickMode" />
+			}
 		}
 	</div>
 </div>
@@ -119,22 +111,6 @@
 	private void TriggerUpdated(object sender, EventArgs e)
 	{
 		InvokeAsync(Update);
-	}
-
-	private void ClearFleetWaypoints()
-	{
-		if (selectedObject is IFleetController ctrl)
-		{
-			ctrl.SetWaypoints(null);
-		}
-	}
-
-	private void AddFleetWaypoint()
-	{
-		if (selectedObject is IFleetController fleet)
-		{
-			inClickMode = !inClickMode;
-		}
 	}
 
 	private void GalaxyClicked(SvgMouseEventArgs e)
