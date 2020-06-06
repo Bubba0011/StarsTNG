@@ -19,8 +19,7 @@
 
 				<FleetLayer />
 				<PlanetLayer InStdMode="@(DisplayMode == UiDisplayMode.Default)" />
-
-				<SelectionLayer SelectedObject="SelectedObject" />
+				@*<SelectionLayer SelectedObject="Selection.SelectedObject" />*@
 
 				@ChildContent
 			</SvgBox>
@@ -31,11 +30,11 @@
 @code
 {
 	Focus focus = new Focus() { View = Vector.Zero };
-	UIWrapper uiWrapper;
+	UIWrapper uiWrapper = new UIWrapper() { Zoom = 1.0 };
 	IGalaxy Galaxy => GameWrapper.Client.GalaxyView;
 
 	[Parameter]
-	public ISpaceObject SelectedObject { get; set; }
+	public Selection Selection { get; set; }
 
 	[Parameter]
 	public GameWrapper GameWrapper { get; set; }
@@ -44,7 +43,7 @@
 	public RenderFragment ChildContent { get; set; }
 
 	[Parameter]
-	public EventCallback<ISpaceObject> SelectedObjectChanged { get; set; }
+	public EventCallback<Selection> SelectionChanged { get; set; }
 
 	[Parameter]
 	public bool InAutoSelectMode { get; set; } = true;
@@ -79,27 +78,9 @@
 
 	private async Task TargetObject(SvgMouseEventArgs e)
 	{
-		var pos = new Position((int)e.SvgCoords.X, (int)e.SvgCoords.Y);
-		var target = Galaxy.ClosestSpaceObject(pos);
-
-		if (target != null)
-		{
-			if (SelectedObject?.Position == target.Position)
-			{
-				var objects = Galaxy.GetSpaceObjectsAt(target.Position).ToArray();
-
-				SelectedObject = objects
-					.SkipWhile(obj => obj.ObjectId != SelectedObject.ObjectId)
-					.Skip(1)
-					.FirstOrDefault();
-			}
-			else
-			{
-				SelectedObject = target;
-			}
-		}
-
-		await SelectedObjectChanged.InvokeAsync(SelectedObject);
+		var position = new Position((int)e.SvgCoords.X, (int)e.SvgCoords.Y);
+		Selection = uiWrapper.Selection = uiWrapper.Selection.TargetObject(Galaxy, position);
+		await SelectionChanged.InvokeAsync(Selection);
 	}
 
 	[JSInvokable("ZoomCallback")]

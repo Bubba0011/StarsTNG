@@ -17,6 +17,11 @@
 		fill: rgb(50,240,50);
 	}
 
+	.selected {
+		stroke: gold;
+		stroke-width: 0.2px;
+	}
+
 	.hab-bad {
 		fill: red;
 	}
@@ -46,9 +51,9 @@
 
 	private string GetClass(IPlanet planet)
 	{
-		return InStdMode
-			? GetStdClass()
-			: GetValueClass();
+		bool isSelected = UIWrapper.Selection.IsSelected(planet);
+
+		return (InStdMode ? GetStdClass() : GetValueClass()) + (isSelected ? " selected" : "");
 
 		string GetStdClass()
 		{

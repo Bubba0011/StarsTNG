@@ -25,7 +25,7 @@
 	<div class="main-container" id="mejn">
 		@if (client != null)
 		{
-			<UiGalaxy GameWrapper="wrapper" @bind-SelectedObject="selectedObject" InAutoSelectMode="!inClickMode" Clicked="GalaxyClicked" DisplayMode="displayMode" />
+			<UiGalaxy GameWrapper="wrapper" @bind-Selection="selection" InAutoSelectMode="!inClickMode" Clicked="GalaxyClicked" DisplayMode="displayMode" />
 
 			<InfoPanel Position="top left">
 				<div>Turn: @client.CurrentTurn</div>
@@ -41,12 +41,12 @@
 					<div>@($"{item.PlayerName}: {item.Score}")</div>
 				}
 			</InfoPanel>
-
-			@if (selectedObject is IPlanet planet)
+	
+			if (selection.SelectedObject is IPlanet planet)
 			{
 				<PlanetInfoPanel Planet="planet" IsEnabled="true" Player="@Player" />
 			}
-			else if (selectedObject is IFleet fleet)
+			else if (selection.SelectedObject is IFleet fleet)
 			{
 				<FleetPanel Fleet="fleet" @bind-InClickMode="inClickMode" />
 			}
@@ -66,7 +66,7 @@
 	private IPlayer Player => client.Players.SingleOrDefault(p => p.Id == PlayerId);
 
 	// Selection
-	private ISpaceObject selectedObject;
+	private Selection selection;
 	private bool inClickMode;
 
 	[Parameter]
@@ -95,11 +95,7 @@
 
 	private void Update()
 	{
-		if (selectedObject != null)
-		{
-			selectedObject = Galaxy.GetSpaceObject(selectedObject.ObjectId);
-		}
-
+		selection = selection.Refresh(Galaxy);
 		StateHasChanged();
 	}
 
@@ -115,7 +111,7 @@
 
 	private void GalaxyClicked(SvgMouseEventArgs e)
 	{
-		if (selectedObject is IFleetController fleet)
+		if (selection.SelectedObject is IFleetController fleet)
 		{
 			int Round(double d) => (int)Math.Round(d);
 

@@ -25,6 +25,10 @@
 		fill: red;
 	}
 
+	.selected {
+		stroke: gold;
+	}
+
 	.waypoint-line {
 		fill: none;
 		stroke: blue;
@@ -62,7 +66,7 @@
 
 	@if (InOrbit(fleet))
 	{
-		<circle cx="@pos.X" cy="@pos.Y" r="4" class="@(fleet.IsMine ? "own-fleet-in-orbit": "op-fleet-in-orbit")" />
+		<circle cx="@pos.X" cy="@pos.Y" r="4" class="@GetClass(fleet)" />
 	}
 	else
 	{
@@ -70,7 +74,7 @@
 			  x="@pos.X"
 			  y="@pos.Y"
 			  transform="@GetFleetTransform(fleet)"
-			  class="@(fleet.IsMine ? "own-fleet-in-space" : "op-fleet-in-space")" />
+			  class="@GetClass(fleet)" />
 	}
 }
 
@@ -102,5 +106,23 @@
 	private string GetFleetTransform(IFleet fleet)
 	{
 		return $"rotate({fleet.Heading ?? 0}, {fleet.Position.X}, {fleet.Position.Y})";
+	}
+
+	private string GetClass(IFleet fleet)
+	{
+		string result;
+
+		if (InOrbit(fleet))
+		{
+			result = fleet.IsMine ? "own-fleet-in-orbit" : "op-fleet-in-orbit";
+		}
+		else
+		{
+			result = fleet.IsMine ? "own-fleet-in-space" : "op-fleet-in-space";
+		}
+
+		bool isSelected = UIWrapper.Selection.IsSelected(fleet);
+
+		return result + (isSelected ? " selected" : "");
 	}
 }
