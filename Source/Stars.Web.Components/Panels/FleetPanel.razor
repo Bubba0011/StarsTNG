@@ -4,8 +4,8 @@
 	}
 
 	.wp-cell {
-		margin: 0px 3px;
-		width: 80px;
+		margin: 2px 4px;
+		width: 90px;
 	}
 </style>
 
@@ -20,11 +20,11 @@
 				@foreach (var wp in GetWaypoints())
 				{
 					<div class="waypoint-item">
-						<div class="wp-cell" style="width:20px;">#@wp.Id</div>
+						<div class="wp-cell" style="width:30px;">#@wp.Id</div>
 						<div class="wp-cell">XY: @wp.Target</div>
 						<div class="wp-cell">Dist: @Math.Round(wp.Distance, 0) ly</div>
 						<div class="wp-cell">Eta: @wp.ETA</div>
-						<Badge Color="Color.Danger" @onclick="@(() => DeleteWaypoint(wp.Id))">x</Badge>
+						<Icon Name="IconName.ClearSearch" @onclick="@(() => DeleteWaypoint(wp.Id))"/>
 					</div>
 				}
 			</div>
