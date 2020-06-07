@@ -40,66 +40,82 @@
 {
 	@foreach (var p in Galaxy.Planets)
 	{
-		<circle cx="@p.Position.X" cy="@p.Position.Y" r="@GetRadius(2)" class="@GetClass(p)" />
+		<circle cx="@p.Position.X" cy="@p.Position.Y" r="@GetRadiusStr(2)" class="@GetClass(p)" />
+
+		@if (!InStdMode && p.Settlement != null)
+		{
+			var side = GetRadius(3);
+			<rect x="@p.Position.X" y="@Str(p.Position.Y - side)" width="@Str(side)" height="@Str(side)" class="@GetStdClass(p)" />
+		}
 	}
 }
 
 @code
 {
 	[Parameter]
-	public bool InStdMode { get; set; } = !true;
+	public bool InStdMode { get; set; }
 
 	private string GetClass(IPlanet planet)
 	{
 		bool isSelected = UIWrapper.Selection.IsSelected(planet);
 
-		return (InStdMode ? GetStdClass() : GetValueClass()) + (isSelected ? " selected" : "");
+		return (InStdMode ? GetStdClass(planet) : GetValueClass(planet)) + (isSelected ? " selected" : "");
+	}
 
-		string GetStdClass()
+	string GetStdClass(IPlanet planet)
+	{
+		if (planet.Settlement != null)
 		{
-			if (planet.Settlement != null)
-			{
-				return planet.Settlement.IsMine ? "planet-owned" : "planet-occupied";
-			}
-
-			if (planet.Details != null)
-			{
-				return "planet-scanned";
-			}
-
-			return "planet";
+			return planet.Settlement.IsMine ? "planet-owned" : "planet-occupied";
 		}
 
-		string GetValueClass()
+		if (planet.Details != null)
 		{
-			var planetValue = GameWrapper.Client.Player.GetPlanetValue(planet);
+			return "planet-scanned";
+		}
 
-			if (planetValue == null)
-			{
-				return "planet";
-			}
-			else if (planetValue <= 0)
-			{
-				return "hab-bad";
-			}
-			else if (planetValue <= 0.35)
-			{
-				return "hab-ok";
-			}
-			else if (planetValue <= 0.70)
-			{
-				return "hab-good";
-			}
-			else
-			{
-				return "hab-great";
-			}
+		return "planet";
+	}
+
+	string GetValueClass(IPlanet planet)
+	{
+		var planetValue = GameWrapper.Client.Player.GetPlanetValue(planet);
+
+		if (planetValue == null)
+		{
+			return "planet";
+		}
+		else if (planetValue <= 0)
+		{
+			return "hab-bad";
+		}
+		else if (planetValue <= 0.45)
+		{
+			return "hab-ok";
+		}
+		else if (planetValue <= 0.70)
+		{
+			return "hab-good";
+		}
+		else
+		{
+			return "hab-great";
 		}
 	}
 
-	private string GetRadius(double startValue)
+	private string GetRadiusStr(double startValue)
 	{
-		var radius = (startValue / Math.Pow(Zoom, 0.5)).ToString(CultureInfo.InvariantCulture);
-		return radius;
+		var radius = GetRadius(startValue);
+		return Str(radius);
+	}
+
+	private double GetRadius(double startValue)
+	{
+		return (startValue / Math.Pow(Zoom, 0.5));
+	}
+
+	private string Str(double value)
+	{
+		return Math.Round(value, 2).ToString(CultureInfo.InvariantCulture);
 	}
 }
