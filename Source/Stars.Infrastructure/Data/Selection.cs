@@ -41,8 +41,18 @@ namespace Stars.Infrastructure.Data
 			if (SelectedObject != null)
 			{
 				SelectedObject = galaxy.GetSpaceObject(SelectedObject.ObjectId);
-				Objects = galaxy.GetSpaceObjectsAt(SelectedObject.Position).ToArray();
+
+				Objects = SelectedObject != null
+					? galaxy.GetSpaceObjectsAt(SelectedObject.Position).ToArray()
+					: null;
 			}
+
+			return this;
+		}
+
+		public Selection SelectObject(string id)
+		{
+			SelectedObject = Objects?.SingleOrDefault(obj => obj.ObjectId == id);
 
 			return this;
 		}
