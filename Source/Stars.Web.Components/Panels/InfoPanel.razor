@@ -1,47 +1,43 @@
 ﻿<style>
 	.info-panel {
-		position: absolute;
 		background-color: rgba(40,60,80,0.65);
 		color: white;
 		border-radius: 3px;
 		box-shadow: 0 0 1px 1px rgb(80,120,160);
+		margin: 4px;
+		font-size: small;
+	}
+
+	.info-panel-title {
+		background-color: rgba(250,250,250,0.15);
+		border-radius: 2px 2px 0px 0px;
+		padding: 0px 4px 2px 4px;
+	}
+
+	.info-panel-content {
 		padding: 4px;
-	}
-
-	.top {
-		top: 10px;
-	}
-
-	.bottom {
-		bottom: 10px;
-	}
-
-	.left {
-		left: 10px;
-	}
-
-	.right {
-		right: 10px;
 	}
 </style>
 
-<div class="@GetClass()" onclick="@OnClicked">
-	@ChildContent
+<div class="info-panel" onclick="@OnClicked">
+	@if (!string.IsNullOrEmpty(Title))
+	{
+		<div class="info-panel-title">@Title</div>
+	}
+
+	<div class="info-panel-content">
+		@ChildContent
+	</div>
 </div>
 
 @code
 {
 	[Parameter]
+	public string Title { get; set; }
+
+	[Parameter]
 	public RenderFragment ChildContent { get; set; }
 
 	[Parameter]
-	public string Position { get; set; }
-
-	[Parameter]
 	public EventCallback OnClicked { get; set; }
-
-	private string GetClass()
-	{
-		return $"info-panel {Position}";
-	}
 }

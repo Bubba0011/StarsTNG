@@ -27,28 +27,47 @@
 		{
 			<UiGalaxy GameWrapper="wrapper" @bind-Selection="selection" InAutoSelectMode="!inClickMode" Clicked="GalaxyClicked" DisplayMode="displayMode" />
 
-			<InfoPanel Position="top left">
-				<div>Turn: @client.CurrentTurn</div>
-				<div>ETA: @client.TriggerStatus</div>
-				<div @onclick="ToggleDisplayMode">Display Mode: @displayMode</div>
-				<Button Size="ButtonSize.Small" Color="Color.Primary" Clicked="client.SetReadyFlag">Ready</Button>
-			</InfoPanel>
+			<InfoSpace Position ="top left">
+				<InfoPanel Title="Game State">
+					<div>Turn: @client.CurrentTurn</div>
+					<div>ETA: @client.TriggerStatus</div>
+					<div @onclick="ToggleDisplayMode">Display Mode: @displayMode</div>
+					<Button Size="ButtonSize.Small" Color="Color.Primary" Clicked="client.SetReadyFlag">Ready</Button>
+				</InfoPanel>
+			</InfoSpace>
 
-			<InfoPanel Position="top right">
-				<b>Scoreboard</b>
-				@foreach (var item in client.Scoreboard)
-				{
-					<div>@($"{item.PlayerName}: {item.Score:### ##0} pts")</div>
-				}
-			</InfoPanel>
-	
-			if (selection.SelectedObject is IPlanet planet)
-			{
-				<PlanetInfoPanel Planet="planet" IsEnabled="true" Player="@Player" />
-			}
-			else if (selection.SelectedObject is IFleet fleet)
-			{
-				<FleetPanel Fleet="fleet" @bind-InClickMode="inClickMode" />
+			<InfoSpace Position="top right">
+				<InfoPanel Title="Scoreboard">
+					@foreach (var item in client.Scoreboard)
+					{
+						<div>@($"{item.PlayerName}: {item.Score:### ##0} pts")</div>
+					}
+				</InfoPanel>
+			</InfoSpace>
+
+			@if (selection.SelectedObject != null)
+			{ 
+				<InfoSpace Position="bottom left">
+					@if (selection.Objects?.Count() > 1)
+					{
+						<InfoPanel Title="Objects at Location">
+							@foreach (var obj in selection.Objects)
+							{
+								<div @onclick="@(() => Select(obj.ObjectId))">@obj.ObjectId</div>
+							}
+						</InfoPanel>
+					}
+					<InfoPanel Title="Selected Object">
+						@if (selection.SelectedObject is IPlanet planet)
+						{
+							<PlanetInfoPanel Planet="planet" IsEnabled="true" Player="@Player" />
+						}
+						else if (selection.SelectedObject is IFleet fleet)
+						{
+							<FleetPanel Fleet="fleet" @bind-InClickMode="inClickMode" />
+						}
+					</InfoPanel>
+				</InfoSpace>
 			}
 		}
 	</div>
@@ -137,5 +156,10 @@
 		displayMode = displayMode == UiDisplayMode.Default
 			? UiDisplayMode.PlanetValue
 			: UiDisplayMode.Default;
+	}
+
+	private void Select(string objectId)
+	{
+		selection = selection.SelectObject(objectId);
 	}
 }

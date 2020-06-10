@@ -1,0 +1,39 @@
+﻿<style>
+	.info-space {
+		position: absolute;
+	}
+
+	.top {
+		top: 10px;
+	}
+
+	.bottom {
+		bottom: 10px;
+	}
+
+	.left {
+		left: 10px;
+	}
+
+	.right {
+		right: 10px;
+	}
+</style>
+
+<div class="@GetClass()">
+	@ChildContent
+</div>
+
+@code
+{
+	[Parameter]
+	public RenderFragment ChildContent { get; set; }
+
+	[Parameter]
+	public string Position { get; set; }
+
+	private string GetClass()
+	{
+		return $"info-space {Position}";
+	}
+}

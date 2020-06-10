@@ -11,28 +11,26 @@
 
 @if (Fleet != null)
 {
-	<InfoPanel Position="bottom left">
-		@Fleet.Name
+	@Fleet.Name
 
-		@if (Fleet is IFleetController ctrl)
-		{
-			<div>
-				@foreach (var wp in GetWaypoints())
-				{
-					<div class="waypoint-item">
-						<div class="wp-cell" style="width:30px;">#@wp.Id</div>
-						<div class="wp-cell">XY: @wp.Target</div>
-						<div class="wp-cell">Dist: @Math.Round(wp.Distance, 0) ly</div>
-						<div class="wp-cell">Eta: @wp.ETA</div>
-						<Icon Name="IconName.ClearSearch" @onclick="@(() => DeleteWaypoint(wp.Id))"/>
-					</div>
-				}
-			</div>
+	@if (Fleet is IFleetController ctrl)
+	{
+		<div>
+			@foreach (var wp in GetWaypoints())
+			{
+				<div class="waypoint-item">
+					<div class="wp-cell" style="width:30px;">#@wp.Id</div>
+					<div class="wp-cell">XY: @wp.Target</div>
+					<div class="wp-cell">Dist: @Math.Round(wp.Distance, 0) ly</div>
+					<div class="wp-cell">Eta: @wp.ETA</div>
+					<Icon Name="IconName.ClearSearch" @onclick="@(() => DeleteWaypoint(wp.Id))"/>
+				</div>
+			}
+		</div>
 
-			<Button Size="ButtonSize.Small" Color="Color.Danger" Clicked="ClearFleetWaypoints" Disabled="!Fleet.Waypoints.Any()">Clear WPs</Button>
-			<Button Size="ButtonSize.Small" Color="Color.Primary" Clicked="AddFleetWaypoint">@(InClickMode ? "Done" : "Add WPs")</Button>
-		}
-	</InfoPanel>
+		<Button Size="ButtonSize.Small" Color="Color.Danger" Clicked="ClearFleetWaypoints" Disabled="!Fleet.Waypoints.Any()">Clear WPs</Button>
+		<Button Size="ButtonSize.Small" Color="Color.Primary" Clicked="AddFleetWaypoint">@(InClickMode ? "Done" : "Add WPs")</Button>
+	}
 }
 
 @code 
