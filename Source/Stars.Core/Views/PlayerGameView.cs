@@ -7,11 +7,12 @@ namespace Stars.Core.Views
 	{
 		private readonly Game game;
 		private readonly int playerId;
+		private readonly List<IPlayer> players;
 
 		public int Turn => game.Turn;
 		public IEnumerable<PlayerScore> Scoreboard => game.Scoreboard;
 		public IGalaxy Galaxy { get; }
-		public IEnumerable<IPlayer> Players => game.Players.Select(Project);
+		public IEnumerable<IPlayer> Players => players;
 
 		public PlayerGameView(Game game, int playerId)
 		{
@@ -19,6 +20,7 @@ namespace Stars.Core.Views
 			this.playerId = playerId;
 
 			Galaxy = new PlayerGalaxyView(game, playerId);
+			players = game.Players.Select(Project).ToList();
 		}
 
 		private IPlayer Project(Player player)

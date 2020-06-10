@@ -8,12 +8,14 @@ namespace Stars.Core.Views
 		private readonly Game game;
 		private readonly int playerId;
 		private readonly List<ScannerSite> scanners;
+		private readonly List<IPlanet> planets;
+		private readonly List<IFleet> fleets;
 
 		private Galaxy Galaxy => game.Galaxy;
 
 		public GalaxyBounds Bounds => Galaxy.Bounds;
-		public IEnumerable<IPlanet> Planets => Galaxy.Planets.Select(Project);
-		public IEnumerable<IFleet> Fleets => GetFleets();
+		public IEnumerable<IPlanet> Planets => planets;
+		public IEnumerable<IFleet> Fleets => fleets;
 
 		public PlayerGalaxyView(Game game, int playerId)
 		{
@@ -21,6 +23,8 @@ namespace Stars.Core.Views
 			this.playerId = playerId;
 
 			scanners = GetScanners().ToList();
+			planets = Galaxy.Planets.Select(Project).ToList();
+			fleets = GetFleets().ToList();
 		}
 
 		private IPlanet Project(Planet planet)
