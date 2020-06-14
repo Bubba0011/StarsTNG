@@ -64,7 +64,7 @@
 						}
 						else if (selection.SelectedObject is IFleet fleet)
 						{
-							<FleetPanel Fleet="fleet" @bind-InClickMode="inClickMode" />
+							<FleetPanel Fleet="fleet" @bind-InClickMode="inClickMode" ModelChanged="() => StateHasChanged()"/>
 						}
 					</InfoPanel>
 				</InfoSpace>

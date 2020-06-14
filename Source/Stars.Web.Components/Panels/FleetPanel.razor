@@ -44,11 +44,15 @@
 	[Parameter]
 	public EventCallback<bool> InClickModeChanged { get; set; }
 
-	private void ClearFleetWaypoints()
+	[Parameter]
+	public EventCallback ModelChanged { get; set; }
+
+	private async Task ClearFleetWaypoints()
 	{
 		if (Fleet is IFleetController ctrl)
 		{
 			ctrl.SetWaypoints(null);
+			await ModelChanged.InvokeAsync(this);
 		}
 	}
 
@@ -61,13 +65,14 @@
 		}
 	}
 
-	private void DeleteWaypoint(int itemId)
+	private async Task DeleteWaypoint(int itemId)
 	{
 		if (Fleet is IFleetController ctrl)
 		{
 			var newList = Fleet.Waypoints.ToList();
 			newList.RemoveAt(itemId - 1);
 			ctrl.SetWaypoints(newList);
+			await ModelChanged.InvokeAsync(this);
 		}
 	}
 
