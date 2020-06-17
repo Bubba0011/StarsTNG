@@ -19,6 +19,18 @@
 	.small-font {
 		font-size: small;
 	}
+
+	.obj-item {
+		cursor: pointer;
+	}
+
+	.obj-item:hover {
+		background-color: rgba(255,255,255,0.5);
+	}
+
+	.selected {
+		font-weight: bold;
+	}
 </style>
 
 <div>
@@ -27,33 +39,34 @@
 		{
 			<UiGalaxy GameWrapper="wrapper" @bind-Selection="selection" InAutoSelectMode="!inClickMode" Clicked="GalaxyClicked" DisplayMode="displayMode" />
 
-			<InfoSpace Position ="top left">
+			<InfoSpace Position="top right">
 				<InfoPanel Title="Game State">
 					<div>Turn: @client.CurrentTurn</div>
 					<div>ETA: @client.TriggerStatus</div>
 					<div @onclick="ToggleDisplayMode">Display Mode: @displayMode</div>
 					<Button Size="ButtonSize.Small" Color="Color.Primary" Clicked="client.SetReadyFlag">Ready</Button>
 				</InfoPanel>
-			</InfoSpace>
-
-			<InfoSpace Position="top right">
-				<InfoPanel Title="Scoreboard">
-					@foreach (var item in client.Scoreboard)
-					{
-						<div>@($"{item.PlayerName}: {item.Score:### ##0} pts")</div>
-					}
-				</InfoPanel>
+				@if (client.Scoreboard.Any())
+				{
+					<InfoPanel Title="Scoreboard">
+						@foreach (var item in client.Scoreboard)
+						{
+							<div>@($"{item.PlayerName}: {item.Score:### ##0} pts")</div>
+						}
+					</InfoPanel>
+				}
 			</InfoSpace>
 
 			@if (selection.SelectedObject != null)
 			{ 
-				<InfoSpace Position="bottom left">
+				<InfoSpace Position="top left">
 					@if (selection.Objects?.Count() > 1)
 					{
 						<InfoPanel Title="Objects at Location">
 							@foreach (var obj in selection.Objects)
 							{
-								<div @onclick="@(() => Select(obj.ObjectId))">@obj.ObjectId</div>
+								string cls = "obj-item" + (selection.IsSelected(obj) ? " selected" : "");
+								<div class="@cls" @onclick="@(() => Select(obj.ObjectId))">@obj.ObjectId</div>
 							}
 						</InfoPanel>
 					}
