@@ -1,6 +1,12 @@
 ﻿<style>
 	.waypoint-item {
 		display: flex;
+		cursor: pointer;
+		align-items: center;
+	}
+
+	.waypoint-item:hover {
+		background-color: rgba(255,255,255,0.5);
 	}
 
 	.wp-cell {
@@ -23,7 +29,7 @@
 					<div class="wp-cell">XY: @wp.Target</div>
 					<div class="wp-cell">Dist: @Math.Round(wp.Distance, 0) ly</div>
 					<div class="wp-cell">Eta: @wp.ETA</div>
-					<Icon Name="IconName.ClearSearch" @onclick="@(() => DeleteWaypoint(wp.Id))"/>
+					<Icon Name="IconName.ClearSearch" @onclick="@(() => DeleteWaypoint(wp.Id))" Style="margin:2px;" />
 				</div>
 			}
 		</div>
@@ -33,7 +39,7 @@
 	}
 }
 
-@code 
+@code
 {
 	[Parameter]
 	public IFleet Fleet { get; set; }
@@ -106,7 +112,7 @@
 	{
 		public int Id { get; set; }
 		public Position Target { get; set; }
-		public double Distance { get;set; }
+		public double Distance { get; set; }
 		public int ETA { get; set; }
 
 		public override string ToString()

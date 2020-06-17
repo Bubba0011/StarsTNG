@@ -29,5 +29,10 @@ namespace Stars.Core
 		{
 			fleet.Waypoints = waypoints?.ToList();
 		}
+
+		public void SetName(string name)
+		{
+			fleet.Name = name;
+		}
 	}
 }
