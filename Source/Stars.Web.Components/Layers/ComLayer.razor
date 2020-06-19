@@ -1,0 +1,110 @@
+﻿@inherits LayerBase
+
+<style>
+	.com-link {
+		stroke: white;
+		stroke-width: 0.25px;
+		stroke-dasharray: 1 2;
+	}
+
+	.com-caption {
+		fill: white;
+		text-anchor: middle;
+		font-size: @(GetRadiusStr(6) + "px");
+	}
+</style>
+
+@if (Galaxy != null && IsEnabled)
+{
+	@foreach (var link in GetLinks())
+	{
+		<line x1="@link.Free.X" y1="@link.Free.Y" x2="@link.Tree.X" y2="@link.Tree.Y" class="com-link" />
+	}
+
+	@if (Zoom >= 2)
+	{ 
+		foreach (var planet in MyPlanets())
+		{
+			var pos = planet.Position;
+			var caption = planet.Settlement!.Population.ToString("### ### ##0").Trim();
+
+			<text>
+				<text x="@pos.X" y="@Str(pos.Y + GetRadius(10))" class="com-caption">@caption</text>
+			</text>
+		}
+	}
+}
+
+@code
+{
+	private List<ComLink> cache;
+	private int cacheTurn;
+
+	private IEnumerable<IPlanet> MyPlanets()
+	{
+		return Galaxy.Planets.Where(p => p.Settlement?.IsMine == true);
+	}
+
+	private IEnumerable<ComLink> GetLinks()
+	{
+		if (cache == null || cacheTurn != GameWrapper.Client.CurrentTurn)
+		{
+			cache = GenerateLinks().ToList();
+			cacheTurn = GameWrapper.Client.CurrentTurn;
+		}
+
+		return cache;
+	}
+
+	private IEnumerable<ComLink> GenerateLinks()
+	{
+		List<Position> tree = new List<Position>();
+		List<Position> free = MyPlanets().Select(p => p.Position).ToList();
+
+		if (!free.Any()) yield break;
+
+		var seed = free.First();
+		free.Remove(seed);
+		tree.Add(seed);
+
+		while (free.Count > 0)
+		{
+			var next = Fringes()
+				.OrderBy(fringe => fringe.Distance)
+				.First();
+
+			free.Remove(next.Free);
+			tree.Add(next.Free);
+
+			yield return next;
+		}
+
+		IEnumerable<ComLink> Fringes()
+		{
+			return free.SelectMany(f => tree.Select(t => new ComLink { Free = f, Tree = t }));
+		}
+	}
+
+	private string GetRadiusStr(double startValue)
+	{
+		var radius = GetRadius(startValue);
+		return Str(radius);
+	}
+
+	private double GetRadius(double startValue)
+	{
+		return (startValue / Math.Pow(Zoom, 0.5));
+	}
+
+	private string Str(double value)
+	{
+		return Math.Round(value, 2).ToString(CultureInfo.InvariantCulture);
+	}
+
+	struct ComLink
+	{
+		public Position Free { get; set; }
+		public Position Tree { get; set; }
+		public double Distance => Free.DistanceTo(Tree);
+	}
+}
