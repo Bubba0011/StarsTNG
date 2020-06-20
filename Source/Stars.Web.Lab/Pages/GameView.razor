@@ -38,54 +38,57 @@
 		@if (client != null)
 		{
 			<CascadingValue Name="GameWrapper" Value="@wrapper">
-				<UiGalaxy @bind-Selection="selection" InAutoSelectMode="!inClickMode" Clicked="GalaxyClicked" DisplayMode="displayMode" />
+				<CascadingValue Name="UIWrapper" Value="@uiWrapper">
+					<UiGalaxy InAutoSelectMode="!inClickMode" Clicked="GalaxyClicked" DisplayMode="displayMode" />
 
-				<InfoSpace Position="top right">
-					<InfoPanel Title="Game State">
-						<div>Turn: @client.CurrentTurn</div>
-						<div>ETA: @client.TriggerStatus</div>
-						<div @onclick="ToggleDisplayMode">Display Mode: @displayMode</div>
-						<Button Size="ButtonSize.Small" Color="Color.Primary" Clicked="client.SetReadyFlag">Ready</Button>
-					</InfoPanel>
+					<InfoSpace Position="top right">
+						<InfoPanel Title="Game State">
+							<div>Turn: @client.CurrentTurn</div>
+							<div>ETA: @client.TriggerStatus</div>
+							<div @onclick="ToggleDisplayMode">Display Mode: @displayMode</div>
+							<Button Size="ButtonSize.Small" Color="Color.Primary" Clicked="client.SetReadyFlag">Ready</Button>
+						</InfoPanel>
 	
-					<ScoreboardPanel />
-				</InfoSpace>
+						<ScoreboardPanel />
+					</InfoSpace>
 
-				@if (selection.SelectedObject != null)
-				{
-					<InfoSpace Position="top left">
-						@if (selection.Objects?.Count() > 1)
-						{
-							<InfoPanel Title="Objects at Location">
-								@foreach (var obj in selection.Objects)
+					@if (selection.SelectedObject != null)
+					{
+						<InfoSpace Position="top left">
+							@if (selection.Objects?.Count() > 1)
+							{
+								<InfoPanel Title="Objects at Location">
+									@foreach (var obj in selection.Objects)
+									{
+										string cls = "obj-item" + (selection.IsSelected(obj) ? " selected" : "");
+										<div class="@cls" @onclick="@(() => Select(obj.ObjectId))">@obj.ObjectId</div>
+									}
+								</InfoPanel>
+							}
+
+							<InfoPanel Title="@GetSelectionTitle()">
+								@if (selection.SelectedObject is IPlanet planet)
 								{
-									string cls = "obj-item" + (selection.IsSelected(obj) ? " selected" : "");
-									<div class="@cls" @onclick="@(() => Select(obj.ObjectId))">@obj.ObjectId</div>
+									<PlanetInfoPanel Planet="planet" IsEnabled="true" />
+								}
+								else if (selection.SelectedObject is IFleet fleet)
+								{
+									<FleetPanel Fleet="fleet" @bind-InClickMode="inClickMode" ModelChanged="() => StateHasChanged()" />
 								}
 							</InfoPanel>
-						}
-
-						<InfoPanel Title="@GetSelectionTitle()">
-							@if (selection.SelectedObject is IPlanet planet)
-							{
-								<PlanetInfoPanel Planet="planet" IsEnabled="true" />
-							}
-							else if (selection.SelectedObject is IFleet fleet)
-							{
-								<FleetPanel Fleet="fleet" @bind-InClickMode="inClickMode" ModelChanged="() => StateHasChanged()" />
-							}
-						</InfoPanel>
-					</InfoSpace>
-				}
+						</InfoSpace>
+					}
 				</CascadingValue>
-			}
-		</div>
+			</CascadingValue>
+		}
+	</div>
 </div>
 
 @code
 {
 	// UI
 	private UiDisplayMode displayMode = UiDisplayMode.Default;
+	private UIWrapper uiWrapper = new UIWrapper();
 
 	// Model
 	private GameWrapper wrapper;
@@ -93,7 +96,7 @@
 	private IGalaxy Galaxy => client.GalaxyView;
 
 	// Selection
-	private Selection selection;
+	private Selection selection => uiWrapper.Selection;
 	private bool inClickMode;
 
 	[Parameter]
@@ -108,6 +111,9 @@
 		wrapper.Client = GameServers.GetGameClient(GameId, PlayerId);
 		wrapper.Client.GameUpdated += GameUpdated;
 		wrapper.Client.TriggerUpdated += TriggerUpdated;
+
+		uiWrapper.StateChanged += (s, e) => StateHasChanged();
+		selection.StateChanged += (s, e) => StateHasChanged();
 	}
 
 	public void Dispose()
@@ -122,8 +128,7 @@
 
 	private void Update()
 	{
-		selection = selection.Refresh(Galaxy);
-		StateHasChanged();
+		selection.Refresh(Galaxy);
 	}
 
 	private void GameUpdated(object sender, EventArgs e)
@@ -168,7 +173,7 @@
 
 	private void Select(string objectId)
 	{
-		selection = selection.SelectObject(objectId);
+		selection.SelectObject(objectId);
 	}
 
 	private string GetSelectionTitle()

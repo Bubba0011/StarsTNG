@@ -9,40 +9,34 @@
 
 @if (GameWrapper.Client != null)
 {
-	<CascadingValue Name="UIWrapper" Value="@uiWrapper">
-		<SvgBox CssClass="swig" OnClick="SvgBoxClicked" FocusOn="@focus">
-			<GalaxyBoundingBox IsFilled="true" />
-			<ScannerLayer />
-			<GalaxyGrid />
-			<GalaxyBoundingBox IsOutlined="true" />
+	<SvgBox CssClass="swig" OnClick="SvgBoxClicked" FocusOn="@focus">
+		<GalaxyBoundingBox IsFilled="true" />
+		<ScannerLayer />
+		<GalaxyGrid />
+		<GalaxyBoundingBox IsOutlined="true" />
 
-			<ComLayer />
-			<FleetLayer />
-			<PlanetLayer InStdMode="@(DisplayMode == UiDisplayMode.Default)" />
-			@*<SelectionLayer SelectedObject="Selection.SelectedObject" />*@
+		<ComLayer />
+		<FleetLayer />
+		<PlanetLayer InStdMode="@(DisplayMode == UiDisplayMode.Default)" />
 
-			@ChildContent
-		</SvgBox>
-	</CascadingValue>
+		@ChildContent
+	</SvgBox>
 }
 
 @code
 {
-	Focus focus = new Focus() { View = Vector.Zero };
-	UIWrapper uiWrapper = new UIWrapper() { Zoom = 1.0 };
+	private Focus focus = new Focus() { View = Vector.Zero };
+
 	IGalaxy Galaxy => GameWrapper.Client.GalaxyView;
+
+	[CascadingParameter(Name = "UIWrapper")]
+	public UIWrapper UiWrapper { get; set; }
 
 	[CascadingParameter(Name = "GameWrapper")]
 	public GameWrapper GameWrapper { get; set; }
 
 	[Parameter]
-	public Selection Selection { get; set; }
-
-	[Parameter]
 	public RenderFragment ChildContent { get; set; }
-
-	[Parameter]
-	public EventCallback<Selection> SelectionChanged { get; set; }
 
 	[Parameter]
 	public bool InAutoSelectMode { get; set; } = true;
@@ -57,7 +51,6 @@
 	{
 		if (firstRender)
 		{
-			uiWrapper = new UIWrapper() { Zoom = 1.0 };
 			var reference = DotNetObjectReference.Create(this);
 			await JSRuntime.BindCallbackMethod(reference, "UiGalaxy", "zoomEvent");
 		}
@@ -67,7 +60,7 @@
 	{
 		if (InAutoSelectMode)
 		{
-			await TargetObject(e);
+			TargetObject(e);
 		}
 		else
 		{
@@ -75,11 +68,10 @@
 		}
 	}
 
-	private async Task TargetObject(SvgMouseEventArgs e)
+	private void TargetObject(SvgMouseEventArgs e)
 	{
 		var position = new Position((int)e.SvgCoords.X, (int)e.SvgCoords.Y);
-		Selection = uiWrapper.Selection = uiWrapper.Selection.TargetObject(Galaxy, position);
-		await SelectionChanged.InvokeAsync(Selection);
+		UiWrapper.Selection.TargetObject(Galaxy, position);
 	}
 
 	[JSInvokable("ZoomCallback")]
@@ -88,7 +80,7 @@
 		double zoomDouble = 1.0;
 		Double.TryParse(zoomFactor, NumberStyles.Any, CultureInfo.InvariantCulture, out zoomDouble);
 
-		uiWrapper.Zoom = 1 / zoomDouble;
+		UiWrapper.Zoom = 1 / zoomDouble;
 
 		StateHasChanged();
 	}

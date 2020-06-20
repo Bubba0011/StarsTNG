@@ -1,20 +1,23 @@
 ﻿using Stars.Core;
+using System;
 using System.Linq;
 
 namespace Stars.Infrastructure.Data
 {
-	public struct Selection
+	public class Selection
 	{
-		public ISpaceObject SelectedObject { get; set; }
+		public ISpaceObject SelectedObject { get; private set; }
 
-		public ISpaceObject[] Objects { get; set; }
+		public ISpaceObject[] Objects { get; private set; }
+
+		public event EventHandler StateChanged;
 
 		public bool IsSelected(ISpaceObject obj)
 		{
 			return obj.ObjectId == SelectedObject?.ObjectId;
 		}
 
-		public Selection TargetObject(IGalaxy galaxy, Position pos)
+		public void TargetObject(IGalaxy galaxy, Position pos)
 		{
 			var previous = SelectedObject;
 			var target = galaxy.ClosestSpaceObject(pos);
@@ -31,12 +34,12 @@ namespace Stars.Infrastructure.Data
 						.Skip(1)
 						.FirstOrDefault();
 				}
-			}
 
-			return this;
+				OnChange();
+			}
 		}
 
-		public Selection Refresh(IGalaxy galaxy)
+		public void Refresh(IGalaxy galaxy)
 		{
 			if (SelectedObject != null)
 			{
@@ -45,16 +48,21 @@ namespace Stars.Infrastructure.Data
 				Objects = SelectedObject != null
 					? galaxy.GetSpaceObjectsAt(SelectedObject.Position).ToArray()
 					: null;
-			}
 
-			return this;
+				OnChange();
+			}
 		}
 
-		public Selection SelectObject(string id)
+		public void SelectObject(string id)
 		{
 			SelectedObject = Objects?.SingleOrDefault(obj => obj.ObjectId == id);
 
-			return this;
+			OnChange();
+		}
+
+		private void OnChange()
+		{
+			StateChanged?.Invoke(this, EventArgs.Empty);
 		}
 	}
 }

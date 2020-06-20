@@ -1,4 +1,6 @@
-﻿<style>
+﻿@inherits PanelBase
+
+<style>
 	.waypoint-item {
 		display: flex;
 		cursor: pointer;
@@ -43,9 +45,6 @@
 
 @code
 {
-	[CascadingParameter(Name = "GameWrapper")]
-	public GameWrapper GameWrapper { get; set; }
-
 	[Parameter]
 	public IFleet Fleet { get; set; }
 

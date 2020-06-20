@@ -1,4 +1,5 @@
-﻿
+﻿@inherits PanelBase
+
 @if (Planet != null && IsEnabled)
 {
 	<div class="small-font">
@@ -53,14 +54,8 @@
 
 @code
 {
-	[CascadingParameter(Name = "GameWrapper")]
-	public GameWrapper GameWrapper { get; set; }
-
 	[Parameter]
 	public IPlanet Planet { get; set; }
-
-	[Parameter]
-	public bool IsEnabled { get; set; }
 
 	private IPlayer Player => GameWrapper.Client.Player;
 
