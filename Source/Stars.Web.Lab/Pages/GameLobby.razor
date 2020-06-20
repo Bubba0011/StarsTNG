@@ -72,8 +72,8 @@
 					<NumericEdit @bind-Value="gameSettings.GalaxySettings.Padding" />
 				</Field>
 				<Field>
-					<FieldLabel>Number of Players</FieldLabel>
-					<NumericEdit @bind-Value="gamePlayerCount" />
+					<FieldLabel>Players (@gamePlayerCount)</FieldLabel>
+					<MemoEdit @bind-Text="@gamePlayerNames" Rows="@(gamePlayerCount + 1)" />
 				</Field>
 			</ModalBody>
 
@@ -116,7 +116,17 @@
 
 	private Modal modalRef;
 	private GameGeneratorSettings gameSettings = new GameGeneratorSettings();
-	private int gamePlayerCount;
+
+	private int gamePlayerCount => GetPlayerNames().Count();
+	private string gamePlayerNames;
+
+	private IEnumerable<string> GetPlayerNames()
+	{
+		return (gamePlayerNames ?? string.Empty)
+			.Split('\n')
+			.Select(name => name.Trim())
+			.Where(name => !string.IsNullOrEmpty(name));
+	}
 
 	private void ShowModal()
 	{
@@ -131,7 +141,7 @@
 			},
 		};
 
-		gamePlayerCount = 4;
+		gamePlayerNames = "Federation\nKlingons\nRomulans\nBorg";
 
 		modalRef.Show();
 	}
@@ -140,10 +150,7 @@
 	{
 		modalRef.Hide();
 
-		gameSettings.PlayerNames = Enumerable
-			.Range(1, gamePlayerCount)
-			.Select(n => $"Player #{n}")
-			.ToArray();
+		gameSettings.PlayerNames = GetPlayerNames().ToArray();
 
 		var generator = new GameGenerator();
 		var game = generator.Generate(gameSettings);
