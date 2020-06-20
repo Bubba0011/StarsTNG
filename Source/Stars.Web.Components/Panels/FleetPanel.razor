@@ -43,6 +43,9 @@
 
 @code
 {
+	[CascadingParameter(Name = "GameWrapper")]
+	public GameWrapper GameWrapper { get; set; }
+
 	[Parameter]
 	public IFleet Fleet { get; set; }
 
@@ -57,7 +60,8 @@
 
 	private string GetPlayerName(int playerId)
 	{
-		return $"Player #{playerId}";
+		var player = GameWrapper.Client.Players.SingleOrDefault(p => p.Id == playerId);
+		return player?.Name ?? $"Player #{playerId}";
 	}
 
 	private async Task ClearFleetWaypoints()

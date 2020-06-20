@@ -7,24 +7,22 @@
 	}
 </style>
 
-@if (Galaxy != null)
+@if (GameWrapper.Client != null)
 {
-	<CascadingValue Name="GameWrapper" Value="@GameWrapper">
-		<CascadingValue Name="UIWrapper" Value="@uiWrapper">
-			<SvgBox CssClass="swig" OnClick="SvgBoxClicked" FocusOn="@focus">
-				<GalaxyBoundingBox IsFilled="true" />
-				<ScannerLayer />
-				<GalaxyGrid />
-				<GalaxyBoundingBox IsOutlined="true" />
+	<CascadingValue Name="UIWrapper" Value="@uiWrapper">
+		<SvgBox CssClass="swig" OnClick="SvgBoxClicked" FocusOn="@focus">
+			<GalaxyBoundingBox IsFilled="true" />
+			<ScannerLayer />
+			<GalaxyGrid />
+			<GalaxyBoundingBox IsOutlined="true" />
 
-				<ComLayer />
-				<FleetLayer />
-				<PlanetLayer InStdMode="@(DisplayMode == UiDisplayMode.Default)" />
-				@*<SelectionLayer SelectedObject="Selection.SelectedObject" />*@
+			<ComLayer />
+			<FleetLayer />
+			<PlanetLayer InStdMode="@(DisplayMode == UiDisplayMode.Default)" />
+			@*<SelectionLayer SelectedObject="Selection.SelectedObject" />*@
 
-				@ChildContent
-			</SvgBox>
-		</CascadingValue>
+			@ChildContent
+		</SvgBox>
 	</CascadingValue>
 }
 
@@ -34,11 +32,11 @@
 	UIWrapper uiWrapper = new UIWrapper() { Zoom = 1.0 };
 	IGalaxy Galaxy => GameWrapper.Client.GalaxyView;
 
-	[Parameter]
-	public Selection Selection { get; set; }
+	[CascadingParameter(Name = "GameWrapper")]
+	public GameWrapper GameWrapper { get; set; }
 
 	[Parameter]
-	public GameWrapper GameWrapper { get; set; }
+	public Selection Selection { get; set; }
 
 	[Parameter]
 	public RenderFragment ChildContent { get; set; }

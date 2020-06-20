@@ -53,14 +53,16 @@
 
 @code
 {
+	[CascadingParameter(Name = "GameWrapper")]
+	public GameWrapper GameWrapper { get; set; }
+
 	[Parameter]
 	public IPlanet Planet { get; set; }
 
 	[Parameter]
-	public IPlayer Player { get; set; }
-
-	[Parameter]
 	public bool IsEnabled { get; set; }
+
+	private IPlayer Player => GameWrapper.Client.Player;
 
 	private int GetPlanetValue()
 	{
@@ -71,7 +73,8 @@
 
 	private string GetPlayerName(int playerId)
 	{
-		return $"Player #{playerId}";
+		var player = GameWrapper.Client.Players.SingleOrDefault(p => p.Id == playerId);
+		return player?.Name ?? $"Player #{playerId}";
 	}
 
 	private void AddScoutToBuildQueue()
