@@ -19,7 +19,7 @@
 		<CascadingValue Name="GameWrapper" Value="@wrapper">
 			<CascadingValue Name="UIWrapper" Value="@uiWrapper">
 
-				<UiGalaxy Clicked="GalaxyClicked" DisplayMode="displayMode" />
+				<UiGalaxy Clicked="GalaxyClicked" />
 
 				<InfoSpace Position="top right">
 					<InfoPanel Title="Game State">
@@ -41,12 +41,12 @@
 
 @code
 {
-	private UiDisplayMode displayMode = UiDisplayMode.Default;
 	private UIWrapper uiWrapper = new UIWrapper();
 	private GameWrapper wrapper;
 	private Selection selection => uiWrapper.Selection;
 	private GameClient client => wrapper.Client;
 	private IGalaxy Galaxy => client.GalaxyView;
+	private UiDisplayMode displayMode => uiWrapper.DisplayMode;
 
 	[Parameter]
 	public int GameId { get; set; }
@@ -78,6 +78,7 @@
 	private void Update()
 	{
 		selection.Refresh(Galaxy);
+		StateHasChanged();
 	}
 
 	private void GameUpdated(object sender, EventArgs e)
@@ -115,7 +116,7 @@
 
 	private void ToggleDisplayMode()
 	{
-		displayMode = displayMode == UiDisplayMode.Default
+		uiWrapper.DisplayMode = displayMode == UiDisplayMode.Default
 			? UiDisplayMode.PlanetValue
 			: UiDisplayMode.Default;
 	}

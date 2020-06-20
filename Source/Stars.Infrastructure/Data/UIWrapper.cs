@@ -8,23 +8,17 @@ namespace Stars.Infrastructure.Data
 		public double Zoom
 		{
 			get => zoom;
-			set
-			{
-				zoom = value;
-				OnStateChanged();
-			}
+			set => Set(ref zoom, value);
 		}
 
 		private bool inClickMode;
 		public bool InClickMode
 		{
 			get => inClickMode;
-			set 
-			{
-				inClickMode = value;
-				OnStateChanged();
-			}
+			set => Set(ref inClickMode, value); 
 		}
+
+		public UiDisplayMode DisplayMode { get; set; } = UiDisplayMode.Default;
 
 		public Selection Selection { get; } = new Selection();
 
@@ -33,6 +27,14 @@ namespace Stars.Infrastructure.Data
 		private void OnStateChanged()
 		{
 			StateChanged?.Invoke(this, EventArgs.Empty);
+		}
+
+		private void Set<T>(ref T target, T value)
+		{
+			if (target?.Equals(value) == true) return;
+
+			target = value;
+			OnStateChanged();
 		}
 	}
 }

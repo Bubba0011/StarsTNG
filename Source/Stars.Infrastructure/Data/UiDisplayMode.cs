@@ -1,4 +1,4 @@
-﻿namespace Stars.Web.Components
+﻿namespace Stars.Infrastructure.Data
 {
 	public enum UiDisplayMode
 	{

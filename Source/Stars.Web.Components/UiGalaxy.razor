@@ -29,6 +29,7 @@
 
 	IGalaxy Galaxy => GameWrapper.Client.GalaxyView;
 	private bool InAutoSelectMode => !UiWrapper.InClickMode;
+	private UiDisplayMode DisplayMode => UiWrapper.DisplayMode;
 
 	[CascadingParameter(Name = "UIWrapper")]
 	public UIWrapper UiWrapper { get; set; }
@@ -38,9 +39,6 @@
 
 	[Parameter]
 	public RenderFragment ChildContent { get; set; }
-
-	[Parameter]
-	public UiDisplayMode DisplayMode { get; set; } = UiDisplayMode.Default;
 
 	[Parameter]
 	public EventCallback<SvgMouseEventArgs> Clicked { get; set; }
