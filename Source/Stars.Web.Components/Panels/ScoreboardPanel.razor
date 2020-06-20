@@ -1,0 +1,38 @@
+﻿<style>
+	.score-item {
+		display: flex;
+		justify-content: space-between;
+		margin: 2px;
+	}
+
+	.my-score {
+		font-weight: bold;
+	}
+</style>
+
+@if (client.Scoreboard.Any())
+{
+	<InfoPanel Title="Scoreboard">
+		@foreach (var item in client.Scoreboard)
+		{
+			<div class="@GetClass(item)">
+				<div>@item.PlayerName</div>
+				<div>@($"{item.Score:### ##0} pts")</div>
+			</div>
+		}
+	</InfoPanel>
+}
+
+
+@code
+{
+	[CascadingParameter(Name = "GameWrapper")]
+	public GameWrapper GameWrapper { get; set; }
+
+	private GameClient client => GameWrapper.Client;
+
+	private string GetClass(PlayerScore score)
+	{
+		return "score-item" + (score.PlayerId == client.PlayerId ? " my-score" : null);
+	}
+}

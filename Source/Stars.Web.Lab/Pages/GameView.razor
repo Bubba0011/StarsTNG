@@ -47,15 +47,8 @@
 						<div @onclick="ToggleDisplayMode">Display Mode: @displayMode</div>
 						<Button Size="ButtonSize.Small" Color="Color.Primary" Clicked="client.SetReadyFlag">Ready</Button>
 					</InfoPanel>
-					@if (client.Scoreboard.Any())
-					{
-						<InfoPanel Title="Scoreboard">
-							@foreach (var item in client.Scoreboard)
-							{
-								<div>@($"{item.PlayerName}: {item.Score:### ##0} pts")</div>
-							}
-						</InfoPanel>
-					}
+	
+					<ScoreboardPanel />
 				</InfoSpace>
 
 				@if (selection.SelectedObject != null)
