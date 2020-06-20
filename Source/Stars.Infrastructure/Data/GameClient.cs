@@ -55,5 +55,10 @@ namespace Stars.Infrastructure.Data
 			TriggerStatus = $"{e.TimeLeft} ({flags})";
 			TriggerUpdated?.Invoke(this, EventArgs.Empty);
 		}
+
+		public void ModelUpdated()
+		{
+			GameUpdated?.Invoke(this, EventArgs.Empty);
+		}
 	}
 }

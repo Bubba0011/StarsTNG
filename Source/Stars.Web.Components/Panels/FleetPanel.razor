@@ -48,14 +48,7 @@
 	[Parameter]
 	public IFleet Fleet { get; set; }
 
-	[Parameter]
-	public bool InClickMode { get; set; }
-
-	[Parameter]
-	public EventCallback<bool> InClickModeChanged { get; set; }
-
-	[Parameter]
-	public EventCallback ModelChanged { get; set; }
+	private bool InClickMode => UIWrapper.InClickMode;
 
 	private string GetPlayerName(int playerId)
 	{
@@ -63,32 +56,31 @@
 		return player?.Name ?? $"Player #{playerId}";
 	}
 
-	private async Task ClearFleetWaypoints()
+	private void ClearFleetWaypoints()
 	{
 		if (Fleet is IFleetController ctrl)
 		{
 			ctrl.SetWaypoints(null);
-			await ModelChanged.InvokeAsync(this);
+			GameWrapper.Client.ModelUpdated();
 		}
 	}
 
-	private async Task AddFleetWaypoint()
+	private void AddFleetWaypoint()
 	{
 		if (Fleet is IFleetController fleet)
 		{
-			InClickMode = !InClickMode;
-			await InClickModeChanged.InvokeAsync(InClickMode);
+			UIWrapper.InClickMode = !UIWrapper.InClickMode;
 		}
 	}
 
-	private async Task DeleteWaypoint(int itemId)
+	private void DeleteWaypoint(int itemId)
 	{
 		if (Fleet is IFleetController ctrl)
 		{
 			var newList = Fleet.Waypoints.ToList();
 			newList.RemoveAt(itemId - 1);
 			ctrl.SetWaypoints(newList);
-			await ModelChanged.InvokeAsync(this);
+			GameWrapper.Client.ModelUpdated();
 		}
 	}
 
@@ -124,10 +116,5 @@
 		public Position Target { get; set; }
 		public double Distance { get; set; }
 		public int ETA { get; set; }
-
-		public override string ToString()
-		{
-			return $"#{Id} (X: {Target.X}, Y: {Target.Y}), Dist: {Distance:0.}ly, ETA: {ETA}";
-		}
 	}
 }

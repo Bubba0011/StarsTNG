@@ -15,6 +15,17 @@ namespace Stars.Infrastructure.Data
 			}
 		}
 
+		private bool inClickMode;
+		public bool InClickMode
+		{
+			get => inClickMode;
+			set 
+			{
+				inClickMode = value;
+				OnStateChanged();
+			}
+		}
+
 		public Selection Selection { get; } = new Selection();
 
 		public event EventHandler StateChanged;

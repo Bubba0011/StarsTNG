@@ -11,93 +11,42 @@
 		width: 100%;
 		height: 100vh;
 	}
-
-	.setup-container {
-		margin: 5px;
-	}
-
-	.small-font {
-		font-size: small;
-	}
-
-	.obj-item {
-		cursor: pointer;
-	}
-
-		.obj-item:hover {
-			background-color: rgba(255,255,255,0.5);
-		}
-
-	.selected {
-		font-weight: bold;
-	}
 </style>
 
-<div>
-	<div class="main-container" id="mejn">
-		@if (client != null)
-		{
-			<CascadingValue Name="GameWrapper" Value="@wrapper">
-				<CascadingValue Name="UIWrapper" Value="@uiWrapper">
-					<UiGalaxy InAutoSelectMode="!inClickMode" Clicked="GalaxyClicked" DisplayMode="displayMode" />
+<div class="main-container" id="mejn">
+	@if (client != null)
+	{
+		<CascadingValue Name="GameWrapper" Value="@wrapper">
+			<CascadingValue Name="UIWrapper" Value="@uiWrapper">
 
-					<InfoSpace Position="top right">
-						<InfoPanel Title="Game State">
-							<div>Turn: @client.CurrentTurn</div>
-							<div>ETA: @client.TriggerStatus</div>
-							<div @onclick="ToggleDisplayMode">Display Mode: @displayMode</div>
-							<Button Size="ButtonSize.Small" Color="Color.Primary" Clicked="client.SetReadyFlag">Ready</Button>
-						</InfoPanel>
-	
-						<ScoreboardPanel />
-					</InfoSpace>
+				<UiGalaxy Clicked="GalaxyClicked" DisplayMode="displayMode" />
 
-					@if (selection.SelectedObject != null)
-					{
-						<InfoSpace Position="top left">
-							@if (selection.Objects?.Count() > 1)
-							{
-								<InfoPanel Title="Objects at Location">
-									@foreach (var obj in selection.Objects)
-									{
-										string cls = "obj-item" + (selection.IsSelected(obj) ? " selected" : "");
-										<div class="@cls" @onclick="@(() => Select(obj.ObjectId))">@obj.ObjectId</div>
-									}
-								</InfoPanel>
-							}
+				<InfoSpace Position="top right">
+					<InfoPanel Title="Game State">
+						<div>Turn: @client.CurrentTurn</div>
+						<div>ETA: @client.TriggerStatus</div>
+						<div @onclick="ToggleDisplayMode">Display Mode: @displayMode</div>
+						<Button Size="ButtonSize.Small" Color="Color.Primary" Clicked="client.SetReadyFlag">Ready</Button>
+					</InfoPanel>
 
-							<InfoPanel Title="@GetSelectionTitle()">
-								@if (selection.SelectedObject is IPlanet planet)
-								{
-									<PlanetInfoPanel Planet="planet" IsEnabled="true" />
-								}
-								else if (selection.SelectedObject is IFleet fleet)
-								{
-									<FleetPanel Fleet="fleet" @bind-InClickMode="inClickMode" ModelChanged="() => StateHasChanged()" />
-								}
-							</InfoPanel>
-						</InfoSpace>
-					}
-				</CascadingValue>
+					<ScoreboardPanel />
+				</InfoSpace>
+
+				<SelectionPanel />
+
 			</CascadingValue>
-		}
-	</div>
+		</CascadingValue>
+	}
 </div>
 
 @code
 {
-	// UI
 	private UiDisplayMode displayMode = UiDisplayMode.Default;
 	private UIWrapper uiWrapper = new UIWrapper();
-
-	// Model
 	private GameWrapper wrapper;
+	private Selection selection => uiWrapper.Selection;
 	private GameClient client => wrapper.Client;
 	private IGalaxy Galaxy => client.GalaxyView;
-
-	// Selection
-	private Selection selection => uiWrapper.Selection;
-	private bool inClickMode;
 
 	[Parameter]
 	public int GameId { get; set; }
@@ -169,24 +118,5 @@
 		displayMode = displayMode == UiDisplayMode.Default
 			? UiDisplayMode.PlanetValue
 			: UiDisplayMode.Default;
-	}
-
-	private void Select(string objectId)
-	{
-		selection.SelectObject(objectId);
-	}
-
-	private string GetSelectionTitle()
-	{
-		if (selection.SelectedObject is IPlanet planet)
-		{
-			return "Planet - " + (planet.Name ?? $"#{planet.Id}") + $" ({selection.SelectedObject.Position})";
-		}
-		else if (selection.SelectedObject is IFleet fleet)
-		{
-			return "Fleet - " + (fleet.Name ?? $"# {fleet.Id}") + $" ({selection.SelectedObject.Position})";
-		}
-
-		return $"Unknown object ({selection.SelectedObject.Position})";
 	}
 }

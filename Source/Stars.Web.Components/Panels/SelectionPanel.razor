@@ -1,0 +1,66 @@
+﻿@inherits PanelBase
+
+<style>
+	.obj-item {
+		cursor: pointer;
+	}
+
+		.obj-item:hover {
+			background-color: rgba(255,255,255,0.5);
+		}
+
+	.selected {
+		font-weight: bold;
+	}
+</style>
+
+@if (selection.SelectedObject != null)
+{
+	<InfoSpace Position="top left">
+		@if (selection.Objects?.Count() > 1)
+		{
+			<InfoPanel Title="Objects at Location">
+				@foreach (var obj in selection.Objects)
+				{
+					string cls = "obj-item" + (selection.IsSelected(obj) ? " selected" : "");
+					<div class="@cls" @onclick="@(() => Select(obj.ObjectId))">@obj.ObjectId</div>
+				}
+			</InfoPanel>
+		}
+
+		<InfoPanel Title="@GetSelectionTitle()">
+			@if (selection.SelectedObject is IPlanet planet)
+			{
+				<PlanetInfoPanel Planet="planet" IsEnabled="true" />
+			}
+			else if (selection.SelectedObject is IFleet fleet)
+			{
+				<FleetPanel Fleet="fleet" IsEnabled="true" />
+			}
+		</InfoPanel>
+	</InfoSpace>
+}
+
+@code
+{
+	private Selection selection => UIWrapper.Selection;
+
+	private void Select(string objectId)
+	{
+		selection.SelectObject(objectId);
+	}
+
+	private string GetSelectionTitle()
+	{
+		if (selection.SelectedObject is IPlanet planet)
+		{
+			return "Planet - " + (planet.Name ?? $"#{planet.Id}") + $" ({selection.SelectedObject.Position})";
+		}
+		else if (selection.SelectedObject is IFleet fleet)
+		{
+			return "Fleet - " + (fleet.Name ?? $"# {fleet.Id}") + $" ({selection.SelectedObject.Position})";
+		}
+
+		return $"Unknown object ({selection.SelectedObject.Position})";
+	}
+}

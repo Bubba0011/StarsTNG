@@ -28,6 +28,7 @@
 	private Focus focus = new Focus() { View = Vector.Zero };
 
 	IGalaxy Galaxy => GameWrapper.Client.GalaxyView;
+	private bool InAutoSelectMode => !UiWrapper.InClickMode;
 
 	[CascadingParameter(Name = "UIWrapper")]
 	public UIWrapper UiWrapper { get; set; }
@@ -37,9 +38,6 @@
 
 	[Parameter]
 	public RenderFragment ChildContent { get; set; }
-
-	[Parameter]
-	public bool InAutoSelectMode { get; set; } = true;
 
 	[Parameter]
 	public UiDisplayMode DisplayMode { get; set; } = UiDisplayMode.Default;
@@ -81,7 +79,5 @@
 		Double.TryParse(zoomFactor, NumberStyles.Any, CultureInfo.InvariantCulture, out zoomDouble);
 
 		UiWrapper.Zoom = 1 / zoomDouble;
-
-		StateHasChanged();
 	}
 }
