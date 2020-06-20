@@ -25,14 +25,16 @@
 					<InfoPanel Title="Game State">
 						<div>Turn: @client.CurrentTurn</div>
 						<div>ETA: @client.TriggerStatus</div>
-						<div @onclick="ToggleDisplayMode">Display Mode: @displayMode</div>
+						<div @onclick="ToggleDisplayMode">Display Mode: @uiWrapper.RenderSettings.MainMode</div>
 						<Button Size="ButtonSize.Small" Color="Color.Primary" Clicked="client.SetReadyFlag">Ready</Button>
 					</InfoPanel>
 
 					<ScoreboardPanel />
 				</InfoSpace>
-
-				<SelectionPanel />
+				
+				<InfoSpace Position="top left">
+					<SelectionPanel />
+				</InfoSpace>
 
 			</CascadingValue>
 		</CascadingValue>
@@ -46,7 +48,6 @@
 	private Selection selection => uiWrapper.Selection;
 	private GameClient client => wrapper.Client;
 	private IGalaxy Galaxy => client.GalaxyView;
-	private UiDisplayMode displayMode => uiWrapper.DisplayMode;
 
 	[Parameter]
 	public int GameId { get; set; }
@@ -116,8 +117,6 @@
 
 	private void ToggleDisplayMode()
 	{
-		uiWrapper.DisplayMode = displayMode == UiDisplayMode.Default
-			? UiDisplayMode.PlanetValue
-			: UiDisplayMode.Default;
+		uiWrapper.RenderSettings = uiWrapper.RenderSettings.Toggle();
 	}
 }

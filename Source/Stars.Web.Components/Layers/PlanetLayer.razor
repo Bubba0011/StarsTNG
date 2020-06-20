@@ -52,8 +52,7 @@
 
 @code
 {
-	[Parameter]
-	public bool InStdMode { get; set; }
+	private bool InStdMode => UIWrapper.RenderSettings.MainMode == UiDisplayMode.Default;
 
 	private string GetClass(IPlanet planet)
 	{

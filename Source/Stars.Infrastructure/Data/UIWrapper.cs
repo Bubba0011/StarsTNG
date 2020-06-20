@@ -18,7 +18,12 @@ namespace Stars.Infrastructure.Data
 			set => Set(ref inClickMode, value); 
 		}
 
-		public UiDisplayMode DisplayMode { get; set; } = UiDisplayMode.Default;
+		private RenderSettings renderingSettings;
+		public RenderSettings RenderSettings
+		{
+			get => renderingSettings;
+			set => Set(ref renderingSettings, value);
+		}
 
 		public Selection Selection { get; } = new Selection();
 

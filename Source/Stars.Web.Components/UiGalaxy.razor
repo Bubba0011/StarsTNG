@@ -17,7 +17,7 @@
 
 		<ComLayer />
 		<FleetLayer />
-		<PlanetLayer InStdMode="@(DisplayMode == UiDisplayMode.Default)" />
+		<PlanetLayer />
 
 		@ChildContent
 	</SvgBox>
@@ -29,7 +29,6 @@
 
 	IGalaxy Galaxy => GameWrapper.Client.GalaxyView;
 	private bool InAutoSelectMode => !UiWrapper.InClickMode;
-	private UiDisplayMode DisplayMode => UiWrapper.DisplayMode;
 
 	[CascadingParameter(Name = "UIWrapper")]
 	public UIWrapper UiWrapper { get; set; }
