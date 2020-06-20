@@ -1,12 +1,7 @@
 ﻿
 @if (Planet != null && IsEnabled)
 {
-	
 	<div class="small-font">
-		<h5>Planet @(Planet.Name ?? $"#{Planet.Id}")</h5>
-
-		<p><b>Position</b> @Planet.Position.X, @Planet.Position.Y</p>
-
 		@if (Planet.Details != null)
 		{
 			@if (Planet.Timestamp.HasValue)
@@ -24,11 +19,14 @@
 				<p><b>Minerals</b><MineralsPanel Minerals="Planet.Details.Minerals" /></p>
 			</div>
 		}
+		else
+		{
+			<i>No information available.</i>
+		}
 
 		@if (Planet.Settlement != null)
 		{
-				
-			<p><b>Owner</b> Player #@Planet.Settlement.OwnerId</p>
+			<p><b>Owner</b> @GetPlayerName(Planet.Settlement.OwnerId)</p>
 			<p><b>Population</b> @Planet.Settlement.Population</p>
 			<p><b>Scanner Range</b> @Planet.Settlement.ScannerRange</p>
 
@@ -69,6 +67,11 @@
 		var value = Player.GetPlanetValue(Planet) ?? 0;
 
 		return (int)(100 * value);
+	}
+
+	private string GetPlayerName(int playerId)
+	{
+		return $"Player #{playerId}";
 	}
 
 	private void AddScoutToBuildQueue()

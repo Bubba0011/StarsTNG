@@ -5,9 +5,9 @@
 		align-items: center;
 	}
 
-	.waypoint-item:hover {
-		background-color: rgba(255,255,255,0.5);
-	}
+		.waypoint-item:hover {
+			background-color: rgba(255,255,255,0.5);
+		}
 
 	.wp-cell {
 		margin: 2px 4px;
@@ -17,11 +17,13 @@
 
 @if (Fleet != null)
 {
-	@Fleet.Name
+	<p><b>Owner</b> @GetPlayerName(Fleet.OwnerId)</p>
+	<p><b>Scanner Range</b> @Fleet.ScannerRange</p>
 
 	@if (Fleet is IFleetController ctrl)
 	{
 		<div>
+			<b>Waypoints</b>
 			@foreach (var wp in GetWaypoints())
 			{
 				<div class="waypoint-item">
@@ -52,6 +54,11 @@
 
 	[Parameter]
 	public EventCallback ModelChanged { get; set; }
+
+	private string GetPlayerName(int playerId)
+	{
+		return $"Player #{playerId}";
+	}
 
 	private async Task ClearFleetWaypoints()
 	{
