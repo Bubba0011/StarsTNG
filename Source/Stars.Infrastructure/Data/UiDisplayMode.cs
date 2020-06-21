@@ -4,5 +4,6 @@
 	{
 		Default,
 		PlanetValue,
+		Diplo,
 	}
 }

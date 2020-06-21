@@ -8,9 +8,12 @@
 		{
 			var result = this;
 
-			result.MainMode = MainMode == UiDisplayMode.Default
-				? UiDisplayMode.PlanetValue
-				: UiDisplayMode.Default;
+			result.MainMode = MainMode switch
+			{
+				UiDisplayMode.Default => UiDisplayMode.PlanetValue,
+				UiDisplayMode.PlanetValue => UiDisplayMode.Diplo,
+				_ => UiDisplayMode.Default,
+			};
 
 			return result;
 		}

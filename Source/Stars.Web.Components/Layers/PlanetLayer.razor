@@ -19,7 +19,7 @@
 
 	.selected {
 		stroke: gold;
-		stroke-width: 0.2px;
+		stroke-width: 0.5px;
 	}
 
 	.hab-bad {
@@ -34,6 +34,11 @@
 	.hab-great {
 		fill: green;
 	}
+
+	@foreach (var cls in GetDiploClasses())
+	{
+		<text>@cls</text>
+	}
 </style>
 
 @if (Galaxy != null && IsEnabled)
@@ -42,7 +47,7 @@
 	{
 		<circle cx="@p.Position.X" cy="@p.Position.Y" r="@GetRadiusStr(2)" class="@GetClass(p)" />
 
-		@if (!InStdMode && p.Settlement != null)
+		@if (p.Settlement != null && UIWrapper.RenderSettings.MainMode == UiDisplayMode.PlanetValue)
 		{
 			var side = GetRadius(3);
 			<rect x="@p.Position.X" y="@Str(p.Position.Y - side)" width="@Str(side)" height="@Str(side)" class="@GetStdClass(p)" />
@@ -52,13 +57,18 @@
 
 @code
 {
-	private bool InStdMode => UIWrapper.RenderSettings.MainMode == UiDisplayMode.Default;
-
 	private string GetClass(IPlanet planet)
 	{
 		bool isSelected = UIWrapper.Selection.IsSelected(planet);
 
-		return (InStdMode ? GetStdClass(planet) : GetValueClass(planet)) + (isSelected ? " selected" : "");
+		string baseClass = UIWrapper.RenderSettings.MainMode switch
+		{
+			UiDisplayMode.PlanetValue => GetValueClass(planet),
+			UiDisplayMode.Diplo => GetDiploClass(planet),
+			_ => GetStdClass(planet),
+		};
+
+		return baseClass + (isSelected ? " selected" : "");
 	}
 
 	string GetStdClass(IPlanet planet)
@@ -100,6 +110,29 @@
 		{
 			return "hab-great";
 		}
+	}
+
+	string GetDiploClass(IPlanet planet)
+	{
+		if (planet.Settlement != null)
+		{
+			return $"diplo-{planet.Settlement.OwnerId}";
+		}
+
+		if (planet.Details != null)
+		{
+			return "planet-scanned";
+		}
+
+		return "planet";
+	}
+
+	private IEnumerable<string> GetDiploClasses()
+	{
+		string[] colors = { "DeepPink", "Turquoise", "Gold", "Maroon", "DarkOrange", "DodgerBlue", "Purple", "DarkCyan" };
+
+		return GameWrapper.Client.Players
+			.Zip(colors, (player, color) => $".diplo-{player.Id} {{ fill: {color} }}");
 	}
 
 	private string GetRadiusStr(double startValue)
