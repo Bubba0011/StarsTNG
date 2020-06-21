@@ -1,5 +1,11 @@
 ﻿@inherits PanelBase
 
+<style>
+	.small-font {
+		font-size: small;
+	}
+</style>
+
 @if (Planet != null && IsEnabled)
 {
 	<div class="small-font">
@@ -33,20 +39,7 @@
 
 			@if (Planet.Settlement is ISettlementController controller)
 			{
-				<p>
-					<div><b>Build Queue</b></div>
-					<div>
-						@foreach (var item in controller.BuildQueue.Items)
-						{
-							<div>@($"{item.ItemToBuild.Name} - {item.Invested} of {item.Cost} ({100 * item.Progress:0.}%)")</div>
-						}
-					</div>
-					<div>
-						<Button Size="ButtonSize.Small" Color="Color.Primary" Clicked="AddScoutToBuildQueue">Add Scout</Button>
-						<Button Size="ButtonSize.Small" Color="Color.Primary" Clicked="AddColonyShipToBuildQueue">Add Colonizer</Button>
-						<Button Size="ButtonSize.Small" Color="Color.Danger" Clicked="RemoveLastBuildQueueItem" Disabled="@(!controller.BuildQueue.Items.Any())">Remove Last</Button>
-					</div>
-				</p>
+				<BuildQueuePanel Settlement="@controller" />
 			}
 		}
 	</div>
@@ -70,35 +63,5 @@
 	{
 		var player = GameWrapper.Client.Players.SingleOrDefault(p => p.Id == playerId);
 		return player?.Name ?? $"Player #{playerId}";
-	}
-
-	private void AddScoutToBuildQueue()
-	{
-		if (Planet.Settlement is ISettlementController ctrl)
-		{
-			var scout = new BuildQueueItem(BuildMenuItem.ScoutShip);
-			ctrl.BuildQueue.Items.Add(scout);
-		}
-	}
-
-	private void AddColonyShipToBuildQueue()
-	{
-		if (Planet.Settlement is ISettlementController ctrl)
-		{
-			var ship = new BuildQueueItem(BuildMenuItem.ColonyShip);
-			ctrl.BuildQueue.Items.Add(ship);
-		}
-	}
-
-	private void RemoveLastBuildQueueItem()
-	{
-		if (Planet.Settlement is ISettlementController ctrl)
-		{
-			var lastItem = ctrl.BuildQueue.Items.Last();
-			if (lastItem != null)
-			{
-				ctrl.BuildQueue.Items.Remove(lastItem);
-			}
-		}
 	}
 }

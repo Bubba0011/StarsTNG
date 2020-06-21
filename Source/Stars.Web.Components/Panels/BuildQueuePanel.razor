@@ -1,0 +1,57 @@
+﻿@inherits PanelBase
+
+<style>
+	.build-queue-item {
+		display: flex;
+		cursor: pointer;
+		align-items: center;
+		justify-content: space-between;
+		margin: 2px;
+	}
+	
+		.build-queue-item:hover {
+			background-color: rgba(255,255,255,0.2);
+		}
+</style>
+
+<div><b>Build Queue</b></div>
+
+<div>
+	@foreach (var item in Settlement.BuildQueue.Items)
+	{
+		<div class="build-queue-item">
+			<div>@($"{item.ItemToBuild.Name} - {item.Invested} of {item.Cost} ({100 * item.Progress:0.}%)")</div>
+			<Icon Name="IconName.ClearSearch" @onclick="@(() => RemoveItem(item))" Style="margin:2px;" />
+		</div>
+	}
+</div>
+
+<div>
+	@foreach (var item in GetBuildMenu())
+	{
+		<Button Size="ButtonSize.Small" Color="Color.Primary" Clicked="@(() => AddItem(item))">Add @item.Name</Button>
+	}
+</div>
+
+@code 
+{
+	[Parameter]
+	public ISettlementController Settlement { get; set; }
+
+	private void AddItem(BuildMenuItem menuItem)
+	{
+		var queueItem = new BuildQueueItem(menuItem);
+		Settlement.BuildQueue.Items.Add(queueItem);
+	}
+
+	private void RemoveItem(BuildQueueItem item)
+	{
+		Settlement.BuildQueue.Items.Remove(item);
+	}
+
+	private IEnumerable<BuildMenuItem> GetBuildMenu()
+	{
+		yield return BuildMenuItem.ScoutShip;
+		yield return BuildMenuItem.ColonyShip;
+	}
+}
