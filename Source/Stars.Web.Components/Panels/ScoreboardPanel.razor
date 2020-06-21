@@ -17,12 +17,11 @@
 		{
 			<div class="@GetClass(item)">
 				<div>@item.PlayerName</div>
-				<div>@($"{item.Score:### ##0} pts")</div>
+				<div style="margin-left:10px;">@($"{item.Score:### ##0} pts")</div>
 			</div>
 		}
 	</InfoPanel>
 }
-
 
 @code
 {
