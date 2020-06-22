@@ -29,7 +29,7 @@
 <div>
 	@foreach (var item in GetBuildMenu())
 	{
-		<Button Size="ButtonSize.Small" Color="Color.Primary" Clicked="@(() => AddItem(item))">Add @item.Name</Button>
+		<Button Size="ButtonSize.Small" Color="Color.Primary" Clicked="@(() => AddItem(item))">@item.Name</Button>
 	}
 </div>
 
@@ -53,5 +53,7 @@
 	{
 		yield return BuildMenuItem.ScoutShip;
 		yield return BuildMenuItem.ColonyShip;
+		yield return BuildMenuItem.AssaultShip;
+		yield return BuildMenuItem.Garrison;
 	}
 }

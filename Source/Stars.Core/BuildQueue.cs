@@ -69,6 +69,8 @@ namespace Stars.Core
 	{
 		public static readonly BuildMenuItem ScoutShip = new BuildMenuItem("Scout Ship", 25);
 		public static readonly BuildMenuItem ColonyShip = new BuildMenuItem("Colony Ship", 15);
+		public static readonly BuildMenuItem AssaultShip = new BuildMenuItem("Assault Ship", 30);
+		public static readonly BuildMenuItem Garrison = new BuildMenuItem("Garrison", 30);
 
 		public string Name { get; set; }
 		public int Cost { get; set; }

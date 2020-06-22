@@ -17,6 +17,7 @@ namespace Stars.Core
 		public bool IsMine => false;
 		public string ObjectId => fleet.ObjectId;
 		public int? Heading => fleet.Heading;
+		public Population? Passengers => fleet.Passengers;
 		public IEnumerable<Position> Waypoints => new Position[0];
 		public IEnumerable<WakePoint> WakePoints => GetWakePoints();
 

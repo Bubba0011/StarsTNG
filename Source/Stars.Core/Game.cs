@@ -1,6 +1,7 @@
 ﻿using Stars.Core.Views;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace Stars.Core
@@ -62,6 +63,18 @@ namespace Stars.Core
 				Colonize(fleet);
 			}
 
+			// Assault ships deploy marines
+			var assaultGroups = Galaxy.Fleets
+				.Where(f => f.Passengers.Marines > 0)
+				.Where(f => f.Waypoints?.Any() != true)
+				.GroupBy(f => f.Position)
+				.ToArray();
+
+			foreach (var group in assaultGroups)
+			{
+				DeployMarines(group);
+			}
+
 			// Update scoreboard...
 			Scoreboard = Players
 				.Select(CalculateScore)
@@ -104,10 +117,25 @@ namespace Stars.Core
 					{
 						int settlers = Math.Min(5000, settlement.Population.Civilians / 2);
 						var passengers = new Population(settlers);
+						settlement.Population -= passengers;
 
 						var ship = LaunchShip(20, "Mayflower");
-						settlement.Population -= passengers;
 						ship.Passengers = passengers;
+					}
+					else if (item.ItemToBuild.Equals(BuildMenuItem.AssaultShip))
+					{
+						int recruites = Math.Min(10_000, settlement.Population.Civilians / 5);
+						int marines = recruites / 2;
+						settlement.Population -= new Population(recruites);
+
+						var ship = LaunchShip(20, "MEU");
+						ship.Passengers = new Population(0, marines);
+					}
+					else if (item.ItemToBuild.Equals(BuildMenuItem.Garrison))
+					{
+						int recruites = Math.Min(10_000, settlement.Population.Civilians / 5);
+						int marines = recruites / 2;
+						settlement.Population += new Population(-recruites, marines);
 					}
 				}
 
@@ -147,6 +175,83 @@ namespace Stars.Core
 							ScannerRange = 100,
 						};
 					}
+				}
+			}
+
+			void DeployMarines(IEnumerable<Fleet> fleets)
+			{
+				var location = fleets.First().Position;
+				var planet = Galaxy.Planets.SingleOrDefault(p => p.Position == location);
+				if (planet?.Settlement == null) return;
+
+				var assaultGroups = fleets
+					.Where(f => f.OwnerId != planet.Settlement.OwnerId)
+					.GroupBy(f => f.OwnerId);
+
+				// 1) Unload reinforcements if attack is imminent
+				if (assaultGroups.Any())
+				{
+					var reinforcements = fleets.Where(f => f.OwnerId == planet.Settlement.OwnerId);
+
+					foreach (var def in reinforcements)
+					{
+						planet.Settlement.Population += def.Passengers;
+						Galaxy.Fleets.Remove(def);
+					}
+				}
+
+				// 2) Attackers attack
+				foreach (var group in assaultGroups)
+				{
+					int attackerId = group.Key;
+					var assaultForce = new Population();
+					foreach (var att in group)
+					{
+						assaultForce += att.Passengers;
+						Galaxy.Fleets.Remove(att);
+					}
+
+					Invade(planet.Settlement, assaultForce, attackerId);
+				}
+			}
+
+			void Invade(Settlement settlement, Population assaultForce, int attackerId)
+			{
+				var defenseForce = settlement.Population;
+				defenseForce.Civilians /= 10;
+
+				var defenseValue = ForceValue(defenseForce);
+				var attackValue = ForceValue(assaultForce);
+
+				if (attackValue > defenseValue)
+				{
+					var killRate = 0.75 * defenseValue / attackValue;
+					assaultForce -= CalculateCasualties(assaultForce, killRate);
+
+					settlement.Population -= defenseForce;
+					settlement.Population += assaultForce;
+
+					settlement.OwnerId = attackerId;
+
+					// TODO: Add history entry for defeated player?
+				}
+				else
+				{
+					var killRate = 0.75 * attackValue / defenseValue;
+					settlement.Population -= CalculateCasualties(defenseForce, killRate);
+				}
+
+				// TODO: Report event to players involved...
+
+				static double ForceValue(Population force) => 2 * force.Marines + force.Civilians;
+
+				static Population CalculateCasualties(Population force, double killRate)
+				{
+					return new Population
+					{
+						Civilians = (int)(force.Civilians * killRate),
+						Marines = (int)(force.Marines * killRate),
+					};
 				}
 			}
 		}

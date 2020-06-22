@@ -11,6 +11,7 @@ namespace Stars.Core
 		int ScannerRange { get; }
 		bool IsMine { get; }
 		int? Heading { get; }
+		Population? Passengers { get; }
 		IEnumerable<Position> Waypoints { get; }
 		IEnumerable<WakePoint> WakePoints { get => Enumerable.Empty<WakePoint>(); }
 	}

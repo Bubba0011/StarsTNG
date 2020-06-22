@@ -22,6 +22,10 @@
 {
 	<p><b>Owner</b> @GetPlayerName(Fleet.OwnerId)</p>
 	<p><b>Scanner Range</b> @Fleet.ScannerRange</p>
+	@if (Fleet.Passengers?.Total > 0)
+	{
+		<p><b>Passengers</b> @Fleet.Passengers</p>
+	}
 
 	@if (Fleet is IFleetController ctrl)
 	{
