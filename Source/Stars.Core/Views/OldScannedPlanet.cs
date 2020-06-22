@@ -34,7 +34,7 @@
 
 			public int OwnerId => history.OwnerId!.Value;
 			public int ScannerRange => history.ScannerRange!.Value;
-			public int Population => history.Population!.Value;
+			public Population Population => history.Population!.Value;
 			public bool IsMine => false;
 		}
 	}

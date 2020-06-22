@@ -26,7 +26,7 @@
 		foreach (var planet in MyPlanets())
 		{
 			var pos = planet.Position;
-			var caption = planet.Settlement!.Population.ToString("### ### ##0").Trim();
+			var caption = GetCaption(planet);
 
 			<text>
 				<text x="@pos.X" y="@Str(pos.Y + GetRadius(10))" class="com-caption">@caption</text>
@@ -39,6 +39,14 @@
 {
 	private List<ComLink> cache;
 	private int cacheTurn;
+
+	private string GetCaption(IPlanet planet)
+	{
+		var population = planet.Settlement!.Population;
+		return S(population.Civilians) + (population.Marines > 0 ? $" + {S(population.Marines)}" : null);
+
+		static string S(int n) => n.ToString("### ### ##0").Trim();
+	}
 
 	private IEnumerable<IPlanet> MyPlanets()
 	{

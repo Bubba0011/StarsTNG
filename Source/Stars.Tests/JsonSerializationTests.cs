@@ -71,7 +71,7 @@ namespace Stars.Tests
 				Settlement = new Settlement()
 				{
 					OwnerId = 1,
-					Population = 1,
+					Population = new Population(1),
 					ScannerRange = 1,
 				},
 			};
@@ -101,7 +101,7 @@ namespace Stars.Tests
 			var original = new Settlement()
 			{
 				OwnerId = owner,
-				Population = population,
+				Population = new Population(population),
 				ScannerRange = scanner,
 			};
 
@@ -216,13 +216,13 @@ namespace Stars.Tests
 							Position = new Position(100, 100),
 							Details = new PlanetDetails()
 							{ 
-								Environment = new Core.Environment(10, 50, 20),
+								Environment = new Environment(10, 50, 20),
 								Minerals = new Minerals(20, 30, 50),
 							},
 							Settlement = new Settlement()
 							{
 								OwnerId = 1,
-								Population = 10_000,
+								Population = new Population(10_000),
 								ScannerRange = 100,
 							},
 						},

@@ -53,7 +53,7 @@ namespace Stars.Core
 
 			// Colony ships colonize
 			var colonizers = Galaxy.Fleets
-				.Where(f => f.ColonistCount > 0)
+				.Where(f => f.Passengers.Civilians > 0)
 				.Where(f => f.Waypoints?.Any() != true)
 				.ToArray();
 
@@ -90,7 +90,7 @@ namespace Stars.Core
 			{
 				Settlement settlement = populatedPlanet.Settlement!;
 
-				int resources = settlement.Population / 1000;
+				int resources = settlement.Population.Civilians / 1000;
 				var output = settlement.BuildQueue.Build(resources);
 				resources -= output.ConsumedResources;
 
@@ -102,11 +102,12 @@ namespace Stars.Core
 					}
 					else if (item.ItemToBuild.Equals(BuildMenuItem.ColonyShip))
 					{
-						int settlers = Math.Min(5000, settlement.Population / 2);
+						int settlers = Math.Min(5000, settlement.Population.Civilians / 2);
+						var passengers = new Population(settlers);
 
 						var ship = LaunchShip(20, "Mayflower");
-						settlement.Population -= settlers;
-						ship.ColonistCount = settlers;
+						settlement.Population -= passengers;
+						ship.Passengers = passengers;
 					}
 				}
 
@@ -142,7 +143,7 @@ namespace Stars.Core
 						planet.Settlement = new Settlement
 						{
 							OwnerId = colonyFleet.OwnerId,
-							Population = colonyFleet.ColonistCount,
+							Population = colonyFleet.Passengers,
 							ScannerRange = 100,
 						};
 					}
@@ -156,7 +157,7 @@ namespace Stars.Core
 				.Where(p => p.Settlement?.OwnerId == player.Id)
 				.Select(p => p.Settlement!);
 
-			var population = settlements.Sum(s => s.Population);
+			var population = settlements.Sum(s => s.Population.Civilians);
 			var planets = settlements.Count();
 
 			var score = population / 1000 + planets * 10;

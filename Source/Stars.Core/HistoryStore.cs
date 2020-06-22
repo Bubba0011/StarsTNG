@@ -120,7 +120,7 @@ namespace Stars.Core
 		public int Turn { get; set; }
 		public int PlanetId { get; set; }
 		public int? OwnerId { get; set; }
-		public int? Population { get; set; }
+		public Population? Population { get; set; }
 		public int? ScannerRange { get; set; }
 	}
 

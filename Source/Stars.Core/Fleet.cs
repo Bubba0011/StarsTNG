@@ -14,7 +14,7 @@ namespace Stars.Core
 		public string ObjectId => $"Fleet#{Id}";
 		public IList<Position>? Waypoints { get; set; }
 		public int? Heading { get; set; }
-		public int ColonistCount { get; set; }
+		public Population Passengers { get; set; }
 
 		public IFleet GetDefaultView() => new DefaultFleetView(this);
 

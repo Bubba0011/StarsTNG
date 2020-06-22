@@ -6,7 +6,7 @@
 
 		public int OwnerId => settlement.OwnerId;
 		public int ScannerRange => settlement.ScannerRange;
-		public int Population => settlement.Population;
+		public Population Population => settlement.Population;
 		public bool IsMine => false;
 
 		public DefaultSettlementView(Settlement settlement)

@@ -40,7 +40,7 @@ namespace Stars.Core.Setup
 				homeworld.Settlement = new Settlement()
 				{
 					OwnerId = player.Id,
-					Population = 10_000,
+					Population = new Population(10_000, 1_000),
 					ScannerRange = 100,
 				};
 
@@ -48,7 +48,7 @@ namespace Stars.Core.Setup
 				{
 					OwnerId = player.Id,
 					Position = homeworld.Position,
-					Name = $"{player.Name} Fleet #1",
+					Name = $"Scout 1",
 					ScannerRange = 50,
 					Waypoints = new List<Position> { Position.Zero, },
 				};

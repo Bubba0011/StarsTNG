@@ -33,12 +33,12 @@ namespace Stars.Core
 				: 0;
 		}
 
-		public int CalculatePopulationGrowth(Planet planet, Player owner)
+		public Population CalculatePopulationGrowth(Planet planet, Player owner)
 		{
 			var settlement = planet.Settlement;
 			if (settlement == null)
 			{
-				return 0;
+				return default;
 			}
 
 			int basePopulationCapacity = owner.Race.PlanetPopulationCapacity;
@@ -46,12 +46,13 @@ namespace Stars.Core
 			double planetHabFactor = CalculatePlanetValue(planet.Details, owner.Race);
 
 			double effectivePopulationCapacity = basePopulationCapacity * planetHabFactor;
-			double capacityPct = settlement.Population / effectivePopulationCapacity;
+			double capacityPct = settlement.Population.Total / effectivePopulationCapacity;
 
 			double crowdingFactor = capacityPct <= 0.25 ? 1 : 16.0 / 9 * Math.Pow(1 - capacityPct, 2);
 			double effectiveGrowthRate = baseGrowthRate * planetHabFactor * crowdingFactor;
 
-			return (int)Math.Round(settlement.Population * effectiveGrowthRate);
+			var newCivs = (int)Math.Round(settlement.Population.Civilians * effectiveGrowthRate);
+			return new Population(newCivs);
 		}
 	}
 }
