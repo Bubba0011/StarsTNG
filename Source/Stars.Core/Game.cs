@@ -1,7 +1,5 @@
-﻿using Stars.Core.Views;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace Stars.Core
@@ -33,10 +31,18 @@ namespace Stars.Core
 			// Save history
 			History.Store(this);
 
-			// Advance time
 			Turn += Rules.TimeStep;
 
-			// Planets build stuff and population grows
+			UpdatePlanets();
+			UpdateFleets();
+			ExecuteColonizeOrders();
+			ExecuteAssaultOrders();
+
+			UpdateScoreboard();
+		}
+
+		private void UpdatePlanets()
+		{
 			foreach (var planet in Galaxy.Planets)
 			{
 				if (planet.Settlement != null)
@@ -44,59 +50,6 @@ namespace Stars.Core
 					BuildStuff(planet);
 					UpdatePopulation(planet);
 				}
-			}
-
-			// Fleets move
-			foreach (var fleet in Galaxy.Fleets)
-			{
-				UpdateFleet(fleet);
-			}
-
-			// Colony ships colonize
-			var colonizers = Galaxy.Fleets
-				.Where(f => f.Passengers.Civilians > 0)
-				.Where(f => f.Waypoints?.Any() != true)
-				.ToArray();
-
-			foreach (var fleet in colonizers)
-			{
-				Colonize(fleet);
-			}
-
-			// Assault ships deploy marines
-			var assaultGroups = Galaxy.Fleets
-				.Where(f => f.Passengers.Marines > 0)
-				.Where(f => f.Waypoints?.Any() != true)
-				.GroupBy(f => f.Position)
-				.ToArray();
-
-			foreach (var group in assaultGroups)
-			{
-				DeployMarines(group);
-			}
-
-			// Update scoreboard...
-			Scoreboard = Players
-				.Select(CalculateScore)
-				.OrderByDescending(item => item.Score)
-				.ThenBy(item => item.PlayerId)
-				.ToArray();
-
-			void UpdatePopulation(Planet populatedPlanet)
-			{
-				Settlement settlement = populatedPlanet.Settlement!;
-				Player? owner = GetPlayer(settlement.OwnerId);
-
-				if (owner != null)
-				{
-					settlement.Population += Rules.CalculatePopulationGrowth(populatedPlanet, owner);
-				}
-			}
-
-			static void UpdateFleet(Fleet fleet)
-			{
-				const double Warp7 = 49;
-				fleet.Move(Warp7);
 			}
 
 			void BuildStuff(Planet populatedPlanet)
@@ -155,27 +108,81 @@ namespace Stars.Core
 				}
 			}
 
-			void Colonize(Fleet colonyFleet)
+			void UpdatePopulation(Planet populatedPlanet)
 			{
-				var planet = Galaxy.Planets.SingleOrDefault(p => p.Position == colonyFleet.Position);
+				Settlement settlement = populatedPlanet.Settlement!;
+				Player? owner = GetPlayer(settlement.OwnerId);
 
-				if (planet != null && planet.Settlement == null)
+				if (owner != null)
+				{
+					settlement.Population += Rules.CalculatePopulationGrowth(populatedPlanet, owner);
+				}
+			}
+		}
+
+		private void UpdateFleets()
+		{
+			foreach (var fleet in Galaxy.Fleets)
+			{
+				const double Warp7 = 49;
+				fleet.Move(Warp7);
+			}
+		}
+
+		private void ExecuteColonizeOrders()
+		{
+			var colonizers = Galaxy.Fleets
+				.Where(f => f.Passengers.Civilians > 0)
+				.Where(f => f.Waypoints?.Any() != true)
+				.ToArray();
+
+			foreach (var fleet in colonizers)
+			{
+				var planet = Galaxy.Planets.SingleOrDefault(p => p.Position == fleet.Position);
+
+				if (planet != null && CanColonize(planet, fleet))
+				{
+					ColonizePlanet(planet, fleet);
+				}
+			}
+
+			bool CanColonize(Planet planet, Fleet colonyFleet)
+			{
+				if (planet.Settlement == null)
 				{
 					var race = GetPlayer(colonyFleet.OwnerId)!.Race;
 					var value = Rules.CalculatePlanetValue(planet.Details, race);
 
-					if (value > 0)
-					{
-						Galaxy.Fleets.Remove(colonyFleet);
-
-						planet.Settlement = new Settlement
-						{
-							OwnerId = colonyFleet.OwnerId,
-							Population = colonyFleet.Passengers,
-							ScannerRange = 100,
-						};
-					}
+					return value > 0;
 				}
+
+				return false;
+			}
+
+			void ColonizePlanet(Planet planet, Fleet colonyFleet)
+			{
+				Galaxy.Fleets.Remove(colonyFleet);
+
+				planet.Settlement = new Settlement
+				{
+					OwnerId = colonyFleet.OwnerId,
+					Population = colonyFleet.Passengers,
+					ScannerRange = 100,
+				};
+			}
+		}
+
+		private void ExecuteAssaultOrders()
+		{
+			var assaultGroups = Galaxy.Fleets
+				.Where(f => f.Passengers.Marines > 0)
+				.Where(f => f.Waypoints?.Any() != true)
+				.GroupBy(f => f.Position)
+				.ToArray();
+
+			foreach (var group in assaultGroups)
+			{
+				DeployMarines(group);
 			}
 
 			void DeployMarines(IEnumerable<Fleet> fleets)
@@ -211,11 +218,11 @@ namespace Stars.Core
 						Galaxy.Fleets.Remove(att);
 					}
 
-					Invade(planet.Settlement, assaultForce, attackerId);
+					ResolveGroundCombat(planet.Settlement, assaultForce, attackerId);
 				}
 			}
 
-			void Invade(Settlement settlement, Population assaultForce, int attackerId)
+			void ResolveGroundCombat(Settlement settlement, Population assaultForce, int attackerId)
 			{
 				var defenseForce = settlement.Population;
 				defenseForce.Civilians /= 10;
@@ -254,6 +261,15 @@ namespace Stars.Core
 					};
 				}
 			}
+		}
+
+		private void UpdateScoreboard()
+		{
+			Scoreboard = Players
+				.Select(CalculateScore)
+				.OrderByDescending(item => item.Score)
+				.ThenBy(item => item.PlayerId)
+				.ToArray();
 		}
 
 		private PlayerScore CalculateScore(Player player)
