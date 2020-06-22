@@ -137,6 +137,10 @@ app {
     top: 0.5rem;
 }
 
+.ant-modal {
+    width:50%;
+}
+
 @media (max-width: 767.98px) {
     .main .top-row:not(.auth) {
         display: none;

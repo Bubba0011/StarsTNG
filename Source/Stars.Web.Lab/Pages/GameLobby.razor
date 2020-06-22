@@ -5,84 +5,90 @@
 
 @if (games != null)
 {
-	<Table Narrow="true">
-		<TableHeader ThemeContrast="ThemeContrast.Dark">
-			<TableRow>
-				<TableHeaderCell>Id</TableHeaderCell>
-				<TableHeaderCell>Name</TableHeaderCell>
-				<TableHeaderCell>Galaxy Size</TableHeaderCell>
-				<TableHeaderCell>No. of Planets</TableHeaderCell>
-				<TableHeaderCell>Space per Planet</TableHeaderCell>
-				<TableHeaderCell>No. of Players</TableHeaderCell>
-				<TableHeaderCell></TableHeaderCell>
-			</TableRow>
-		</TableHeader>
+	<Container>
+		<Row>
+			<Column ColumnSize="ColumnSize.Is6.Is3.WithOffset">
+				<Table Narrow="true" Striped="true">
+					<TableHeader ThemeContrast="ThemeContrast.Dark">
+						<TableRow>
+							<TableHeaderCell>Id</TableHeaderCell>
+							<TableHeaderCell>Name</TableHeaderCell>
+							<TableHeaderCell>Galaxy Size</TableHeaderCell>
+							<TableHeaderCell>No. of Planets</TableHeaderCell>
+							<TableHeaderCell>Space per Planet</TableHeaderCell>
+							<TableHeaderCell>No. of Players</TableHeaderCell>
+							<TableHeaderCell></TableHeaderCell>
+						</TableRow>
+					</TableHeader>
 
-		<TableBody>
-			@foreach (var game in games)
-			{
-				<TableRow>
-					<TableRowCell>@game.GameId</TableRowCell>
-					<TableRowCell>@game.Name</TableRowCell>
-					<TableRowCell>@game.GalaxySize</TableRowCell>
-					<TableRowCell>@game.PlanetCount</TableRowCell>
-					<TableRowCell>@Density(game)</TableRowCell>
-					<TableRowCell>@game.PlayerCount</TableRowCell>
-					<TableRowCell>
-						@for (int pid = 1; pid <= game.PlayerCount; pid++)
+					<TableBody>
+						@foreach (var game in games)
 						{
-							var txt = $"Player#{pid}";
-							<NavLink href=@($"game/{game.GameId}/{pid}")>@txt</NavLink>
+							<TableRow>
+								<TableRowCell>@game.GameId</TableRowCell>
+								<TableRowCell>@game.Name</TableRowCell>
+								<TableRowCell>@game.GalaxySize</TableRowCell>
+								<TableRowCell>@game.PlanetCount</TableRowCell>
+								<TableRowCell>@Density(game)</TableRowCell>
+								<TableRowCell>@game.PlayerCount</TableRowCell>
+								<TableRowCell>
+									@for (int pid = 1; pid <= game.PlayerCount; pid++)
+									{
+										var txt = $"Player#{pid}";
+										<NavLink href=@($"game/{game.GameId}/{pid}")>@txt</NavLink>
+									}
+								</TableRowCell>
+							</TableRow>
 						}
-					</TableRowCell>
-				</TableRow>
-			}
-		</TableBody>
-	</Table>
+					</TableBody>
+				</Table>
 
-	<Button Clicked="CreateGame">Create Game</Button>
+				<Button Clicked="CreateGame">Create Game</Button>
 
-	<Modal @ref="modalRef">
-		<ModalBackdrop />
-		<ModalContent Size="ModalSize.Large">
-			<ModalHeader>
-				<ModalTitle>Create Game</ModalTitle>
-				<CloseButton Clicked="CancelModal" />
-			</ModalHeader>
+				<Modal @ref="modalRef">
+					<ModalBackdrop />
+					<ModalContent Centered="true">
+						<ModalHeader>
+							<ModalTitle>Create Game</ModalTitle>
+							<CloseButton Clicked="CancelModal" />
+						</ModalHeader>
 
-			<ModalBody>
-				<Field>
-					<FieldLabel>Game Name</FieldLabel>
-					<TextEdit @bind-Text="gameSettings.GameName" Placeholder="The name of the game..." />
-				</Field>
-				<Field>
-					<FieldLabel>Galaxy Size</FieldLabel>
-					<NumericEdit @bind-Value="gameSettings.GalaxySettings.GalaxySize" />
-				</Field>
-				<Field>
-					<FieldLabel>Number of Planets</FieldLabel>
-					<NumericEdit @bind-Value="gameSettings.GalaxySettings.PlanetCount" />
-				</Field>
-				<Field>
-					<FieldLabel>Min. Distance Between Planets</FieldLabel>
-					<NumericEdit @bind-Value="gameSettings.GalaxySettings.MinimumDistanceBetweenPlanets" />
-				</Field>
-				<Field>
-					<FieldLabel>Galaxy Padding</FieldLabel>
-					<NumericEdit @bind-Value="gameSettings.GalaxySettings.Padding" />
-				</Field>
-				<Field>
-					<FieldLabel>Players (@gamePlayerCount)</FieldLabel>
-					<MemoEdit @bind-Text="@gamePlayerNames" Rows="@(gamePlayerCount + 1)" />
-				</Field>
-			</ModalBody>
+						<ModalBody>
+							<Field>
+								<FieldLabel>Game Name</FieldLabel>
+								<TextEdit @bind-Text="gameSettings.GameName" Placeholder="The name of the game..." />
+							</Field>
+							<Field>
+								<FieldLabel>Galaxy Size</FieldLabel>
+								<NumericEdit @bind-Value="gameSettings.GalaxySettings.GalaxySize" />
+							</Field>
+							<Field>
+								<FieldLabel>Number of Planets</FieldLabel>
+								<NumericEdit @bind-Value="gameSettings.GalaxySettings.PlanetCount" />
+							</Field>
+							<Field>
+								<FieldLabel>Min. Distance Between Planets</FieldLabel>
+								<NumericEdit @bind-Value="gameSettings.GalaxySettings.MinimumDistanceBetweenPlanets" />
+							</Field>
+							<Field>
+								<FieldLabel>Galaxy Padding</FieldLabel>
+								<NumericEdit @bind-Value="gameSettings.GalaxySettings.Padding" />
+							</Field>
+							<Field>
+								<FieldLabel>Players (@gamePlayerCount)</FieldLabel>
+								<MemoEdit @bind-Text="@gamePlayerNames" Rows="@(gamePlayerCount + 1)" />
+							</Field>
+						</ModalBody>
 
-			<ModalFooter>
-				<Button Color="Color.Secondary" Clicked="CancelModal">Cancel</Button>
-				<Button Color="Color.Primary" Clicked="OkModal">Create</Button>
-			</ModalFooter>
-		</ModalContent>
-	</Modal>
+						<ModalFooter>
+							<Button Color="Color.Secondary" Clicked="CancelModal">Cancel</Button>
+							<Button Color="Color.Primary" Clicked="OkModal">Create</Button>
+						</ModalFooter>
+					</ModalContent>
+				</Modal>
+			</Column>
+		</Row>
+	</Container>
 }
 
 @code
