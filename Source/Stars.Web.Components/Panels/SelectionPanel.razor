@@ -22,7 +22,7 @@
 			@foreach (var obj in selection.Objects)
 			{
 				string cls = "obj-item" + (selection.IsSelected(obj) ? " selected" : "");
-				<div class="@cls" @onclick="@(() => Select(obj.ObjectId))">@obj.ObjectId</div>
+				<div class="@cls" @onclick="@(() => Select(obj.ObjectId))">@GetObjectName(obj)</div>
 			}
 		</InfoPanel>
 	}
@@ -50,15 +50,20 @@
 
 	private string GetSelectionTitle()
 	{
-		if (selection.SelectedObject is IPlanet planet)
+		return $"{GetObjectName(selection.SelectedObject)} ({selection.SelectedObject.Position})";
+	}
+
+	private string GetObjectName(ISpaceObject obj)
+	{
+		if (obj is IPlanet planet)
 		{
-			return "Planet - " + (planet.Name ?? $"#{planet.Id}") + $" ({selection.SelectedObject.Position})";
+			return "Planet - " + (planet.Name ?? $"#{planet.Id}");
 		}
-		else if (selection.SelectedObject is IFleet fleet)
+		else if (obj is IFleet fleet)
 		{
-			return "Fleet - " + (fleet.Name ?? $"# {fleet.Id}") + $" ({selection.SelectedObject.Position})";
+			return "Fleet - " + (fleet.Name ?? $"#{fleet.Id}");
 		}
 
-		return $"Unknown object ({selection.SelectedObject.Position})";
+		return obj.ObjectId;
 	}
 }
