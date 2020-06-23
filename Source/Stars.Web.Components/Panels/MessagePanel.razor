@@ -1,0 +1,53 @@
+﻿@inherits PanelBase
+
+<style>
+	.message {
+		max-width: 300px;
+		margin: 0px 2px;
+		background-color: rgba(0,0,0, 0.2);
+		padding: 0px 2px;
+	}
+
+	.mood-bad {
+		background-color: rgba(255,0,0, 0.2);
+	}
+
+	.mood-good {
+		background-color: rgba(0,255,0, 0.2);
+	}
+</style>
+
+@if (player?.Messages.Any() == true)
+{
+	<InfoPanel Title="Messages">
+		@foreach (var msg in player.Messages)
+		{
+			<div class="@GetMessageClass(msg)">@msg.Body</div>
+		}
+
+		<Button Size="ButtonSize.Small" Color="Color.Danger" Clicked="ClearMessages">Clear</Button>
+	</InfoPanel>
+}
+
+@code
+{
+	private IPlayer player => GameWrapper.Client.Player;
+
+	private void ClearMessages()
+	{
+		if (player is IPlayerController controller)
+		{
+			controller.ClearMessages();
+		}
+	}
+
+	private string GetMessageClass(Message msg)
+	{
+		return msg.Mood switch
+		{
+			Mood.Bad => "message mood-bad",
+			Mood.Good => "message mood-good",
+			_ => "message",
+		};
+	}
+}

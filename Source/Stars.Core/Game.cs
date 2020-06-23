@@ -104,6 +104,8 @@ namespace Stars.Core
 					Galaxy.Fleets.Add(ship);
 					ship.Name = $"{name} #{ship.Id}";
 
+					Notify(ship.OwnerId, $"Ship launched - {ship.Name}");
+
 					return ship;
 				}
 			}
@@ -169,6 +171,8 @@ namespace Stars.Core
 					Population = colonyFleet.Passengers,
 					ScannerRange = 100,
 				};
+
+				Notify(colonyFleet.OwnerId, $"Settlement established on planet #{planet.Id}", Mood.Good);
 			}
 		}
 
@@ -182,14 +186,17 @@ namespace Stars.Core
 
 			foreach (var group in assaultGroups)
 			{
-				DeployMarines(group);
+				var location = group.Key;
+				var planet = Galaxy.Planets.SingleOrDefault(p => p.Position == location);
+				if (planet?.Settlement != null)
+				{
+					DeployMarines(planet, group);
+				}
 			}
 
-			void DeployMarines(IEnumerable<Fleet> fleets)
+			void DeployMarines(Planet planet, IEnumerable<Fleet> fleets)
 			{
-				var location = fleets.First().Position;
-				var planet = Galaxy.Planets.SingleOrDefault(p => p.Position == location);
-				if (planet?.Settlement == null) return;
+				if (planet.Settlement == null) return;
 
 				var assaultGroups = fleets
 					.Where(f => f.OwnerId != planet.Settlement.OwnerId)
@@ -212,18 +219,23 @@ namespace Stars.Core
 				{
 					int attackerId = group.Key;
 					var assaultForce = new Population();
+
 					foreach (var att in group)
 					{
 						assaultForce += att.Passengers;
 						Galaxy.Fleets.Remove(att);
 					}
 
-					ResolveGroundCombat(planet.Settlement, assaultForce, attackerId);
+					ResolveGroundCombat(planet, assaultForce, attackerId);
 				}
 			}
 
-			void ResolveGroundCombat(Settlement settlement, Population assaultForce, int attackerId)
+			void ResolveGroundCombat(Planet planet, Population assaultForce, int attackerId)
 			{
+				Settlement settlement = planet.Settlement!;
+				Player defender = GetPlayer(settlement.OwnerId)!;
+				Player attacker = GetPlayer(attackerId)!;
+
 				var defenseForce = settlement.Population;
 				defenseForce.Civilians /= 10;
 
@@ -238,7 +250,13 @@ namespace Stars.Core
 					settlement.Population -= defenseForce;
 					settlement.Population += assaultForce;
 
-					settlement.OwnerId = attackerId;
+					settlement.OwnerId = attacker.Id;
+
+					var defenderMsg = $"Our settlement on Planet #{planet.Id} was overrun by {attacker.Name} forces.";
+					Notify(defender.Id, defenderMsg, Mood.Bad);
+
+					var attackerMsg = $"We have conquered the {defender.Name} settlement on Planet #{planet.Id}";
+					Notify(attacker.Id, attackerMsg, Mood.Good);
 
 					// TODO: Add history entry for defeated player?
 				}
@@ -246,6 +264,12 @@ namespace Stars.Core
 				{
 					var killRate = 0.75 * attackValue / defenseValue;
 					settlement.Population -= CalculateCasualties(defenseForce, killRate);
+
+					var defenderMsg = $"We have successfully defended our settlement on Planet #{planet.Id} from attacking {attacker.Name} forces.";
+					Notify(defender.Id, defenderMsg, Mood.Good);
+
+					var attackerMsg = $"Our assault on the {defender.Name} settlement on Planet #{planet.Id} failed.";
+					Notify(attacker.Id, attackerMsg, Mood.Bad);
 				}
 
 				// TODO: Report event to players involved...
@@ -289,6 +313,12 @@ namespace Stars.Core
 		private Player? GetPlayer(int playerId)
 		{
 			return Players.SingleOrDefault(p => p.Id == playerId);
+		}
+
+		private void Notify(int playerId, string message, Mood mood = Mood.Neutral)
+		{
+			string body = $"Turn {Turn}: {message}";
+			GetPlayer(playerId)?.AddMessage(new Message(body, mood));
 		}
 	}
 }
