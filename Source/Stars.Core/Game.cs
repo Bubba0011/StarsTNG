@@ -62,56 +62,7 @@ namespace Stars.Core
 
 				foreach (var item in output.CompletedItems)
 				{
-					if (item.ItemToBuild.Equals(BuildMenuItem.ScoutShip))
-					{
-						LaunchShip(50, "Scout");
-					}
-					else if (item.ItemToBuild.Equals(BuildMenuItem.ColonyShip))
-					{
-						int settlers = Math.Min(5000, settlement.Population.Civilians / 2);
-						var passengers = new Population(settlers);
-						settlement.Population -= passengers;
-
-						var ship = LaunchShip(20, "Mayflower");
-						ship.Passengers = passengers;
-					}
-					else if (item.ItemToBuild.Equals(BuildMenuItem.AssaultShip))
-					{
-						int recruites = Math.Min(10_000, settlement.Population.Civilians / 5);
-						int marines = recruites / 2;
-						settlement.Population -= new Population(recruites);
-
-						var ship = LaunchShip(20, "MEU");
-						ship.Passengers = new Population(0, marines);
-					}
-					else if (item.ItemToBuild.Equals(BuildMenuItem.Garrison))
-					{
-						int recruites = Math.Min(10_000, settlement.Population.Civilians / 5);
-						int marines = recruites / 2;
-						settlement.Population += new Population(-recruites, marines);
-					}
-					else if (item.ItemToBuild.Equals(BuildMenuItem.SpacePort))
-					{
-						settlement.Installations.SpacePort = 200;
-						Notify(settlement.OwnerId, $"Space Port completed");
-					}
-				}
-
-				Fleet LaunchShip(int scanner, string name)
-				{
-					var ship = new Fleet
-					{
-						OwnerId = settlement.OwnerId,
-						Position = populatedPlanet.Position,
-						ScannerRange = scanner,
-					};
-
-					Galaxy.Fleets.Add(ship);
-					ship.Name = $"{name} #{ship.Id}";
-
-					Notify(ship.OwnerId, $"Ship launched - {ship.Name}");
-
-					return ship;
+					item.ItemToBuild.Complete(Galaxy, populatedPlanet, settlement, msg => Notify(settlement.OwnerId, msg));
 				}
 			}
 
