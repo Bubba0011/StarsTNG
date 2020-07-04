@@ -39,6 +39,17 @@ namespace Stars.Infrastructure.Data
 			}
 		}
 
+		public void TargetObject(IGalaxy galaxy, ISpaceObject target)
+		{
+			if (target != null)
+			{
+				SelectedObject = target;
+				Objects = galaxy.GetSpaceObjectsAt(target.Position).ToArray();
+
+				OnChange();
+			}
+		}
+
 		public void Refresh(IGalaxy galaxy)
 		{
 			if (SelectedObject != null)

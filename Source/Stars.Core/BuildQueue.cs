@@ -83,7 +83,7 @@ namespace Stars.Core
 			Cost = cost;
 		}
 
-		internal void Complete(Galaxy galaxy, Planet planet, Settlement settlement, Action<string> notify)
+		internal void Complete(Galaxy galaxy, Planet planet, Settlement settlement, Action<Message> notify)
 		{
 			var item = this;
 
@@ -118,7 +118,7 @@ namespace Stars.Core
 			else if (item.Equals(SpacePort))
 			{
 				settlement.Installations.SpacePort = 200;
-				notify($"Space Port completed");
+				Notify($"Space Port completed", planet);
 			}
 
 			Fleet LaunchShip(int scanner, string name)
@@ -133,9 +133,15 @@ namespace Stars.Core
 				galaxy.Fleets.Add(ship);
 				ship.Name = $"{name} #{ship.Id}";
 
-				notify($"Ship launched - {ship.Name}");
+				Notify($"Ship launched - {ship.Name}", ship);
 
 				return ship;
+			}
+
+			void Notify(string msgBody, ISpaceObject? obj = default)
+			{
+				var msg = new Message(msgBody, Mood.Neutral, obj);
+				notify(msg);
 			}
 		}
 

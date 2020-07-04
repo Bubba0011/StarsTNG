@@ -15,6 +15,10 @@
 	.mood-good {
 		background-color: rgba(0,255,0, 0.2);
 	}
+
+	.clickable {
+		cursor: pointer;
+	}
 </style>
 
 @if (player?.Messages.Any() == true)
@@ -22,7 +26,8 @@
 	<InfoPanel Title="Messages">
 		@foreach (var msg in player.Messages)
 		{
-			<div class="@GetMessageClass(msg)">@msg.Body</div>
+			var tmp = msg;
+			<div class="@GetMessageClass(msg)" @onclick="@(async () => await ItemClicked.InvokeAsync(tmp))">@msg.Body</div>
 		}
 
 		<Button Size="ButtonSize.Small" Color="Color.Danger" Clicked="ClearMessages">Clear</Button>
@@ -32,6 +37,9 @@
 @code
 {
 	private IPlayer player => GameWrapper.Client.Player;
+
+	[Parameter]
+	public EventCallback<Message> ItemClicked { get; set; }
 
 	private void ClearMessages()
 	{
@@ -43,11 +51,15 @@
 
 	private string GetMessageClass(Message msg)
 	{
-		return msg.Mood switch
+		var mood = msg.Mood switch
 		{
 			Mood.Bad => "message mood-bad",
 			Mood.Good => "message mood-good",
 			_ => "message",
 		};
+
+		var click = msg.ObjectId != null ? "clickable" : "";
+
+		return $"message {mood} {click}";
 	}
 }

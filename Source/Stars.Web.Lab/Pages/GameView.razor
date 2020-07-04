@@ -34,7 +34,7 @@
 				</InfoSpace>
 
 				<InfoSpace Position="bottom right">
-					<MessagePanel />
+					<MessagePanel ItemClicked="MessageClicked" />
 				</InfoSpace>
 
 			</CascadingValue>
@@ -114,6 +114,12 @@
 
 			fleet.SetWaypoints(list);
 		}
+	}
+
+	private void MessageClicked(Message message)
+	{
+		var obj = Galaxy.GetSpaceObject(message.ObjectId);
+		selection.TargetObject(Galaxy, obj);
 	}
 
 	private void ToggleDisplayMode()

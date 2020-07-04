@@ -131,7 +131,7 @@ namespace Stars.Core
 					},
 				};
 
-				Notify(colonyFleet.OwnerId, $"Settlement established on planet #{planet.Id}", Mood.Good);
+				Notify(colonyFleet.OwnerId, new Message($"Settlement established on planet #{planet.Id}", Mood.Good, planet));
 			}
 		}
 
@@ -277,7 +277,12 @@ namespace Stars.Core
 		private void Notify(int playerId, string message, Mood mood = Mood.Neutral)
 		{
 			string body = $"Turn {Turn}: {message}";
-			GetPlayer(playerId)?.AddMessage(new Message(body, mood));
+			Notify(playerId, new Message(body, mood));
+		}
+
+		private void Notify(int playerId, Message message)
+		{
+			GetPlayer(playerId)?.AddMessage(message);
 		}
 	}
 }
