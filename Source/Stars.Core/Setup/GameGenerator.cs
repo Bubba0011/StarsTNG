@@ -40,19 +40,21 @@ namespace Stars.Core.Setup
 				homeworld.Settlement = new Settlement()
 				{
 					OwnerId = player.Id,
-					Population = new Population(10_000, 1_000),
-					ScannerRange = 100,
+					Population = new Population(10_000),
+					Installations = new Installations
+					{
+						Scanner = 100,
+					},
 				};
 
 				var fleet = new Fleet()
 				{
 					OwnerId = player.Id,
 					Position = homeworld.Position,
-					Name = $"Scout 1",
 					ScannerRange = 50,
-					Waypoints = new List<Position> { Position.Zero, },
 				};
 				galaxy.Fleets.Add(fleet);
+				fleet.Name = $"Scout #{fleet.Id}";
 			}
 
 			var gameSettings = new GameRules();

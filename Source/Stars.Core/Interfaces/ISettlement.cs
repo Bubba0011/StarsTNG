@@ -6,5 +6,6 @@
 		public int ScannerRange { get; }
 		public Population Population { get; }
 		public bool IsMine { get; }
+		public Installations? Installations { get => null; }
 	}
 }

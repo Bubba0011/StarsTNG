@@ -76,7 +76,7 @@ namespace Stars.Core.Views
 			{
 				if (planet.Settlement?.OwnerId == playerId)
 				{
-					yield return new ScannerSite(planet.Position, planet.Settlement.ScannerRange);
+					yield return new ScannerSite(planet.Position, planet.Settlement.Installations.Scanner);
 				}
 			}
 

@@ -27,10 +27,12 @@
 </div>
 
 <div>
-	@foreach (var item in GetBuildMenu())
-	{
-		<Button Size="ButtonSize.Small" Color="Color.Primary" Clicked="@(() => AddItem(item))">@item.Name</Button>
-	}
+	<Buttons Margin="Margin.Is0.FromRight">
+		@foreach (var item in GetBuildMenu1())
+		{
+			<Button Size="ButtonSize.Small" Color="Color.Primary" Clicked="@(() => AddItem(item))">@item.Name</Button>
+		}
+	</Buttons>
 </div>
 
 @code 
@@ -49,11 +51,8 @@
 		Settlement.BuildQueue.Items.Remove(item);
 	}
 
-	private IEnumerable<BuildMenuItem> GetBuildMenu()
+	private IEnumerable<BuildMenuItem> GetBuildMenu1()
 	{
-		yield return BuildMenuItem.ScoutShip;
-		yield return BuildMenuItem.ColonyShip;
-		yield return BuildMenuItem.AssaultShip;
-		yield return BuildMenuItem.Garrison;
+		return BuildMenuItem.GetBuildableItems(Settlement);
 	}
 }

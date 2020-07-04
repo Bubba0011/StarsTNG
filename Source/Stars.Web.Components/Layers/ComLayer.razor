@@ -1,10 +1,16 @@
 ﻿@inherits LayerBase
 
 <style>
-	.com-link {
-		stroke: white;
+	.com-link-0 {
+		stroke: grey;
 		stroke-width: 0.25px;
-		stroke-dasharray: 1 2;
+		stroke-dasharray: 1 3;
+	}
+
+	.com-link-1 {
+		stroke: white;
+		stroke-width: 0.4px;
+		stroke-dasharray: 2 2;
 	}
 
 	.com-caption {
@@ -18,7 +24,7 @@
 {
 	@foreach (var link in GetLinks())
 	{
-		<line x1="@link.Free.X" y1="@link.Free.Y" x2="@link.Tree.X" y2="@link.Tree.Y" class="com-link" />
+		<line x1="@link.Free.X" y1="@link.Free.Y" x2="@link.Tree.X" y2="@link.Tree.Y" class="@($"com-link-{link.Cap}")" />
 	}
 
 	@if (Zoom >= 2)
@@ -66,8 +72,43 @@
 
 	private IEnumerable<ComLink> GenerateLinks()
 	{
+		var spacePorts = MyPlanets().Where(p => p.Settlement.Installations.SpacePort > 0).ToArray();
+		
+		foreach (var link in MinimumSpanningTree(spacePorts.Select(p => p.Position), (a, b) => true))
+		{
+			var tmp = link;
+			tmp.Cap = 1;
+			yield return tmp;
+		}
+
+		var noPorts = MyPlanets().Where(p => p.Settlement.Installations.SpacePort <= 0).ToArray();
+
+		foreach (var nope in noPorts)
+		{
+			var hub = spacePorts
+				.OrderBy(p => p.Position.DistanceTo(nope.Position))
+				.FirstOrDefault();
+
+			if (hub != null)
+			{
+				yield return new ComLink
+				{
+					Free = nope.Position,
+					Tree = hub.Position,
+				};
+			}
+		}
+	}
+
+	private IEnumerable<ComLink> GenerateLinksOld()
+	{
+		return MinimumSpanningTree(MyPlanets().Select(p => p.Position), (a,b) => true);
+	}
+
+	private IEnumerable<ComLink> MinimumSpanningTree(IEnumerable<Position> nodes, Func<Position, Position, bool> areLinked)
+	{
 		List<Position> tree = new List<Position>();
-		List<Position> free = MyPlanets().Select(p => p.Position).ToList();
+		List<Position> free = nodes.ToList();
 
 		if (!free.Any()) yield break;
 
@@ -89,7 +130,7 @@
 
 		IEnumerable<ComLink> Fringes()
 		{
-			return free.SelectMany(f => tree.Select(t => new ComLink { Free = f, Tree = t }));
+			return free.SelectMany(f => tree.Where(t => areLinked(f, t)).Select(t => new ComLink { Free = f, Tree = t }));
 		}
 	}
 
@@ -113,6 +154,7 @@
 	{
 		public Position Free { get; set; }
 		public Position Tree { get; set; }
+		public int Cap { get; set; }
 		public double Distance => Free.DistanceTo(Tree);
 	}
 }

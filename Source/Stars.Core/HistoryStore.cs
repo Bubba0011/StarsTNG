@@ -52,7 +52,7 @@ namespace Stars.Core
 				PlanetId = planet.Id,
 				OwnerId = planet.Settlement?.OwnerId,
 				Population = planet.Settlement?.Population,
-				ScannerRange = planet.Settlement?.ScannerRange,
+				ScannerRange = planet.Settlement?.Installations.Scanner,
 			};
 
 			Planets.Add(record);

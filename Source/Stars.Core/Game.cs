@@ -90,6 +90,11 @@ namespace Stars.Core
 						int marines = recruites / 2;
 						settlement.Population += new Population(-recruites, marines);
 					}
+					else if (item.ItemToBuild.Equals(BuildMenuItem.SpacePort))
+					{
+						settlement.Installations.SpacePort = 200;
+						Notify(settlement.OwnerId, $"Space Port completed");
+					}
 				}
 
 				Fleet LaunchShip(int scanner, string name)
@@ -169,7 +174,10 @@ namespace Stars.Core
 				{
 					OwnerId = colonyFleet.OwnerId,
 					Population = colonyFleet.Passengers,
-					ScannerRange = 100,
+					Installations = new Installations
+					{
+						Scanner = 100,
+					},
 				};
 
 				Notify(colonyFleet.OwnerId, $"Settlement established on planet #{planet.Id}", Mood.Good);

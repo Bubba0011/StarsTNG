@@ -72,7 +72,10 @@ namespace Stars.Tests
 				{
 					OwnerId = 1,
 					Population = new Population(1),
-					ScannerRange = 1,
+					Installations = new Installations
+					{
+						Scanner = 1,
+					},
 				},
 			};
 
@@ -102,7 +105,10 @@ namespace Stars.Tests
 			{
 				OwnerId = owner,
 				Population = new Population(population),
-				ScannerRange = scanner,
+				Installations = new Installations
+				{
+					Scanner = scanner,
+				},
 			};
 
 			var restored = SerializeAndDeserialize(original);
@@ -223,7 +229,10 @@ namespace Stars.Tests
 							{
 								OwnerId = 1,
 								Population = new Population(10_000),
-								ScannerRange = 100,
+								Installations = new Installations
+								{
+									Scanner = 100,
+								},
 							},
 						},
 					},

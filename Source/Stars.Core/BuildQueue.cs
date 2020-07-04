@@ -70,7 +70,9 @@ namespace Stars.Core
 		public static readonly BuildMenuItem ScoutShip = new BuildMenuItem("Scout Ship", 25);
 		public static readonly BuildMenuItem ColonyShip = new BuildMenuItem("Colony Ship", 15);
 		public static readonly BuildMenuItem AssaultShip = new BuildMenuItem("Assault Ship", 30);
+
 		public static readonly BuildMenuItem Garrison = new BuildMenuItem("Garrison", 30);
+		public static readonly BuildMenuItem SpacePort = new BuildMenuItem("Space Port", 30);
 
 		public string Name { get; set; }
 		public int Cost { get; set; }
@@ -79,6 +81,17 @@ namespace Stars.Core
 		{
 			Name = name;
 			Cost = cost;
+		}
+
+		public static IEnumerable<BuildMenuItem> GetBuildableItems(ISettlement settlement)
+		{
+			yield return ScoutShip;
+			yield return ColonyShip;
+
+			if (settlement.Installations?.SpacePort == 0)
+			{
+				yield return SpacePort;
+			}
 		}
 	}
 }
