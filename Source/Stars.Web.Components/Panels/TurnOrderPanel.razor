@@ -3,7 +3,7 @@
 {
 	<InfoPanel Position="top left">
 		<h5>Game</h5>
-		<div @onclick="NextTurn">Turn: @Game.Turn</div>
+		<div @onclick="NextTurn">Time: @Game.Time</div>
 		<div @onclick="NextPlayer">Player: @(Game.Players.Single(p => p.Id == PlayerId).Name)</div>
 	</InfoPanel>
 }

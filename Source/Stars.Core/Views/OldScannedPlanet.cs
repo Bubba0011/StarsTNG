@@ -10,12 +10,12 @@
 		public PlanetDetails? Details => planet.Details;
 		public ISettlement? Settlement { get; }
 		public string ObjectId => planet.ObjectId;
-		public int? Timestamp { get; }
+		public SpaceTime? Timestamp { get; }
 
 		public OldScannedPlanet(Planet planet, PlanetRecord history)
 		{
 			this.planet = planet;
-			this.Timestamp = history.Turn;
+			this.Timestamp = history.Time;
 
 			if (history.OwnerId.HasValue)
 			{

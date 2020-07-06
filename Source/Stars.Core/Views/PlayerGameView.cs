@@ -9,7 +9,7 @@ namespace Stars.Core.Views
 		private readonly int playerId;
 		private readonly List<IPlayer> players;
 
-		public int Turn => game.Turn;
+		public SpaceTime Time => game.Time;
 		public IEnumerable<PlayerScore> Scoreboard => game.Scoreboard;
 		public IGalaxy Galaxy { get; }
 		public IEnumerable<IPlayer> Players => players;

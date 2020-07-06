@@ -19,11 +19,11 @@ namespace Stars.Core
 	public struct WakePoint
 	{
 		public Position Position { get; }
-		public int Turn { get; }
+		public SpaceTime Time { get; }
 
-		public WakePoint(int turn, Position position)
+		public WakePoint(SpaceTime time, Position position)
 		{
-			this.Turn = turn;
+			this.Time = time;
 			this.Position = position;
 		}
 	}

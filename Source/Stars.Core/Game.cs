@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Stars.Core
@@ -9,7 +8,7 @@ namespace Stars.Core
 		public string? Name { get; set; }
 		public GameRules Rules { get; set; }
 		public Galaxy Galaxy { get; set; }
-		public int Turn { get; set; } = 1;
+		public SpaceTime Time { get; set; } = new SpaceTime(1);
 		public IList<PlayerScore> Scoreboard { get; set; } = new PlayerScore[0];
 		public EntityStore<Player> Players { get; set; } = new EntityStore<Player>();
 		public HistoryStore History { get; set; } = new HistoryStore();
@@ -31,7 +30,7 @@ namespace Stars.Core
 			// Save history
 			History.Store(this);
 
-			Turn += Rules.TimeStep;
+			Time += Rules.TimeStep;
 
 			UpdatePlanets();
 			UpdateFleets();
@@ -274,14 +273,14 @@ namespace Stars.Core
 			return Players.SingleOrDefault(p => p.Id == playerId);
 		}
 
-		private void Notify(int playerId, string message, Mood mood = Mood.Neutral)
+		private void Notify(int playerId, string body, Mood mood = Mood.Neutral)
 		{
-			string body = $"Turn {Turn}: {message}";
 			Notify(playerId, new Message(body, mood));
 		}
 
 		private void Notify(int playerId, Message message)
 		{
+			message.TimeStamp = Time;
 			GetPlayer(playerId)?.AddMessage(message);
 		}
 	}

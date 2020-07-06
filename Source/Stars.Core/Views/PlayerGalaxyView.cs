@@ -38,10 +38,10 @@ namespace Stars.Core.Views
 				return new ScannedPlanet(planet);
 			}
 
-			var turn = game.History.GetPlayerView(playerId, planet.Id);
-			if (turn.HasValue)
+			var time = game.History.GetPlayerView(playerId, planet.Id);
+			if (time.HasValue)
 			{
-				var history = game.History.GetPlanet(turn.Value, planet.Id);
+				var history = game.History.GetPlanet(time.Value, planet.Id);
 				return new OldScannedPlanet(planet, history!);
 			}
 			else

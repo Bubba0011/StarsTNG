@@ -27,7 +27,7 @@
 		@foreach (var msg in player.Messages)
 		{
 			var tmp = msg;
-			<div class="@GetMessageClass(msg)" @onclick="@(async () => await ItemClicked.InvokeAsync(tmp))">@msg.Body</div>
+			<div class="@GetMessageClass(msg)" @onclick="@(async () => await ItemClicked.InvokeAsync(tmp))">@msg.TimeStamp: @msg.Body</div>
 		}
 
 		<Button Size="ButtonSize.Small" Color="Color.Danger" Clicked="ClearMessages">Clear</Button>

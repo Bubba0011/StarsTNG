@@ -15,7 +15,7 @@ namespace Stars.Infrastructure.Data
 		public IPlayer Player => Players.Single(p => p.Id == PlayerId);
 		public IGalaxy GalaxyView => gameView.Galaxy;
 		public string TriggerStatus { get; private set; }
-		public int CurrentTurn => gameView.Turn;
+		public SpaceTime CurrentTime => gameView.Time;
 		public IEnumerable<PlayerScore> Scoreboard => gameView.Scoreboard;
 		public IEnumerable<IPlayer> Players => gameView.Players;
 

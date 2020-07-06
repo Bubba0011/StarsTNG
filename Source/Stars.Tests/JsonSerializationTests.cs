@@ -212,7 +212,7 @@ namespace Stars.Tests
 				Galaxy = new Galaxy()
 				{
 					Bounds = new GalaxyBounds(800),
-					
+
 					Planets = new EntityStore<Planet>
 					{
 						new Planet()
@@ -221,7 +221,7 @@ namespace Stars.Tests
 							Name = "Planet One",
 							Position = new Position(100, 100),
 							Details = new PlanetDetails()
-							{ 
+							{
 								Environment = new Environment(10, 50, 20),
 								Minerals = new Minerals(20, 30, 50),
 							},
@@ -237,8 +237,8 @@ namespace Stars.Tests
 						},
 					},
 				},
-				
-				Turn = 1,
+
+				Time = new SpaceTime(1),
 			};
 
 			return game;

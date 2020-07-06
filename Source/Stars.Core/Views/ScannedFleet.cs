@@ -31,8 +31,8 @@ namespace Stars.Core
 		private IEnumerable<WakePoint> GetWakePoints()
 		{
 			return history.GetFleet(Id, viewingPlayerId)
-				.OrderBy(h => h.Turn)
-				.Select(h => new WakePoint(h.Turn, h.Position));
+				.OrderBy(h => h.Time)
+				.Select(h => new WakePoint(h.Time, h.Position));
 		}
 	}
 }

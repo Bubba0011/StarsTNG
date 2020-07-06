@@ -20,7 +20,7 @@
 
 				<InfoSpace Position="top right">
 					<InfoPanel Title="Game State">
-						<div>Turn: @client.CurrentTurn</div>
+						<div>Time: @client.CurrentTime</div>
 						<div>ETA: @client.TriggerStatus</div>
 						<div @onclick="ToggleDisplayMode">Display Mode: @uiWrapper.RenderSettings.MainMode</div>
 						<Button Size="ButtonSize.Small" Color="Color.Primary" Clicked="client.SetReadyFlag">Ready</Button>

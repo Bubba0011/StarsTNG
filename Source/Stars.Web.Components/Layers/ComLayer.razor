@@ -44,7 +44,7 @@
 @code
 {
 	private List<ComLink> cache;
-	private int cacheTurn;
+	private SpaceTime cacheTime;
 
 	private string GetCaption(IPlanet planet)
 	{
@@ -61,10 +61,10 @@
 
 	private IEnumerable<ComLink> GetLinks()
 	{
-		if (cache == null || cacheTurn != GameWrapper.Client.CurrentTurn)
+		if (cache == null || cacheTime != GameWrapper.Client.CurrentTime)
 		{
 			cache = GenerateLinks().ToList();
-			cacheTurn = GameWrapper.Client.CurrentTurn;
+			cacheTime = GameWrapper.Client.CurrentTime;
 		}
 
 		return cache;
@@ -73,7 +73,7 @@
 	private IEnumerable<ComLink> GenerateLinks()
 	{
 		var spacePorts = MyPlanets().Where(p => p.Settlement.Installations.SpacePort > 0).ToArray();
-		
+
 		foreach (var link in MinimumSpanningTree(spacePorts.Select(p => p.Position), (a, b) => true))
 		{
 			var tmp = link;
