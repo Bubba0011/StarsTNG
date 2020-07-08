@@ -2,7 +2,7 @@
 
 namespace Stars.Core
 {
-	class DefaultPlayerView : IPlayer
+	class OpponentPlayerView : IPlayer
 	{
 		private readonly Player player;
 
@@ -10,7 +10,7 @@ namespace Stars.Core
 		public string? Name => player.Name;
 		public IList<Message> Messages => new List<Message>();
 
-		public DefaultPlayerView(Player player)
+		public OpponentPlayerView(Player player)
 		{
 			this.player = player;
 		}

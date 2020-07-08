@@ -8,12 +8,17 @@
 		public Position Position => planet.Position;
 		public string? Name => planet.Name;
 		public PlanetDetails? Details => planet.Details;
-		public ISettlement? Settlement => planet.Settlement?.GetDefaultView();
+		public ISettlement? Settlement { get; }
 		public string ObjectId => planet.ObjectId;
 
 		public ScannedPlanet(Planet planet)
 		{
 			this.planet = planet;
+
+			if (planet.Settlement != null)
+			{
+				Settlement = new SettlementView(planet.Settlement);
+			}
 		}
 	}
 }

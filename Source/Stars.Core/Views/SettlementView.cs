@@ -1,6 +1,6 @@
 ﻿namespace Stars.Core
 {
-	class DefaultSettlementView : ISettlement
+	class SettlementView : ISettlement
 	{
 		private readonly Settlement settlement;
 
@@ -9,7 +9,7 @@
 		public Population Population => settlement.Population;
 		public bool IsMine => false;
 
-		public DefaultSettlementView(Settlement settlement)
+		public SettlementView(Settlement settlement)
 		{
 			this.settlement = settlement;
 		}

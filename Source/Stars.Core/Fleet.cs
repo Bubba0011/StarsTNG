@@ -16,8 +16,6 @@ namespace Stars.Core
 		public int? Heading { get; set; }
 		public Population Passengers { get; set; }
 
-		public IFleet GetDefaultView() => new DefaultFleetView(this);
-
 		public void Move(double speed)
 		{
 			Heading = CalculateHeading();

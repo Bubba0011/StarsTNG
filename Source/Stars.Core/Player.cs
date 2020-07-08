@@ -9,9 +9,6 @@ namespace Stars.Core
 		public int Id { get; set; }
 		public string? Name { get; set; }
 		public Race Race { get; set; } = new Race();
-
-		public IPlayer GetDefaultView() => new DefaultPlayerView(this);
-
 		public List<Message> Messages { get; set; } = new List<Message>();
 		
 		internal void AddMessage(Message message)

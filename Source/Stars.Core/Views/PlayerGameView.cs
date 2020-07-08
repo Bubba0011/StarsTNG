@@ -26,8 +26,8 @@ namespace Stars.Core.Views
 		private IPlayer Project(Player player)
 		{
 			return player.Id == playerId
-				? new PlayerPlayerView(player, game)
-				: player.GetDefaultView();
+				? (IPlayer)new PlayerPlayerView(player, game)
+				: (IPlayer)new OpponentPlayerView(player);
 		}
 	}
 }
