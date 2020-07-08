@@ -4,7 +4,7 @@ namespace Stars.Core
 {
 	public class GameRules
 	{
-		public SpaceTimeSpan TimeStep => new SpaceTimeSpan(2);
+		public Duration TimeStep => new Duration(0, 2);
 
 		public double CalculatePlanetValue(PlanetDetails planetDetails, Race race)
 		{

@@ -8,7 +8,7 @@ namespace Stars.Core
 		public string? Name { get; set; }
 		public GameRules Rules { get; set; }
 		public Galaxy Galaxy { get; set; }
-		public SpaceTime Time { get; set; } = new SpaceTime(1);
+		public StarDate Time { get; set; } = new StarDate(5000);
 		public IList<PlayerScore> Scoreboard { get; set; } = new PlayerScore[0];
 		public EntityStore<Player> Players { get; set; } = new EntityStore<Player>();
 		public HistoryStore History { get; set; } = new HistoryStore();

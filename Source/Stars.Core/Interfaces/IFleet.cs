@@ -19,9 +19,9 @@ namespace Stars.Core
 	public struct WakePoint
 	{
 		public Position Position { get; }
-		public SpaceTime Time { get; }
+		public StarDate Time { get; }
 
-		public WakePoint(SpaceTime time, Position position)
+		public WakePoint(StarDate time, Position position)
 		{
 			this.Time = time;
 			this.Position = position;

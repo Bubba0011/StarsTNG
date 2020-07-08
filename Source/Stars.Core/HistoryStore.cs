@@ -31,7 +31,7 @@ namespace Stars.Core
 			}
 		}
 
-		private void StorePlayerView(SpaceTime time, int playerId, IEnumerable<int> planetIds, IEnumerable<int> fleetIds)
+		private void StorePlayerView(StarDate time, int playerId, IEnumerable<int> planetIds, IEnumerable<int> fleetIds)
 		{
 			var record = new PlayerRecord
 			{
@@ -44,7 +44,7 @@ namespace Stars.Core
 			Players.Add(record);
 		}
 
-		private void StorePlanet(SpaceTime time, Planet planet)
+		private void StorePlanet(StarDate time, Planet planet)
 		{
 			var record = new PlanetRecord
 			{
@@ -58,7 +58,7 @@ namespace Stars.Core
 			Planets.Add(record);
 		}
 
-		private void StoreFleet(SpaceTime time, Fleet fleet)
+		private void StoreFleet(StarDate time, Fleet fleet)
 		{
 			var record = new FleetRecord
 			{
@@ -70,7 +70,7 @@ namespace Stars.Core
 			Fleets.Add(record);
 		}
 
-		public SpaceTime? GetPlayerView(int playerId, int planetId)
+		public StarDate? GetPlayerView(int playerId, int planetId)
 		{
 			var hit = Players
 				.Where(rec => rec.PlayerId == playerId)
@@ -80,7 +80,7 @@ namespace Stars.Core
 			return hit?.Time;
 		}
 
-		public PlanetRecord? GetPlanet(SpaceTime time, int planetId)
+		public PlanetRecord? GetPlanet(StarDate time, int planetId)
 		{
 			return Planets
 				.Where(p => p.Time == time)
@@ -109,7 +109,7 @@ namespace Stars.Core
 
 	public class PlayerRecord
 	{
-		public SpaceTime Time { get; set; }
+		public StarDate Time { get; set; }
 		public int PlayerId { get; set; }
 		public HashSet<int> PlanetIds { get; set; } = new HashSet<int>();
 		public HashSet<int> FleetIds { get; set; } = new HashSet<int>();
@@ -117,7 +117,7 @@ namespace Stars.Core
 
 	public class PlanetRecord
 	{
-		public SpaceTime Time { get; set; }
+		public StarDate Time { get; set; }
 		public int PlanetId { get; set; }
 		public int? OwnerId { get; set; }
 		public Population? Population { get; set; }
@@ -126,7 +126,7 @@ namespace Stars.Core
 
 	public class FleetRecord
 	{
-		public SpaceTime Time { get; set; }
+		public StarDate Time { get; set; }
 		public int FleetId { get; set; }
 		public Position Position { get; set; }
 	}

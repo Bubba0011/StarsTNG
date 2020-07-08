@@ -238,7 +238,7 @@ namespace Stars.Tests
 					},
 				},
 
-				Time = new SpaceTime(1),
+				Time = new StarDate(),
 			};
 
 			return game;

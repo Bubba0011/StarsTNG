@@ -10,7 +10,7 @@
 		public PlanetDetails? Details => planet.Details;
 		public ISettlement? Settlement { get; }
 		public string ObjectId => planet.ObjectId;
-		public SpaceTime? Timestamp { get; }
+		public StarDate? Timestamp { get; }
 
 		public OldScannedPlanet(Planet planet, PlanetRecord history)
 		{

@@ -6,6 +6,6 @@
 		string? Name { get; }
 		PlanetDetails? Details { get; }
 		ISettlement? Settlement { get; }
-		SpaceTime? Timestamp { get => null; }
+		StarDate? Timestamp { get => null; }
 	}
 }
