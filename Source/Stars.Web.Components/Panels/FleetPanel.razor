@@ -21,6 +21,7 @@
 @if (Fleet != null)
 {
 	<p><b>Owner</b> @GetPlayerName(Fleet.OwnerId)</p>
+	<p><b>Max Speed</b> @Fleet.MaxSpeed</p>
 	<p><b>Scanner Range</b> @Fleet.ScannerRange</p>
 	@if (Fleet.Passengers?.Total > 0)
 	{
@@ -91,8 +92,6 @@
 
 	private IEnumerable<WaypointItem> GetWaypoints()
 	{
-		var speed = new Speed(49);
-
 		int id = 0;
 		Position lastPos = Fleet.Position;
 		Duration totTime = default;
@@ -100,7 +99,7 @@
 		foreach (var wp in Fleet.Waypoints)
 		{
 			var distance = lastPos.DistanceTo(wp.Position);
-			var eta = distance / speed;
+			var eta = distance / Fleet.MaxSpeed.Value;
 			totTime += eta;
 			lastPos = wp.Position;
 			id++;

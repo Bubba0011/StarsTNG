@@ -14,7 +14,7 @@ namespace Stars.Core
 		public IList<Waypoint>? Waypoints { get; set; }
 		public Velocity? Velocity { get; set; }
 		public Population Passengers { get; set; }
-		public Speed MaxSpeed { get; set; } = new Speed(49);
+		public Speed MaxSpeed { get; set; } = new Speed(7);
 
 		public void Move(Duration time)
 		{

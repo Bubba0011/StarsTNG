@@ -17,6 +17,7 @@ namespace Stars.Core
 		public string ObjectId => fleet.ObjectId;
 		public Velocity? Velocity => fleet.Velocity;
 		public Population? Passengers => fleet.Passengers;
+		public Speed? MaxSpeed => fleet.MaxSpeed;
 		public IEnumerable<Waypoint> Waypoints => fleet.Waypoints ?? new Waypoint[0];
 		public IEnumerable<WakePoint> WakePoints => history.GetFleet(Id).OrderBy(h => h.Time).Select(h => new WakePoint(h.Time, h.Position));
 

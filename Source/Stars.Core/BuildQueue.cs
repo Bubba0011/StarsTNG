@@ -89,7 +89,7 @@ namespace Stars.Core
 
 			if (item.Equals(ScoutShip))
 			{
-				LaunchShip(50, "Scout");
+				LaunchShip(50, "Scout", 7.8m);
 			}
 			else if (item.Equals(ColonyShip))
 			{
@@ -97,7 +97,7 @@ namespace Stars.Core
 				var passengers = new Population(settlers);
 				settlement.Population -= passengers;
 
-				var ship = LaunchShip(20, "Mayflower");
+				var ship = LaunchShip(20, "Mayflower", 7.2m);
 				ship.Passengers = passengers;
 			}
 			else if (item.Equals(AssaultShip))
@@ -121,13 +121,14 @@ namespace Stars.Core
 				Notify($"Space Port completed", planet);
 			}
 
-			Fleet LaunchShip(int scanner, string name)
+			Fleet LaunchShip(int scanner, string name, decimal warpSpeed = 7)
 			{
 				var ship = new Fleet
 				{
 					OwnerId = settlement.OwnerId,
 					Position = planet.Position,
 					ScannerRange = scanner,
+					MaxSpeed = new Speed(warpSpeed),
 				};
 
 				galaxy.Fleets.Add(ship);

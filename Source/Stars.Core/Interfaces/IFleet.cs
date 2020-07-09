@@ -12,6 +12,7 @@ namespace Stars.Core
 		bool IsMine { get; }
 		Velocity? Velocity { get; }
 		Population? Passengers { get; }
+		Speed? MaxSpeed { get; }
 		IEnumerable<Waypoint> Waypoints { get; }
 		IEnumerable<WakePoint> WakePoints { get => Enumerable.Empty<WakePoint>(); }
 	}

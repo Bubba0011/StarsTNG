@@ -2,11 +2,17 @@
 {
 	public struct Speed
 	{
-		public double LysPerYear { get; set; }
+		public decimal WarpFactor { get; set; }
+		public double LysPerYear => (double)(WarpFactor * WarpFactor);
 
-		public Speed(double lysPerYear)
+		public Speed(decimal warpFactor)
 		{
-			LysPerYear = lysPerYear;
+			WarpFactor = warpFactor;
+		}
+
+		public override string ToString()
+		{
+			return $"Warp {WarpFactor}";
 		}
 
 		public static double operator *(Speed speed, Duration time)
