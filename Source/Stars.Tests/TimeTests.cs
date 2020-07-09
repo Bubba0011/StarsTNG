@@ -6,12 +6,12 @@ namespace Stars.Tests
 	public class TimeTests
 	{
 		[Fact]
-		public void TimeStartsAtYear1()
+		public void TimeStartsAtYearZero()
 		{
-			var zero = new StarDate();
-			var yearOne = new StarDate(1, 0);
+			var startYear = new StarDate();
+			var yearZero = new StarDate(0, 0);
 
-			Assert.Equal(yearOne, zero);
+			Assert.Equal(yearZero, startYear);
 		}
 
 		[Fact]
@@ -41,7 +41,7 @@ namespace Stars.Tests
 		{
 			var start = new StarDate();
 			var delta = new Duration(0, 2);
-			var expected = new StarDate(1, 2);
+			var expected = new StarDate(0, 2);
 
 			StarDate future = start + delta;
 

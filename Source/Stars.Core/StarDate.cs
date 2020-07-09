@@ -4,18 +4,16 @@ namespace Stars.Core
 {
 	public struct StarDate : IComparable<StarDate>
 	{
-		const int BaseYear = 1;
-
-		internal const int TicksPerYear = 10;
 		internal const int TicksPerMonth = 1;
+		internal const int TicksPerYear = 10 * TicksPerMonth;
 
 		public int Ticks { get; set; }
-		public int Year => BaseYear + Ticks / TicksPerYear;
+		public int Year => Ticks / TicksPerYear;
 		public int Month => (Ticks % TicksPerYear) / TicksPerMonth;
 
-		public StarDate(int year, int month = 0)
+		public StarDate(int year, int month = default)
 		{
-			Ticks = TicksPerYear * (year - BaseYear) + TicksPerMonth * month;
+			Ticks = TicksPerYear * year + TicksPerMonth * month;
 		}
 
 		public override string ToString()
