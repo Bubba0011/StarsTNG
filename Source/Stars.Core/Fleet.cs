@@ -11,7 +11,7 @@ namespace Stars.Core
 		public string? Name { get; set; }
 		public int ScannerRange { get; set; }
 		public string ObjectId => $"Fleet#{Id}";
-		public IList<Position>? Waypoints { get; set; }
+		public IList<Waypoint>? Waypoints { get; set; }
 		public Velocity? Velocity { get; set; }
 		public Population Passengers { get; set; }
 		public Speed MaxSpeed { get; set; } = new Speed(49);
@@ -22,7 +22,7 @@ namespace Stars.Core
 
 			if (Waypoints?.Any() == true)
 			{
-				var delta = Waypoints.First() - Position;
+				var delta = Waypoints.First().Position - Position;
 				Velocity = new Velocity(speed, delta);
 			}
 			else
@@ -31,7 +31,7 @@ namespace Stars.Core
 				return;
 			}
 
-			var target = Waypoints.First();
+			var target = Waypoints.First().Position;
 			var distanceToTarget = target.DistanceTo(Position);
 			var distanceCovered = speed * time;
 

@@ -18,7 +18,7 @@ namespace Stars.Core
 		public string ObjectId => fleet.ObjectId;
 		public Velocity? Velocity => fleet.Velocity;
 		public Population? Passengers => fleet.Passengers;
-		public IEnumerable<Position> Waypoints => new Position[0];
+		public IEnumerable<Waypoint> Waypoints => new Waypoint[0];
 		public IEnumerable<WakePoint> WakePoints => GetWakePoints();
 
 		public ScannedFleet(Fleet fleet, HistoryStore history, int viewingPlayerId)

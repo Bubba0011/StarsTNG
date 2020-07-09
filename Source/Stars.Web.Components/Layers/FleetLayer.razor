@@ -56,8 +56,9 @@
 
 		<polyline points="@path" class="waypoint-line" />
 
-		@foreach (var wp in fleet.Waypoints)
+		@foreach (var waypoint in fleet.Waypoints)
 		{
+			var wp = waypoint.Position;
 			<circle cx="@wp.X" cy="@wp.Y" r="1" class="waypoint" />
 		}
 	}
@@ -98,7 +99,7 @@
 
 			foreach (var p in fleet.Waypoints)
 			{
-				yield return S(p);
+				yield return S(p.Position);
 			}
 		}
 	}

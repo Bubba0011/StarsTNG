@@ -17,7 +17,7 @@ namespace Stars.Core
 		public string ObjectId => fleet.ObjectId;
 		public Velocity? Velocity => fleet.Velocity;
 		public Population? Passengers => fleet.Passengers;
-		public IEnumerable<Position> Waypoints => fleet.Waypoints ?? new Position[0];
+		public IEnumerable<Waypoint> Waypoints => fleet.Waypoints ?? new Waypoint[0];
 		public IEnumerable<WakePoint> WakePoints => history.GetFleet(Id).OrderBy(h => h.Time).Select(h => new WakePoint(h.Time, h.Position));
 
 		public OwnedFleet(Fleet fleet, HistoryStore history)
@@ -26,7 +26,7 @@ namespace Stars.Core
 			this.history = history;
 		}
 
-		public void SetWaypoints(IEnumerable<Position>? waypoints)
+		public void SetWaypoints(IEnumerable<Waypoint>? waypoints)
 		{
 			fleet.Waypoints = waypoints?.ToList();
 		}

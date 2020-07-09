@@ -109,8 +109,9 @@
 				pos = closestObject.Position;
 			}
 
+			var waypoint = new Waypoint(pos);
 			var list = fleet.Waypoints.ToList();
-			list.Add(pos);
+			list.Add(waypoint);
 
 			fleet.SetWaypoints(list);
 		}

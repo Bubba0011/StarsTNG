@@ -99,16 +99,16 @@
 
 		foreach (var wp in Fleet.Waypoints)
 		{
-			var distance = lastPos.DistanceTo(wp);
+			var distance = lastPos.DistanceTo(wp.Position);
 			var eta = distance / speed;
 			totTime += eta;
-			lastPos = wp;
+			lastPos = wp.Position;
 			id++;
 
 			yield return new WaypointItem
 			{
 				Id = id,
-				Target = wp,
+				Target = wp.Position,
 				Distance = distance,
 				ETA = totTime,
 			};
