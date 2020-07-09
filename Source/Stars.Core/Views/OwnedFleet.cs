@@ -15,7 +15,7 @@ namespace Stars.Core
 		public int ScannerRange => fleet.ScannerRange;
 		public bool IsMine => true;
 		public string ObjectId => fleet.ObjectId;
-		public int? Heading => fleet.Heading;
+		public Velocity? Velocity => fleet.Velocity;
 		public Population? Passengers => fleet.Passengers;
 		public IEnumerable<Position> Waypoints => fleet.Waypoints ?? new Position[0];
 		public IEnumerable<WakePoint> WakePoints => history.GetFleet(Id).OrderBy(h => h.Time).Select(h => new WakePoint(h.Time, h.Position));

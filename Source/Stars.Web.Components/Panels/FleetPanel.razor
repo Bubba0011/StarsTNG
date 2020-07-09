@@ -91,16 +91,16 @@
 
 	private IEnumerable<WaypointItem> GetWaypoints()
 	{
-		const double speed = 49;
+		var speed = new Speed(49);
 
 		int id = 0;
 		Position lastPos = Fleet.Position;
-		int totTime = 0;
+		Duration totTime = default;
 
 		foreach (var wp in Fleet.Waypoints)
 		{
 			var distance = lastPos.DistanceTo(wp);
-			var eta = (int)Math.Ceiling(distance / speed);
+			var eta = distance / speed;
 			totTime += eta;
 			lastPos = wp;
 			id++;
@@ -120,6 +120,6 @@
 		public int Id { get; set; }
 		public Position Target { get; set; }
 		public double Distance { get; set; }
-		public int ETA { get; set; }
+		public Duration ETA { get; set; }
 	}
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Stars.Core
@@ -13,22 +12,32 @@ namespace Stars.Core
 		public int ScannerRange { get; set; }
 		public string ObjectId => $"Fleet#{Id}";
 		public IList<Position>? Waypoints { get; set; }
-		public int? Heading { get; set; }
+		public Velocity? Velocity { get; set; }
 		public Population Passengers { get; set; }
+		public Speed MaxSpeed { get; set; } = new Speed(49);
 
-		public void Move(double speed)
+		public void Move(Duration time)
 		{
-			Heading = CalculateHeading();
+			var speed = MaxSpeed;
 
-			if (Waypoints == null) return;
-			if (Waypoints.Any() == false) return;
+			if (Waypoints?.Any() == true)
+			{
+				var delta = Waypoints.First() - Position;
+				Velocity = new Velocity(speed, delta);
+			}
+			else
+			{
+				Velocity = null;
+				return;
+			}
 
 			var target = Waypoints.First();
 			var distanceToTarget = target.DistanceTo(Position);
+			var distanceCovered = speed * time;
 
-			if (distanceToTarget > speed)
+			if (distanceToTarget > distanceCovered)
 			{
-				var pct = speed / distanceToTarget;
+				var pct = distanceCovered / distanceToTarget;
 				var targetDelta = target - Position;
 				var moveDelta = targetDelta * pct;
 				Position += moveDelta;
@@ -41,21 +50,6 @@ namespace Stars.Core
 				{
 					Waypoints = null;
 				}
-			}
-		}
-
-		private int? CalculateHeading()
-		{
-			if (Waypoints?.Any() == true)
-			{
-				var delta = Waypoints.First() - Position;
-				var radianAngle = Math.Atan2(delta.Y, delta.X);
-				var degreeAngle = 180 * radianAngle / Math.PI;
-				return (int)Math.Round(degreeAngle, 0);
-			}
-			else
-			{
-				return null;
 			}
 		}
 	}

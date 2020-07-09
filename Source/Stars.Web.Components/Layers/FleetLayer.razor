@@ -105,7 +105,7 @@
 
 	private string GetFleetTransform(IFleet fleet)
 	{
-		return $"rotate({fleet.Heading ?? 0}, {fleet.Position.X}, {fleet.Position.Y})";
+		return $"rotate({fleet.Velocity?.Heading ?? 0}, {fleet.Position.X}, {fleet.Position.Y})";
 	}
 
 	private string GetClass(IFleet fleet)

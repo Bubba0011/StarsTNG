@@ -11,11 +11,11 @@ namespace Stars.Core
 
 		public int Ticks { get; set; }
 		public int Year => BaseYear + Ticks / TicksPerYear;
-		public int Month => (Ticks % TicksPerYear) / TicksPerMonth + 1;
+		public int Month => (Ticks % TicksPerYear) / TicksPerMonth;
 
-		public StarDate(int year, int month = 1)
+		public StarDate(int year, int month = 0)
 		{
-			Ticks = TicksPerYear * (year - BaseYear) + TicksPerMonth * (month - 1);
+			Ticks = TicksPerYear * (year - BaseYear) + TicksPerMonth * month;
 		}
 
 		public override string ToString()
@@ -37,7 +37,7 @@ namespace Stars.Core
 
 		public override int GetHashCode()
 		{
-			return HashCode.Combine(Ticks);
+			return Ticks;
 		}
 
 		int IComparable<StarDate>.CompareTo(StarDate other)
@@ -61,24 +61,6 @@ namespace Stars.Core
 		public static bool operator !=(StarDate lhs, StarDate rhs)
 		{
 			return lhs.Ticks != rhs.Ticks;
-		}
-	}
-
-	public struct Duration
-	{
-		public int Ticks { get; set; }
-		public int Years => Ticks / StarDate.TicksPerYear;
-		public int Months => (Ticks % StarDate.TicksPerYear) / StarDate.TicksPerMonth;
-		public double YearFraction => (double)Ticks / StarDate.TicksPerYear;
-
-		public Duration(int years, int months = 0)
-		{
-			Ticks = StarDate.TicksPerYear * years + StarDate.TicksPerMonth * months;
-		}
-
-		public override string ToString()
-		{
-			return $"{Years}.{Months}";
 		}
 	}
 }

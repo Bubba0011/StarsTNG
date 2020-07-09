@@ -10,7 +10,7 @@ namespace Stars.Core
 		string? Name { get; }
 		int ScannerRange { get; }
 		bool IsMine { get; }
-		int? Heading { get; }
+		Velocity? Velocity { get; }
 		Population? Passengers { get; }
 		IEnumerable<Position> Waypoints { get; }
 		IEnumerable<WakePoint> WakePoints { get => Enumerable.Empty<WakePoint>(); }
@@ -23,8 +23,8 @@ namespace Stars.Core
 
 		public WakePoint(StarDate time, Position position)
 		{
-			this.Time = time;
-			this.Position = position;
+			Time = time;
+			Position = position;
 		}
 	}
 }

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 
 namespace Stars.Core
@@ -32,31 +34,31 @@ namespace Stars.Core
 
 			Time += Rules.TimeStep;
 
-			UpdatePlanets();
-			UpdateFleets();
+			UpdatePlanets(Rules.TimeStep);
+			UpdateFleets(Rules.TimeStep);
 			ExecuteColonizeOrders();
 			ExecuteAssaultOrders();
 
 			UpdateScoreboard();
 		}
 
-		private void UpdatePlanets()
+		private void UpdatePlanets(Duration time)
 		{
 			foreach (var planet in Galaxy.Planets)
 			{
 				if (planet.Settlement != null)
 				{
-					BuildStuff(planet);
-					UpdatePopulation(planet);
+					BuildStuff(planet, time);
+					UpdatePopulation(planet, time);
 				}
 			}
 
-			void BuildStuff(Planet populatedPlanet)
+			void BuildStuff(Planet populatedPlanet, Duration time)
 			{
 				Settlement settlement = populatedPlanet.Settlement!;
 
-				int resources = settlement.Population.Civilians / 1000;
-				var output = settlement.BuildQueue.Build(resources);
+				var resources = time.YearFraction * settlement.Population.Civilians / 1000;
+				var output = settlement.BuildQueue.Build((int)resources);
 				resources -= output.ConsumedResources;
 
 				foreach (var item in output.CompletedItems)
@@ -65,24 +67,23 @@ namespace Stars.Core
 				}
 			}
 
-			void UpdatePopulation(Planet populatedPlanet)
+			void UpdatePopulation(Planet populatedPlanet, Duration time)
 			{
 				Settlement settlement = populatedPlanet.Settlement!;
 				Player? owner = GetPlayer(settlement.OwnerId);
 
 				if (owner != null)
 				{
-					settlement.Population += Rules.CalculatePopulationGrowth(populatedPlanet, owner);
+					settlement.Population += Rules.CalculatePopulationGrowth(populatedPlanet, owner, time);
 				}
 			}
 		}
 
-		private void UpdateFleets()
+		private void UpdateFleets(Duration time)
 		{
 			foreach (var fleet in Galaxy.Fleets)
 			{
-				const double Warp7 = 49;
-				fleet.Move(Warp7);
+				fleet.Move(time);
 			}
 		}
 

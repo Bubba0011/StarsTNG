@@ -9,7 +9,7 @@ namespace Stars.Tests
 		public void TimeStartsAtYear1()
 		{
 			var zero = new StarDate();
-			var yearOne = new StarDate(1, 1);
+			var yearOne = new StarDate(1, 0);
 
 			Assert.Equal(yearOne, zero);
 		}
@@ -41,7 +41,7 @@ namespace Stars.Tests
 		{
 			var start = new StarDate();
 			var delta = new Duration(0, 2);
-			var expected = new StarDate(1, 3);
+			var expected = new StarDate(1, 2);
 
 			StarDate future = start + delta;
 
@@ -51,9 +51,9 @@ namespace Stars.Tests
 		[Fact]
 		public void YearHasTenMonths()
 		{
-			var start = new StarDate(1, 10);
+			var start = new StarDate(1, 9);
 			var oneMonth = new Duration(0, 1);
-			var expected = new StarDate(2, 1);
+			var expected = new StarDate(2, 0);
 
 			StarDate future = start + oneMonth;
 

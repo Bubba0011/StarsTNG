@@ -4,7 +4,7 @@ namespace Stars.Core
 {
 	public class GameRules
 	{
-		public Duration TimeStep => new Duration(0, 2);
+		public Duration TimeStep => new Duration(0, 5);
 
 		public double CalculatePlanetValue(PlanetDetails planetDetails, Race race)
 		{
@@ -33,7 +33,7 @@ namespace Stars.Core
 				: 0;
 		}
 
-		public Population CalculatePopulationGrowth(Planet planet, Player owner)
+		public Population CalculatePopulationGrowth(Planet planet, Player owner, Duration time)
 		{
 			var settlement = planet.Settlement;
 			if (settlement == null)
@@ -42,7 +42,7 @@ namespace Stars.Core
 			}
 
 			int basePopulationCapacity = owner.Race.PlanetPopulationCapacity;
-			double baseGrowthRate = owner.Race.PopulationGrowthRate;
+			double baseGrowthRate = Math.Pow(1 + owner.Race.PopulationGrowthRate, time.YearFraction) - 1;
 			double planetHabFactor = CalculatePlanetValue(planet.Details, owner.Race);
 
 			double effectivePopulationCapacity = basePopulationCapacity * planetHabFactor;
